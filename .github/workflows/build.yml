@@ -3,8 +3,6 @@ name: Build apps
 # Builds an Android debug APK and an UNSIGNED iOS IPA (sign it yourself with your own certificate).
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
 
 jobs:
   android:
