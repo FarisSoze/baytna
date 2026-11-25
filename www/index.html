@@ -1197,15 +1197,27 @@ async function gptToken(){
     finally { gRefreshing = null; }
   })());
 }
-async function oaFetch(path, init = {}, retried){
-  const token = await gptToken();
-  let r; try { r = await fetch(OA.api + path, {...init, headers:{...(init.headers || {}), Authorization:'Bearer ' + token}}); } catch { throw gErr('', 'network'); }
-  if (r.status === 401 && !retried){ G.exp = 0; return oaFetch(path, init, true); }
-  if (!r.ok){ const j = await r.json().catch(() => ({})); throw gErr((j.error && j.error.message) || j.detail || '', (j.error && j.error.code) || 'http_' + r.status); }
-  return r;
+// On the phone the request goes through the native HTTP stack: OpenAI's plan route does not answer browser cross-origin requests from a WebView.
+// Returns the whole body as text (the event stream included) once the response is complete.
+async function oaFetch(path, body, retried){
+  const token = await gptToken(), url = OA.api + path, headers = {Authorization:'Bearer ' + token, Accept:body ? 'text/event-stream' : 'application/json'};
+  if (body) headers['Content-Type'] = 'application/json';
+  let status, text;
+  try {
+    if (isNative()){
+      const r = await native('CapacitorHttp', 'request', {url, method:body ? 'POST' : 'GET', headers, data:body, responseType:'text', connectTimeout:20000, readTimeout:120000});
+      status = r.status; text = typeof r.data === 'string' ? r.data : JSON.stringify(r.data == null ? '' : r.data);
+    } else {
+      const r = await fetch(url, {method:body ? 'POST' : 'GET', headers, body:body ? JSON.stringify(body) : undefined});
+      status = r.status; text = await r.text();
+    }
+  } catch (e) { throw gErr(String((e && e.message) || e), 'network'); }
+  if (status === 401 && !retried){ G.exp = 0; return oaFetch(path, body, true); }
+  if (status < 200 || status > 299){ let j = {}; try { j = JSON.parse(text); } catch {} throw gErr((j.error && j.error.message) || (typeof j.detail === 'string' ? j.detail : '') || text.slice(0, 140), (j.error && j.error.code) || 'http_' + status); }
+  return text;
 }
 async function gptModels(){
-  const j = await (await oaFetch('/models')).json(), all = j.models || j.data || [];
+  const j = JSON.parse(await oaFetch('/models')), all = j.models || j.data || [];
   const list = (all.some(m => m.visibility === 'list') ? all.filter(m => m.visibility === 'list') : all).map(m => ({slug:m.slug || m.id, name:m.display_name || m.slug || m.id})).filter(m => m.slug);
   if (!list.length) throw gErr('', 'no_models');
   G.models = list;
@@ -1232,20 +1244,14 @@ function gptPrompt(){
 async function gptAsk(){
   if (!G.model) await gptModels();
   const input = chat.filter(m => m.role === 'user' || m.raw).slice(-14).map(m => ({role:m.role, content:m.role === 'user' ? m.text : m.raw}));
-  const r = await oaFetch('/responses', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({model:G.model, instructions:gptPrompt(), input, store:false, stream:true})});
-  const rd = r.body.getReader(), dec = new TextDecoder(); let buf = '', out = '', completed = false;
-  const take = block => { for (const line of block.split('\n')){
+  const text = await oaFetch('/responses', {model:G.model, instructions:gptPrompt(), input, store:false, stream:true});
+  let out = '', completed = false;
+  for (const line of text.replace(/\r/g, '').split('\n')){
     if (!line.startsWith('data:')) continue;
     let ev; try { ev = JSON.parse(line.slice(5)); } catch { continue; }
     if (ev.type === 'response.output_text.delta') out += ev.delta || '';
     else if (ev.type === 'response.completed') completed = true;
     else if (ev.type === 'response.failed' || ev.type === 'response.incomplete' || ev.type === 'error'){ const er = (ev.response && ev.response.error) || ev.error || ev; throw gErr(er.message || '', er.code || ev.type); }
-  } };
-  for (;;){
-    const {value, done} = await rd.read();
-    if (value) buf = (buf + dec.decode(value, {stream:true})).replace(/\r/g, '');
-    let i; while ((i = buf.indexOf('\n\n')) >= 0){ take(buf.slice(0, i)); buf = buf.slice(i + 2); }
-    if (done){ take(buf); break; }
   }
   if (!completed) throw gErr('', 'cut');
   return out;
@@ -1270,12 +1276,12 @@ function applyGpt(j){
   if (undo.length){ buzz(8); const n = fresh.length + fin.length; toast(n > 1 ? `المساعد عدّل ${n} أشياء` : 'تم', () => undo.forEach(f => f())); render(); }
   return done.join('\n');
 }
-const GMSG = {network:'ما فيه اتصال بالإنترنت.', cut:'انقطع الرد قبل ما يكتمل. أعد المحاولة.', no_models:'ما لقيت نموذجاً متاحاً لحسابك.',
+const GMSG = {cut:'انقطع الرد قبل ما يكتمل. أعد المحاولة.', no_models:'ما لقيت نموذجاً متاحاً لحسابك.',
   subscription_sharing_usage_limit_exceeded:'وصلت حد استخدام اشتراكك حالياً. جرّب بعدين، أو راجع ChatGPT ← الإعدادات ← الاستخدام.',
   subscription_sharing_user_not_eligible:'اشتراكك في ChatGPT ما يسمح باستخدامه داخل التطبيقات.',
   subscription_sharing_usage_unavailable:'ChatGPT مشغول حالياً. جرّب بعد شوي.', subscription_sharing_user_unavailable:'ChatGPT مشغول حالياً. جرّب بعد شوي.',
   subscription_sharing_unsupported_capability:'النموذج المختار ما يدعم هذا الطلب. اختر نموذجاً ثانياً من الأسفل.'};
-const gMsg = e => e.message && !e.code ? e.message : GMSG[e.code] || `تعذّر الوصول إلى ChatGPT (${e.code || 'خطأ'})${e.message ? ': ' + e.message : ''}`;
+const gMsg = e => e.message && !e.code ? e.message : e.code === 'network' ? `تعذّر الاتصال بـChatGPT. تأكد من الإنترنت وجرّب مرة ثانية.${e.message ? ' (' + e.message.slice(0, 80) + ')' : ''}` : GMSG[e.code] || `تعذّر الوصول إلى ChatGPT (${e.code || 'خطأ'})${e.message ? ': ' + e.message : ''}`;
 
 function drawChat(){
   const el = $('#chat');
