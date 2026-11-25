@@ -285,6 +285,23 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-duration:.01ms!important}}
 @media (prefers-reduced-transparency:reduce){.side,.pill,.toast,.bar::before{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--surface)}}
+.stack{display:flex;flex-direction:column;gap:14px}
+.chat{display:flex;flex-direction:column;gap:8px;height:min(42dvh,340px);overflow:auto;overscroll-behavior:contain;padding:2px}
+.chat:empty::before{content:'مثال: «نبي نسوي كبسة الجمعة، ضيف اللي ينقصنا» أو الصق قائمة من الواتساب.';margin:auto;max-width:260px;text-align:center;color:var(--fg3);font-size:.875rem;font-weight:300;line-height:1.7}
+.msg{max-width:86%;padding:10px 14px;border-radius:18px;font-size:.9375rem;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.msg.u{align-self:flex-end;background:var(--cta-bg);color:var(--cta-fg);border-end-end-radius:6px}
+.msg.a{align-self:flex-start;background:var(--fill);border-end-start-radius:6px}
+.msg.wait{color:var(--fg3)}.msg.bad{color:var(--danger)}
+.msg .added{display:block;margin-top:6px;padding-top:6px;border-top:1px solid var(--line);font-size:.8125rem;color:var(--fg2)}
+.chat-in{display:flex;align-items:center;gap:8px;height:52px;border-radius:18px;background:var(--fill);padding-inline:16px 6px}
+.chat-in input{flex:1;min-width:0;height:100%;border:0;background:none;outline:0}
+.chat-in input::placeholder{color:var(--fg3);font-weight:300}
+.chat-in .send{transform:none;opacity:1;pointer-events:auto;flex:none}
+.chat-in .send:disabled{opacity:.4}
+.chat-foot{display:flex;align-items:center;gap:10px;font-size:.75rem;color:var(--fg3);min-height:32px}
+.chat-foot span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:end}
+.chat-foot select{max-width:42%;height:32px;border:0;border-radius:10px;background:var(--fill);color:var(--fg2);font:inherit;padding-inline:8px}
+.chat-foot button{color:var(--fg2);text-decoration:underline;min-height:32px}
 @media (prefers-contrast:more){:root{--line:currentColor}.card,.tile,.panel,.quick{box-shadow:inset 0 0 0 1px var(--fg)}}
 </style>
 </head>
@@ -303,6 +320,7 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
     <div class="bar" id="bar">
       <div class="bar-title" id="barTitle" aria-hidden="true"></div>
       <button class="avatars press" id="barAv" data-invite aria-label="الحساب والأشخاص"></button>
+      <button class="round press" data-gpt aria-label="المساعد" data-ic="spark"></button>
       <button class="round press" data-invite aria-label="دعوة شخص" data-ic="userPlus"></button>
     </div>
     <header class="lt"><div><p class="eyebrow" id="eyebrow"></p><h1 id="ltitle"></h1></div>
@@ -425,6 +443,32 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
   </form>
 </dialog>
 
+<dialog class="modal" id="gptDlg" aria-labelledby="gptTitle">
+  <div class="scrim" data-close></div>
+  <form class="sheet" id="gptForm" novalidate>
+    <div class="sheet-h"><span class="grabber"></span><h2 id="gptTitle">المساعد</h2><button type="button" class="x press" data-close aria-label="إغلاق" data-ic="x"></button></div>
+    <div class="stack" id="gptOut">
+      <p style="margin:0 4px;color:var(--fg2);line-height:1.8">اكتب له بكلامك العادي وهو يضيف الأغراض والمواعيد ويرتبها بالتاقات. يشتغل باشتراكك في ChatGPT بدون أي رسوم إضافية.</p>
+      <button type="button" class="btn primary block" id="gptLogin">Continue with ChatGPT</button>
+      <div class="field" id="gptPasteBox" hidden>
+        <label for="gptPaste">وافقت وما رجع التطبيق لحاله؟</label>
+        <input id="gptPaste" dir="ltr" autocomplete="off" autocapitalize="off" placeholder="http://127.0.0.1:1455/auth/callback?code=…">
+        <p class="help">انسخ رابط الصفحة من المتصفح بعد الموافقة والصقه هنا.</p>
+      </div>
+      <p class="err" id="gptErr" role="alert" style="margin:0"></p>
+    </div>
+    <div class="stack" id="gptIn" hidden>
+      <div class="chat" id="chat" aria-live="polite"></div>
+      <div class="chat-in">
+        <label class="sr" for="gptText">رسالتك للمساعد</label>
+        <input id="gptText" autocomplete="off" enterkeyhint="send" placeholder="وش تحتاجون؟">
+        <button class="send" type="submit" id="gptSendBtn" aria-label="إرسال" data-ic="up"></button>
+      </div>
+      <div class="chat-foot"><button type="button" id="gptOutBtn">خروج</button><label class="sr" for="gptModel">النموذج</label><select id="gptModel"></select><span id="gptWho"></span></div>
+    </div>
+  </form>
+</dialog>
+
 <div class="auth" id="auth">
   <form class="auth-card" id="authForm" novalidate>
     <span class="logo" data-ic="home"></span>
@@ -455,6 +499,7 @@ const I = {
   done:'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
   users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
   userPlus:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/>',
+  spark:'<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>',
   plus:'<path d="M12 5v14M5 12h14"/>', check:'<path d="M20 6 9 17l-5-5"/>', x:'<path d="M18 6 6 18M6 6l12 12"/>', up:'<path d="M12 19V5M5 12l7-7 7 7"/>',
   grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
   cart:'<circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>',
@@ -706,6 +751,7 @@ document.addEventListener('click', e => {
   else if (d.edit) (isAppt(S.items.find(i => i.id === d.edit) || {}) ? openAppt : openItem)(d.edit);
   else if ('newtag' in d) openTag();
   else if ('invite' in d) openInvite();
+  else if ('gpt' in d) openGpt();
   else if ('close' in d) closeSheet(b.closest('dialog'));
   else if ('logout' in d){ closeSheet($('#inviteDlg')); sb.auth.signOut(); }
   else if ('clear' in d){
@@ -1024,7 +1070,10 @@ function syncWidget(){
 // The widget plus button opens the app with baytna://add; the shell keeps it until we ask.
 async function consumeAction(){
   if (!isNative() || !S.me) return;
-  try { const r = await native('WidgetBridge', 'consumeAction'); if (r && r.action === 'add' && !$('#itemDlg').open){ S.view = 'home'; render(); openItem(); } } catch (e) { console.warn('action', e); }
+  try { const r = await native('WidgetBridge', 'consumeAction');
+    if (r && r.action === 'add' && !$('#itemDlg').open){ S.view = 'home'; render(); openItem(); }
+    else if (r && r.action === 'gpt') gptReturn();
+  } catch (e) { console.warn('action', e); }
 }
 addEventListener('baytnaAction', consumeAction);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) consumeAction(); });
@@ -1043,6 +1092,240 @@ function syncReminders(){
     await LN.schedule({notifications:due.map(i => ({id:nid(i.id), title:i.title, body:isAppt(i) ? `موعد · ${fmtDue(i.due)}${i.loc ? ' · ' + i.loc : ''}` : `${tagOf(i.tag).name} · ${PRIO.find(p => p.id === i.prio).name}`, schedule:{at:new Date(at(i)), allowWhileIdle:true}}))});
   } catch (e) { console.warn('reminders', e); } }, 800);
 }
+
+/* ---------- Assistant: "Sign in with ChatGPT" (OpenAI's open-source client flow) ----------
+   The user's own ChatGPT plan pays for the requests. The app talks to OpenAI directly: tokens stay on this device and never reach our backend. */
+const OA = {auth:'https://auth.openai.com/api/accounts/authorize', token:'https://auth.openai.com/api/accounts/oauth/token', api:'https://api.openai.com/v1',
+  redirect:'http://127.0.0.1:1455/auth/callback', scope:'openid profile email offline_access resource.invoke chatgpt.tokens.use.direct', plan:'chatgpt.tokens.use.direct'};
+const GKEY = 'baytna-gpt-v1', PKEY = 'baytna-gpt-pending';
+let G = {}, chat = [], gBusy = false, gReady;
+const gSave = async () => {
+  const value = JSON.stringify(G);
+  if (isNative()) try { await native('WidgetBridge', 'secureSet', {key:'gpt', value}); return; } catch (e) { console.warn('gpt store', e); }
+  try { localStorage.setItem(GKEY, value); } catch {}
+};
+const gLoad = () => gReady || (gReady = (async () => {
+  if (isNative()) try { const r = await native('WidgetBridge', 'secureGet', {key:'gpt'}); if (r && r.value){ G = JSON.parse(r.value); return; } } catch (e) { console.warn('gpt store', e); }
+  try { G = JSON.parse(localStorage.getItem(GKEY)) || {}; } catch { G = {}; }
+})());
+const b64u = bytes => btoa(String.fromCharCode(...bytes)).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+const rnd = n => b64u(crypto.getRandomValues(new Uint8Array(n)));
+// SHA-256 for the PKCE challenge. crypto.subtle is missing on some WebView origins, so there is a plain fallback.
+function sha256js(bytes){
+  const K = [], H = [], frac = x => ((x - Math.floor(x)) * 4294967296) >>> 0, rot = (x, n) => (x >>> n) | (x << (32 - n));
+  for (let n = 2; K.length < 64; n++){ let prime = true; for (let d = 2; d * d <= n; d++) if (n % d === 0){ prime = false; break; }
+    if (prime){ if (H.length < 8) H.push(frac(Math.sqrt(n))); K.push(frac(Math.cbrt(n))); } }
+  const l = bytes.length, b = new Uint8Array(((l + 72) >> 6) << 6), dv = new DataView(b.buffer), w = new Uint32Array(64);
+  b.set(bytes); b[l] = 128; dv.setUint32(b.length - 4, l * 8);
+  for (let o = 0; o < b.length; o += 64){
+    let [a, c, d, e, f, g, h, k] = H;
+    for (let i = 0; i < 64; i++){
+      w[i] = i < 16 ? dv.getUint32(o + i * 4) : (w[i - 16] + (rot(w[i - 15], 7) ^ rot(w[i - 15], 18) ^ (w[i - 15] >>> 3)) + w[i - 7] + (rot(w[i - 2], 17) ^ rot(w[i - 2], 19) ^ (w[i - 2] >>> 10))) >>> 0;
+      const t1 = (k + (rot(f, 6) ^ rot(f, 11) ^ rot(f, 25)) + ((f & g) ^ (~f & h)) + K[i] + w[i]) >>> 0, t2 = ((rot(a, 2) ^ rot(a, 13) ^ rot(a, 22)) + ((a & c) ^ (a & d) ^ (c & d))) >>> 0;
+      k = h; h = g; g = f; f = (e + t1) >>> 0; e = d; d = c; c = a; a = (t1 + t2) >>> 0;
+    }
+    [a, c, d, e, f, g, h, k].forEach((v, i) => H[i] = (H[i] + v) >>> 0);
+  }
+  const out = new Uint8Array(32); H.forEach((v, i) => new DataView(out.buffer).setUint32(i * 4, v)); return out;
+}
+const sha256 = async s => { const m = new TextEncoder().encode(s); try { if (crypto.subtle) return new Uint8Array(await crypto.subtle.digest('SHA-256', m)); } catch {} return sha256js(m); };
+const jwt = t => JSON.parse(new TextDecoder().decode(Uint8Array.from(atob(t.split('.')[1].replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0))));
+const gErr = (msg, code) => Object.assign(new Error(msg), {code});
+const gSigned = () => !!(G.refresh && G.client);
+
+async function oaToken(params){
+  let r; try { r = await fetch(OA.token, {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:new URLSearchParams(params)}); } catch { throw gErr('', 'network'); }
+  const j = await r.json().catch(() => ({}));
+  if (!r.ok) throw gErr(j.error_description || '', (typeof j.error === 'string' ? j.error : j.error && j.error.code) || 'http_' + r.status);
+  return j;
+}
+const takeTokens = t => { G.access = t.access_token; if (t.refresh_token) G.refresh = t.refresh_token; if (t.id_token) G.idt = t.id_token; G.exp = Date.now() + (t.expires_in || 3600) * 1000; };
+
+async function gptStart(){
+  await gLoad();
+  if (!G.host){ G.host = 'urn:uuid:' + uid(); await gSave(); }
+  const p = {state:rnd(24), nonce:rnd(24), verifier:rnd(48), client:G.client || 'dynamic_agent_client'};
+  localStorage.setItem(PKEY, JSON.stringify(p));
+  const q = new URLSearchParams({client_id:p.client, ext_agent_host_id:G.host, response_type:'code', redirect_uri:OA.redirect, scope:OA.scope, resource:OA.api,
+    state:p.state, nonce:p.nonce, code_challenge_method:'S256', code_challenge:b64u(await sha256(p.verifier))});
+  if (!G.client) q.set('agent_name_hint', 'Baytna');
+  else { if (G.idt) q.set('id_token_hint', G.idt); if (G.email) q.set('login_hint', G.email); }
+  const url = OA.auth + '?' + q;
+  if (isNative()){
+    try { await native('WidgetBridge', 'authListen', {port:1455}); } catch (e) { console.warn('auth listener', e); }   // without it the paste box still works
+    try { await native('WidgetBridge', 'openUrl', {url}); return; } catch (e) { console.warn('open url', e); }
+  }
+  window.open(url, '_blank');
+}
+// `raw` is the callback's query string, or the whole callback URL when the user pastes it.
+async function gptFinish(raw){
+  let p = null; try { p = JSON.parse(localStorage.getItem(PKEY)); } catch {}
+  const q = new URLSearchParams(String(raw).trim().replace(/^[^?]*\?/, ''));
+  if (!p) throw gErr('ما فيه محاولة دخول جارية. اضغط الزر من جديد.');
+  if (q.get('state') !== p.state) throw gErr('هذا الرابط ما يخص محاولة الدخول الحالية. اضغط الزر من جديد.');
+  localStorage.removeItem(PKEY);
+  if (q.get('error')) throw gErr(q.get('error') === 'access_denied' ? 'ما تمت الموافقة. اضغط الزر ووافق على استخدام اشتراكك.' : 'رفض ChatGPT الطلب (' + q.get('error') + ').');
+  const fresh = p.client === 'dynamic_agent_client', client = q.get('client_id') || (fresh ? '' : p.client);
+  if (!client || client === 'dynamic_agent_client' || !q.get('code')) throw gErr('ما اكتمل تسجيل التطبيق عند ChatGPT. جرّب من جديد.');
+  if (!fresh && client !== p.client) throw gErr('الحساب اللي رجع غير الحساب المحفوظ. اضغط «خروج» ثم ادخل من جديد.');
+  const t = await oaToken({grant_type:'authorization_code', client_id:client, code:q.get('code'), code_verifier:p.verifier, redirect_uri:OA.redirect, resource:OA.api});
+  // The ID token arrives straight from OpenAI over TLS; check that it belongs to this attempt and this client.
+  let id = {}; try { id = jwt(t.id_token); } catch {}
+  if (id.nonce !== p.nonce || id.iss !== 'https://auth.openai.com' || ![].concat(id.aud).includes(client) || id.exp * 1000 < Date.now()) throw gErr('تعذّر التحقق من هوية الحساب. جرّب من جديد.');
+  if (G.sub && G.sub !== id.sub && !fresh) throw gErr('هذا حساب ChatGPT ثاني. اضغط «خروج» ثم ادخل به.');
+  if (!String(t.scope || q.get('scope') || '').split(/[ +]/).includes(OA.plan)) throw gErr('دخلت، لكن بدون السماح باستخدام اشتراكك. اضغط الزر ووافق على «استخدام خطة ChatGPT».');
+  takeTokens(t); Object.assign(G, {client, sub:id.sub, email:id.email || '', model:'', models:[]});
+  await gSave();
+}
+let gRefreshing = null;                                  // one refresh at a time: the refresh token rotates
+async function gptToken(){
+  await gLoad();
+  if (!gSigned()) throw gErr('', 'relogin');
+  if (G.access && G.exp - Date.now() > 90000) return G.access;
+  return gRefreshing || (gRefreshing = (async () => {
+    try { takeTokens(await oaToken({grant_type:'refresh_token', client_id:G.client, refresh_token:G.refresh, resource:OA.api})); await gSave(); return G.access; }
+    catch (e) { if (/invalid_grant|refresh_token|token_expired/.test(e.code || '')){ G.access = G.refresh = ''; G.exp = 0; await gSave(); e.code = 'relogin'; } throw e; }
+    finally { gRefreshing = null; }
+  })());
+}
+async function oaFetch(path, init = {}, retried){
+  const token = await gptToken();
+  let r; try { r = await fetch(OA.api + path, {...init, headers:{...(init.headers || {}), Authorization:'Bearer ' + token}}); } catch { throw gErr('', 'network'); }
+  if (r.status === 401 && !retried){ G.exp = 0; return oaFetch(path, init, true); }
+  if (!r.ok){ const j = await r.json().catch(() => ({})); throw gErr((j.error && j.error.message) || j.detail || '', (j.error && j.error.code) || 'http_' + r.status); }
+  return r;
+}
+async function gptModels(){
+  const j = await (await oaFetch('/models')).json(), all = j.models || j.data || [];
+  const list = (all.some(m => m.visibility === 'list') ? all.filter(m => m.visibility === 'list') : all).map(m => ({slug:m.slug || m.id, name:m.display_name || m.slug || m.id})).filter(m => m.slug);
+  if (!list.length) throw gErr('', 'no_models');
+  G.models = list;
+  if (!list.some(m => m.slug === G.model)) G.model = (list.find(m => /mini|nano|lite|small|fast/i.test(m.slug)) || list[0]).slug;   // a light model is plenty for a shopping list
+  await gSave(); drawGpt();
+}
+function gptPrompt(){
+  const now = new Date(), day = new Intl.DateTimeFormat('ar-SA-u-nu-latn-ca-gregory', {weekday:'long'}).format(now);
+  return `أنت مساعد داخل تطبيق «بيتنا» لمستلزمات البيت والمواعيد. تكلم بلهجة سعودية بسيطة وباختصار.
+ردّك دائماً كائن JSON واحد فقط بدون أي نص خارجه وبدون علامات كود، بهذا الشكل:
+{"reply":"رد قصير للمستخدم","items":[{"title":"اسم الغرض","tag":"اسم التاق","prio":"urgent|soon|later"}],"appts":[{"title":"اسم الموعد","when":"YYYY-MM-DDTHH:mm","loc":"الموقع أو فارغ","remind":0|15|60|1440|null}],"done":["اسم غرض موجود خلص"]}
+القواعد:
+- أضف إلى items فقط ما يطلب المستخدم إضافته أو يذكر أنه ناقص. كل غرض في عنصر مستقل باسم قصير. لا تكرر غرضاً موجوداً في القائمة الحالية.
+- tag لازم يكون واحداً من التاقات المتاحة بنفس الاسم حرفياً، وإذا ما يناسب شيء اتركه فارغاً.
+- prio: مستعجل = urgent، عادي = soon (الافتراضي)، مو ضروري = later.
+- appts للمواعيد فقط (دكتور، عمال، مراجعة). remind عدد الدقائق قبل الموعد، والافتراضي 60. إذا ما ذُكر وقت استخدم 09:00.
+- done: أسماء أغراض من القائمة الحالية قال المستخدم إنها خلصت أو انشرت، بنفس الاسم حرفياً.
+- إذا سأل سؤالاً عاماً (طبخة، نصيحة) جاوبه في reply باختصار واعرض عليه إضافة المقادير، ولا تضفها إلا إذا طلب.
+- المصفوفات الفارغة تبقى [].
+اليوم ${day} ${toLocal(now.toISOString())}.
+التاقات المتاحة: ${S.tags.map(t => t.name).join('، ') || 'لا يوجد'}.
+القائمة الحالية: ${active().slice(0, 80).map(i => i.title).join('، ') || 'فارغة'}.`;
+}
+async function gptAsk(){
+  if (!G.model) await gptModels();
+  const input = chat.filter(m => m.role === 'user' || m.raw).slice(-14).map(m => ({role:m.role, content:m.role === 'user' ? m.text : m.raw}));
+  const r = await oaFetch('/responses', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({model:G.model, instructions:gptPrompt(), input, store:false, stream:true})});
+  const rd = r.body.getReader(), dec = new TextDecoder(); let buf = '', out = '', completed = false;
+  const take = block => { for (const line of block.split('\n')){
+    if (!line.startsWith('data:')) continue;
+    let ev; try { ev = JSON.parse(line.slice(5)); } catch { continue; }
+    if (ev.type === 'response.output_text.delta') out += ev.delta || '';
+    else if (ev.type === 'response.completed') completed = true;
+    else if (ev.type === 'response.failed' || ev.type === 'response.incomplete' || ev.type === 'error'){ const er = (ev.response && ev.response.error) || ev.error || ev; throw gErr(er.message || '', er.code || ev.type); }
+  } };
+  for (;;){
+    const {value, done} = await rd.read();
+    if (value) buf = (buf + dec.decode(value, {stream:true})).replace(/\r/g, '');
+    let i; while ((i = buf.indexOf('\n\n')) >= 0){ take(buf.slice(0, i)); buf = buf.slice(i + 2); }
+    if (done){ take(buf); break; }
+  }
+  if (!completed) throw gErr('', 'cut');
+  return out;
+}
+// Turns the assistant's JSON into real changes. Returns a short Arabic summary of what was done.
+function applyGpt(j){
+  const arr = v => Array.isArray(v) ? v : [], str = v => typeof v === 'string' ? v.trim() : '', done = [], undo = [];
+  const have = new Set(active().map(i => norm(i.title)));
+  const items = arr(j.items).map(x => ({title:str(x && x.title), tag:str(x && x.tag), prio:x && x.prio})).filter(x => x.title && !have.has(norm(x.title)) && have.add(norm(x.title)))
+    .map(x => ({id:uid(), title:x.title, tag:(S.tags.find(t => norm(t.name) === norm(x.tag)) || {}).id || guessTag(x.title) || null, prio:PRIO.some(p => p.id === x.prio) ? x.prio : 'soon', by:S.me}));
+  const aps = arr(j.appts).map(x => ({title:str(x && x.title), when:str(x && x.when), loc:str(x && x.loc), remind:x && x.remind})).filter(x => x.title && /^\d{4}-\d\d-\d\dT\d\d:\d\d/.test(x.when))
+    .map(x => ({id:uid(), kind:'appt', title:x.title, due:x.when.slice(0, 16), loc:x.loc, remind:REMIND.some(r => r[0] === x.remind) ? x.remind : 60, tag:null, prio:'soon', by:S.me}));
+  const fresh = [...items, ...aps];
+  if (fresh.length){ S.items.unshift(...fresh); db.saveItems(fresh); const ids = fresh.map(i => i.id); undo.push(() => { S.items = S.items.filter(i => !ids.includes(i.id)); db.delItems(ids); }); }
+  if (items.length) done.push('أضفت: ' + items.map(i => i.title).join('، '));
+  if (aps.length) done.push('موعد: ' + aps.map(a => `${a.title} (${fmtDue(a.due)})`).join('، '));
+  const fin = arr(j.done).map(t => active().find(i => norm(i.title) === norm(str(t)))).filter((i, n, a) => i && a.indexOf(i) === n);
+  if (fin.length){
+    const set = v => { fin.forEach(i => { i.done = v; i.doneAt = v ? Date.now() : undefined; i.doneBy = v ? S.me : undefined; }); db.saveItems(fin); };
+    set(true); undo.push(() => set(false)); done.push('خلص: ' + fin.map(i => i.title).join('، '));
+  }
+  if (undo.length){ buzz(8); const n = fresh.length + fin.length; toast(n > 1 ? `المساعد عدّل ${n} أشياء` : 'تم', () => undo.forEach(f => f())); render(); }
+  return done.join('\n');
+}
+const GMSG = {network:'ما فيه اتصال بالإنترنت.', cut:'انقطع الرد قبل ما يكتمل. أعد المحاولة.', no_models:'ما لقيت نموذجاً متاحاً لحسابك.',
+  subscription_sharing_usage_limit_exceeded:'وصلت حد استخدام اشتراكك حالياً. جرّب بعدين، أو راجع ChatGPT ← الإعدادات ← الاستخدام.',
+  subscription_sharing_user_not_eligible:'اشتراكك في ChatGPT ما يسمح باستخدامه داخل التطبيقات.',
+  subscription_sharing_usage_unavailable:'ChatGPT مشغول حالياً. جرّب بعد شوي.', subscription_sharing_user_unavailable:'ChatGPT مشغول حالياً. جرّب بعد شوي.',
+  subscription_sharing_unsupported_capability:'النموذج المختار ما يدعم هذا الطلب. اختر نموذجاً ثانياً من الأسفل.'};
+const gMsg = e => e.message && !e.code ? e.message : GMSG[e.code] || `تعذّر الوصول إلى ChatGPT (${e.code || 'خطأ'})${e.message ? ': ' + e.message : ''}`;
+
+function drawChat(){
+  const el = $('#chat');
+  el.innerHTML = chat.map(m => `<div class="msg ${m.role === 'user' ? 'u' : 'a'}${m.wait ? ' wait' : ''}${m.bad ? ' bad' : ''}">${esc(m.wait ? 'يكتب…' : m.text)}${m.added ? `<span class="added">${esc(m.added)}</span>` : ''}</div>`).join('');
+  el.scrollTop = el.scrollHeight;
+}
+function drawGpt(){
+  const on = gSigned(), d = $('#gptDlg');
+  $('#gptOut').hidden = on; $('#gptIn').hidden = !on;
+  $('#gptPasteBox').hidden = !localStorage.getItem(PKEY);
+  if (on){
+    $('#gptWho').textContent = G.email || '';
+    const sel = $('#gptModel'); sel.hidden = !(G.models && G.models.length > 1);
+    sel.innerHTML = (G.models || []).map(m => `<option value="${esc(m.slug)}"${m.slug === G.model ? ' selected' : ''}>${esc(m.name)}</option>`).join('');
+    drawChat();
+  }
+  if (d.open && !d._closing && isPhone()) d._H = d.querySelector('.sheet').offsetHeight + 24;
+}
+const gptFail = e => { const el = $('#gptErr'); el.textContent = e ? gMsg(e) : ''; el.classList.toggle('show', !!e); };
+async function openGpt(){
+  await gLoad(); gptFail(); drawGpt(); openSheet($('#gptDlg'));
+  if (gSigned() && !(G.models && G.models.length)) gptModels().catch(e => console.warn('models', e));
+}
+// Back from the browser: the native shell kept the callback for us.
+async function gptReturn(q){
+  if (!localStorage.getItem(PKEY)) return;
+  try {
+    if (!q && isNative()) q = (await native('WidgetBridge', 'authResult')).query;
+    if (!q) return;
+    await gptFinish(q); gptFail(); toast('تم ربط ChatGPT'); buzz(8);
+    if (!$('#gptDlg').open) openGpt(); else { drawGpt(); gptModels().catch(e => console.warn('models', e)); }
+  } catch (e) { console.warn('gpt sign-in', e); if (!$('#gptDlg').open) await openGpt(); gptFail(e); drawGpt(); }
+}
+addEventListener('baytnaAuth', () => gptReturn());
+document.addEventListener('visibilitychange', () => { if (!document.hidden) gptReturn(); });
+$('#gptLogin').onclick = async () => { gptFail(); try { await gptStart(); } catch (e) { gptFail(e); } drawGpt(); };
+$('#gptPaste').addEventListener('input', e => { const v = e.target.value.trim(); if (/[?&]state=/.test(v) && /[?&](code|error)=/.test(v)){ e.target.value = ''; gptReturn(v); } });
+$('#gptModel').onchange = e => { G.model = e.target.value; gSave(); };
+$('#gptOutBtn').onclick = async () => {
+  const {refresh, client} = G; chat = []; G = {host:G.host, client:G.client, sub:G.sub, email:G.email, idt:G.idt}; await gSave(); drawGpt();
+  try {                                                    // best effort: end the renewable session at OpenAI too
+    const cfg = await (await fetch('https://auth.openai.com/.well-known/openid-configuration')).json();
+    if (cfg.revocation_endpoint && refresh) await fetch(cfg.revocation_endpoint, {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:new URLSearchParams({token:refresh, token_type_hint:'refresh_token', client_id:client})});
+  } catch (e) { console.warn('revoke', e); }
+};
+$('#gptForm').onsubmit = async e => {
+  e.preventDefault();
+  const inp = $('#gptText'), text = inp.value.trim(); if (!text || gBusy || !gSigned()) return;
+  inp.value = ''; gBusy = true; $('#gptSendBtn').disabled = true;
+  const m = {role:'assistant', text:'', wait:true}; chat.push({role:'user', text}, m); drawChat();
+  try {
+    const out = await gptAsk(); let j;
+    try { j = JSON.parse(out.slice(out.indexOf('{'), out.lastIndexOf('}') + 1)); } catch { j = {reply:out}; }
+    m.raw = out; m.text = String(j.reply || '').trim(); m.added = applyGpt(j);
+    if (!m.text && !m.added) m.text = 'تم.';
+  } catch (err) { console.warn('gpt', err); m.bad = true; m.text = err.code === 'relogin' ? 'انتهت جلسة ChatGPT. ادخل من جديد.' : gMsg(err); }
+  m.wait = false; gBusy = false; $('#gptSendBtn').disabled = false;
+  if (m.bad && !gSigned()) drawGpt(); else drawChat();
+};
 
 (async function boot(){
   render();

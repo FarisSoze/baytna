@@ -1,16 +1,38 @@
 package com.baytna.app;
 
+import android.content.Intent;
+import android.net.Uri;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
 import com.getcapacitor.PluginMethod;
 import com.getcapacitor.annotation.CapacitorPlugin;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
-/** Hands the current list to the home-screen widget and passes widget taps back to the web app. */
+/**
+ * Hands the current list to the home-screen widget and passes widget taps back to the web app.
+ * Also carries the "Sign in with ChatGPT" round trip: opens the browser, catches the loopback callback, keeps the tokens in app-private storage.
+ */
 @CapacitorPlugin(name = "WidgetBridge")
 public class WidgetBridgePlugin extends Plugin {
     static final String PREFS = "baytna_widget";
+    static final String SECURE = "baytna_secure";
+    static final String CALLBACK = "/auth/callback?";
+    static final String PAGE = "<!doctype html><html lang=\"ar\" dir=\"rtl\"><meta charset=\"utf-8\"><meta name=\"viewport\" content=\"width=device-width,initial-scale=1\">"
+        + "<title>بيتنا</title><body style=\"margin:0;min-height:100vh;display:grid;place-items:center;background:#0B0B0C;color:#F5F1E8;font-family:system-ui,sans-serif;text-align:center\">"
+        + "<div><h1 style=\"font-weight:600\">تم الربط</h1><p style=\"opacity:.7\">ارجع إلى تطبيق بيتنا.</p>"
+        + "<a href=\"baytna://gpt\" style=\"display:inline-block;margin-top:18px;padding:14px 28px;border-radius:16px;background:#D9BE8A;color:#1B1710;text-decoration:none;font-weight:600\">فتح بيتنا</a></div>"
+        + "<script>location.href='baytna://gpt'</script></body></html>";
+
     static volatile String pendingAction = null;
+    static volatile String authQuery = null;
+    private static volatile ServerSocket authServer = null;
 
     @PluginMethod
     public void setItems(PluginCall call) {
@@ -29,5 +51,91 @@ public class WidgetBridgePlugin extends Plugin {
         res.put("action", pendingAction == null ? "" : pendingAction);
         pendingAction = null;
         call.resolve(res);
+    }
+
+    @PluginMethod
+    public void secureGet(PluginCall call) {
+        JSObject res = new JSObject();
+        res.put("value", getContext().getSharedPreferences(SECURE, 0).getString(call.getString("key", ""), ""));
+        call.resolve(res);
+    }
+
+    @PluginMethod
+    public void secureSet(PluginCall call) {
+        getContext().getSharedPreferences(SECURE, 0).edit().putString(call.getString("key", ""), call.getString("value", "")).apply();
+        call.resolve();
+    }
+
+    @PluginMethod
+    public void openUrl(PluginCall call) {
+        String url = call.getString("url", "");
+        if (!url.startsWith("https://")) { call.reject("https only"); return; }
+        try {
+            getContext().startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(url)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK));
+            call.resolve();
+        } catch (Exception e) {
+            call.reject("no browser", e);
+        }
+    }
+
+    /** Listens on 127.0.0.1 only, for one sign-in callback, for at most ten minutes. */
+    @PluginMethod
+    public void authListen(PluginCall call) {
+        stopAuth();
+        authQuery = null;
+        final ServerSocket server;
+        try {
+            server = new ServerSocket(call.getInt("port", 1455), 4, InetAddress.getByName("127.0.0.1"));
+            server.setSoTimeout(600000);
+        } catch (Exception e) {
+            call.reject("port busy", e);
+            return;
+        }
+        authServer = server;
+        new Thread(() -> {
+            try {
+                while (!server.isClosed()) {
+                    final Socket s = server.accept();                 // throws after ten idle minutes, which ends the thread
+                    try (s) {
+                        s.setSoTimeout(5000);
+                        String line = new BufferedReader(new InputStreamReader(s.getInputStream(), StandardCharsets.UTF_8)).readLine();
+                        String[] parts = line == null ? new String[0] : line.split(" ");
+                        String target = parts.length > 1 ? parts[1] : "";
+                        boolean ok = target.startsWith(CALLBACK);
+                        byte[] body = (ok ? PAGE : "Not found").getBytes(StandardCharsets.UTF_8);
+                        OutputStream out = s.getOutputStream();
+                        out.write(("HTTP/1.1 " + (ok ? "200 OK" : "404 Not Found") + "\r\nContent-Type: text/html; charset=utf-8\r\nContent-Length: " + body.length
+                            + "\r\nCache-Control: no-store\r\nConnection: close\r\n\r\n").getBytes(StandardCharsets.UTF_8));
+                        out.write(body);
+                        out.flush();
+                        if (ok) {
+                            authQuery = target.substring(CALLBACK.length());
+                            if (bridge != null) bridge.triggerWindowJSEvent("baytnaAuth");
+                            break;
+                        }
+                    } catch (java.io.IOException e) {
+                        // a browser pre-connection that never sent a request: keep waiting for the real one
+                    }
+                }
+            } catch (Exception ignored) {
+            } finally {
+                try { server.close(); } catch (Exception ignored) { }
+            }
+        }, "baytna-auth").start();
+        call.resolve();
+    }
+
+    @PluginMethod
+    public void authResult(PluginCall call) {
+        JSObject res = new JSObject();
+        res.put("query", authQuery == null ? "" : authQuery);
+        authQuery = null;
+        call.resolve(res);
+    }
+
+    private static void stopAuth() {
+        ServerSocket s = authServer;
+        authServer = null;
+        if (s != null) try { s.close(); } catch (Exception ignored) { }
     }
 }
