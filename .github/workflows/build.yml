@@ -75,7 +75,8 @@ jobs:
           path: ${{ matrix.ipa }}
       - name: Keep the error lines when the build fails
         if: failure()
-        run: (grep -nE "error:|fatal|warning: unable|\*\* ARCHIVE FAILED" -A3 build.log || tail -n 150 build.log) > "ios-${{ matrix.variant }}-errors.txt"
+        run: |
+          (grep -nE "error:|fatal|ARCHIVE FAILED" -A3 build.log || tail -n 150 build.log) > "ios-${{ matrix.variant }}-errors.txt"
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
