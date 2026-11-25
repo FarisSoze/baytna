@@ -146,6 +146,7 @@ public class WidgetBridgePlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "authListen", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "authResult", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "setIcon", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "setTheme", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "listen", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "stopListening", returnType: CAPPluginReturnPromise)
     ]
@@ -195,6 +196,16 @@ public class WidgetBridgePlugin: CAPPlugin, CAPBridgedPlugin {
             UIApplication.shared.setAlternateIconName(name) { error in
                 if let error = error { call.reject(error.localizedDescription) } else { call.resolve() }
             }
+        }
+    }
+
+    /// "dark", "light", or anything else to follow the phone.
+    @objc func setTheme(_ call: CAPPluginCall) {
+        let name = call.getString("name") ?? "auto"
+        DispatchQueue.main.async {
+            let style: UIUserInterfaceStyle = name == "dark" ? .dark : name == "light" ? .light : .unspecified
+            self.bridge?.viewController?.view.window?.overrideUserInterfaceStyle = style
+            call.resolve()
         }
     }
 
