@@ -12,8 +12,8 @@ workflows:
     scripts:
       - name: Version number
         script: |
-          # Continues after the GitHub builds (which ended below 100), so Android accepts the update.
-          echo "BUILD_NUMBER=$((BUILD_NUMBER + 100))" >> $CM_ENV
+          # From the commit time, so numbers keep increasing whichever CI builds.
+          echo "BUILD_NUMBER=$(( ($(git log -1 --format=%ct) - 1793491200) / 60 ))" >> $CM_ENV
       - name: Install dependencies
         script: npm ci
       - name: Stamp the version shown inside the app

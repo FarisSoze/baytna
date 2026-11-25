@@ -3,14 +3,14 @@ name: Build apps
 # Builds an Android debug APK and UNSIGNED iOS IPAs (sign them yourself with your own certificate),
 # then publishes them as the "latest" release so they can be downloaded straight to a phone.
 # Manual only: day-to-day builds run on Codemagic (codemagic.yaml). Start this one by hand from the Actions tab if ever needed.
+# A tag named build-<anything> also starts it:  git tag build-1 && git push origin build-1
 on:
   workflow_dispatch:
+  push:
+    tags: ['build-*']
 
 permissions:
   contents: write
-
-env:
-  BUILD_NUMBER: ${{ github.run_number }}
 
 concurrency:
   group: build-${{ github.ref }}
@@ -21,6 +21,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+      - name: Build number from the commit time (same on every CI, always increasing)
+        run: echo "BUILD_NUMBER=$(( ($(git log -1 --format=%ct) - 1793491200) / 60 ))" >> "$GITHUB_ENV"
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - uses: actions/setup-java@v4
@@ -50,6 +52,8 @@ jobs:
             ipa: baytna-widgets-unsigned.ipa
     steps:
       - uses: actions/checkout@v4
+      - name: Build number from the commit time (same on every CI, always increasing)
+        run: echo "BUILD_NUMBER=$(( ($(git log -1 --format=%ct) - 1793491200) / 60 ))" >> "$GITHUB_ENV"
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci
