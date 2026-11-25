@@ -38,7 +38,8 @@
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
-html,body{margin:0;min-height:100%}
+html{-webkit-text-size-adjust:100%;overscroll-behavior-x:none}
+html,body{margin:0;min-height:100%;overflow-x:clip}
 body{font-family:var(--font);background:var(--bg);color:var(--fg);font-size:1rem;line-height:1.55;font-weight:400;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
 body::before{content:"";position:fixed;inset:0 0 auto;height:420px;z-index:-1;pointer-events:none;background:radial-gradient(60% 100% at 70% 0%,var(--glow),transparent 70%)}
 button,input{font:inherit;color:inherit}
@@ -67,7 +68,7 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke
 .side h2{font-size:.8125rem;font-weight:500;color:var(--fg3);margin:0 0 6px;padding-inline:12px}
 .nav-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
 .nav-btn{width:100%;min-height:46px;display:flex;align-items:center;gap:12px;padding:6px 12px;border-radius:12px;text-align:start;font-weight:400;transition:background-color .2s,transform .14s ease-out}
-.nav-btn:hover{background:var(--fill)}
+@media (hover:hover) and (pointer:fine){.nav-btn:hover{background:var(--fill)}}
 .nav-btn:active{transform:scale(.98)}
 .nav-btn[aria-current="true"]{background:var(--accent-soft);color:var(--accent);font-weight:500}
 .nav-btn .count{margin-inline-start:auto;font-size:.875rem;color:var(--fg3)}
@@ -95,40 +96,33 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke
 .bar.scrolled .bar-title{opacity:1;transform:none}
 @media (min-width:900px){.bar{margin-inline:-40px;padding-inline:40px}}
 .round{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--fill);color:var(--accent)}
-.lt{padding:4px 0 14px}
+.lt{padding:4px 0 12px;display:flex;align-items:flex-end;justify-content:space-between;gap:12px}
+.lt>div:first-child{min-width:0}
 .eyebrow{margin:0;color:var(--fg2);font-size:.9375rem;font-weight:300}
 .lt h1{margin:0;font-size:clamp(2rem,6vw,2.75rem);font-weight:600;line-height:1.25}
 
 /* ---------- Hero ---------- */
-.hero{position:relative;overflow:hidden;display:flex;align-items:center;gap:16px;padding:18px;border-radius:24px;background:var(--surface);box-shadow:var(--shadow);margin-bottom:14px}
-.hero::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(90% 140% at 100% 0%,var(--accent-soft),transparent 60%)}
-.ring{width:64px;height:64px;flex:none;position:relative;display:grid;place-items:center}
+.ring{width:52px;height:52px;flex:none;position:relative;display:grid;place-items:center;margin-bottom:4px}
 .ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
 .ring circle{fill:none;stroke-width:5;stroke-linecap:round}
 .ring .tr{stroke:var(--fill)}
 .ring .pr{stroke:var(--accent);stroke-dasharray:163.4;stroke-dashoffset:163.4;transition:stroke-dashoffset .9s var(--ease)}
-.ring b{font-size:.9375rem;font-weight:600}
-.hero-t{position:relative;min-width:0}
-.hero-n{font-size:1.75rem;font-weight:600;line-height:1.2}
-.hero-n small{font-size:1rem;font-weight:400;color:var(--fg2);margin-inline-start:6px}
-.hero-s{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:4px;color:var(--fg2);font-size:.875rem}
-.hero-s span{display:inline-flex;align-items:center;gap:6px}
+.ring b{font-size:1.0625rem;font-weight:600}
 .pip{width:8px;height:8px;border-radius:50%;background:var(--pc)}
 
 /* ---------- Tag tiles ---------- */
-.tiles{display:flex;gap:10px;overflow-x:auto;padding:4px 16px 14px;margin-inline:-16px;scrollbar-width:none;scroll-snap-type:x proximity}
+.tiles{display:flex;gap:8px;overflow-x:auto;padding:2px 16px 12px;margin-inline:-16px;scrollbar-width:none}
 .tiles::-webkit-scrollbar{display:none}
-.tile{flex:none;width:124px;min-height:88px;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:space-between;gap:8px;padding:12px;border-radius:20px;background:var(--surface);box-shadow:var(--shadow);text-align:start;position:relative;transition:transform .16s ease-out,background-color .25s,box-shadow .25s}
+.tile{flex:none;min-height:44px;display:inline-flex;align-items:center;gap:8px;padding-inline:8px 14px;border-radius:999px;background:var(--surface);box-shadow:var(--shadow);font-size:.9375rem;transition:transform .16s ease-out,background-color .25s,box-shadow .25s}
 .tile:active{transform:scale(.95)}
-.tile-top{display:flex;align-items:center;justify-content:space-between}
-.tile-top b{font-size:1.5rem;font-weight:600;line-height:1}
-.tile-name{font-size:.875rem;font-weight:500;color:var(--fg2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile b{font-weight:500;color:var(--fg2)}
+.tile-name{font-weight:500;white-space:nowrap}
 .tile[aria-pressed="true"]{background:color-mix(in srgb,var(--c) 20%,var(--surface));box-shadow:0 0 0 1.5px var(--ct),var(--shadow)}
-.tile[aria-pressed="true"] .tile-name{color:var(--ct)}
-.tile.new{align-items:center;justify-content:center;gap:6px;background:none;box-shadow:inset 0 0 0 1.5px var(--line);color:var(--fg2);width:96px;font-size:.875rem}
+.tile[aria-pressed="true"] .tile-name,.tile[aria-pressed="true"] b{color:var(--ct)}
+.tile.new{background:none;box-shadow:inset 0 0 0 1.5px var(--line);color:var(--fg2);padding-inline:12px 14px}
 
 /* ---------- Quick add ---------- */
-.quick{display:flex;align-items:center;gap:8px;height:54px;border-radius:18px;background:var(--surface);box-shadow:var(--shadow);padding-inline:16px 6px;margin-bottom:8px;transition:box-shadow .25s}
+.quick{display:flex;align-items:center;gap:8px;height:52px;border-radius:18px;background:var(--surface);box-shadow:var(--shadow);padding-inline:16px 6px;margin-bottom:14px;transition:box-shadow .25s}
 .quick:focus-within{box-shadow:0 0 0 2px var(--accent),var(--shadow)}
 .quick>svg{color:var(--accent)}
 .quick input{flex:1;min-width:0;height:100%;border:0;background:none;outline:0;font-weight:400}
@@ -144,11 +138,15 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke
 .group-h .count{color:var(--fg3);font-weight:400}
 .p-urgent{--pc:var(--urgent)}.p-soon{--pc:var(--soon)}.p-later{--pc:var(--later)}
 .grid{display:grid;grid-template-columns:1fr;gap:8px}
-.row{position:relative;border-radius:18px;--p:0}
+.row{position:relative;border-radius:18px;--p:0;overflow:hidden}
 .row-bg{position:absolute;inset:0;border-radius:18px;background:var(--ok);color:#fff;display:flex;align-items:center;padding-inline:22px;opacity:var(--p)}
 .row-bg svg{width:24px;height:24px;stroke-width:2.6;transform:scale(calc(.6 + var(--p)*.4));transition:transform .2s var(--ease)}
 .row.armed .row-bg svg{transform:scale(1.25)}
 .row[data-side="r"] .row-bg{justify-content:flex-end}
+.row[data-side="l"] .row-bg{background:var(--danger)}
+.row-bg span{display:grid}
+.row-bg .bg-del,.row[data-side="l"] .row-bg .bg-ok{display:none}
+.row[data-side="l"] .row-bg .bg-del{display:grid}
 .card{position:relative;overflow:hidden;display:flex;align-items:center;gap:2px;min-height:64px;background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding-inline:6px 14px;touch-action:pan-y;user-select:none;-webkit-user-select:none;transition:scale .16s ease-out}
 .card:has(.body:active){scale:.98}
 .row.dragging .card{transition:none;cursor:grabbing}
@@ -158,7 +156,7 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke
 }
 .check{width:48px;height:48px;display:grid;place-items:center;flex:none;border-radius:50%;position:relative;z-index:1}
 .check span{width:26px;height:26px;border-radius:50%;box-shadow:inset 0 0 0 2px var(--fg3);display:grid;place-items:center;color:transparent;transition:background-color .2s,box-shadow .2s,color .2s,transform .35s cubic-bezier(.3,1.6,.5,1)}
-.check:hover span{box-shadow:inset 0 0 0 2px var(--ok)}
+@media (hover:hover) and (pointer:fine){.check:hover span{box-shadow:inset 0 0 0 2px var(--ok)}}
 .check:active span{transform:scale(.85)}
 .check svg{width:15px;height:15px;stroke-width:3.2}
 .row.is-done .check span,.row.checking .check span{background:var(--ok);box-shadow:none;color:#fff}
@@ -217,7 +215,7 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke
 .plus svg{width:26px;height:26px}
 
 /* ---------- Sheets ---------- */
-dialog.modal{border:0;padding:0;margin:0;background:none;color:var(--fg);position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;overflow:hidden}
+dialog.modal{border:0;padding:0;margin:0;background:none;color:var(--fg);position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;overflow:clip}
 dialog.modal[open]{display:flex;align-items:flex-end;justify-content:center}
 dialog.modal::backdrop{background:none}
 .scrim{position:absolute;inset:0;background:rgba(0,0,0,.5);opacity:0}
@@ -253,6 +251,8 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .pick input{position:absolute;opacity:0;inset:0;width:100%;height:100%;cursor:pointer;margin:0}
 .pick label:has(input:checked){background:color-mix(in srgb,var(--c) 20%,transparent);box-shadow:0 0 0 1.5px var(--ct);color:var(--ct);font-weight:500}
 .pick label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.pick.sm label{min-height:40px;padding-inline:6px 12px;font-size:.8125rem}
+.pick-names{margin:0;font-weight:500;font-size:1.0625rem;overflow-wrap:anywhere}
 .actions{display:flex;gap:10px}
 .actions .primary{flex:1}
 .del{width:52px;height:52px;border-radius:16px;background:var(--fill);color:var(--danger);display:grid;place-items:center;flex:none}
@@ -283,7 +283,7 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 
 @media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-duration:.01ms!important}}
 @media (prefers-reduced-transparency:reduce){.side,.pill,.toast,.bar::before{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--surface)}}
-@media (prefers-contrast:more){:root{--line:currentColor}.card,.tile,.hero,.panel,.quick{box-shadow:inset 0 0 0 1px var(--fg)}}
+@media (prefers-contrast:more){:root{--line:currentColor}.card,.tile,.panel,.quick{box-shadow:inset 0 0 0 1px var(--fg)}}
 </style>
 </head>
 <body>
@@ -303,12 +303,8 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
       <button class="avatars press" id="barAv" data-invite aria-label="الحساب والأشخاص"></button>
       <button class="round press" data-invite aria-label="دعوة شخص" data-ic="userPlus"></button>
     </div>
-    <header class="lt"><p class="eyebrow" id="eyebrow"></p><h1 id="ltitle"></h1></header>
-
-    <section class="hero" id="hero" aria-label="ملخص">
-      <div class="ring"><svg viewBox="0 0 64 64" aria-hidden="true"><circle class="tr" cx="32" cy="32" r="26"/><circle class="pr" id="ringPr" cx="32" cy="32" r="26"/></svg><b class="num" id="ringPct"></b></div>
-      <div class="hero-t"><div class="hero-n num" id="heroN"></div><div class="hero-s" id="heroS"></div></div>
-    </section>
+    <header class="lt"><div><p class="eyebrow" id="eyebrow"></p><h1 id="ltitle"></h1></div>
+      <div class="ring" id="ring" role="img"><svg viewBox="0 0 64 64" aria-hidden="true"><circle class="tr" cx="32" cy="32" r="26"/><circle class="pr" id="ringPr" cx="32" cy="32" r="26"/></svg><b class="num" id="ringPct"></b></div></header>
 
     <div class="tiles" id="tiles" role="group" aria-label="تصفية حسب التاق"></div>
 
@@ -318,8 +314,6 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
       <input id="qIn" autocomplete="off" enterkeyhint="done">
       <button class="send" type="submit" aria-label="إضافة" data-ic="up"></button>
     </form>
-    <p class="hint" id="quickHint">افصل بفاصلة لإضافة أكثر من غرض · اسحب البطاقة لإنهائها</p>
-
     <div id="view"></div>
   </main>
 </div>
@@ -352,6 +346,17 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
       <button type="button" class="del press" id="fDelete" aria-label="حذف الغرض" data-ic="trash" hidden></button>
       <button type="submit" class="btn primary" id="fSubmit">إضافة</button>
     </div>
+  </form>
+</dialog>
+
+<dialog class="modal" id="pickDlg" aria-labelledby="pickTitle">
+  <div class="scrim" data-close></div>
+  <form class="sheet" id="pickForm" novalidate>
+    <div class="sheet-h"><span class="grabber"></span><h2 id="pickTitle">وين نضيفها؟</h2><button type="button" class="x press" data-close aria-label="إغلاق" data-ic="x"></button></div>
+    <p class="pick-names" id="pickNames"></p>
+    <fieldset class="field"><legend>التاق</legend><div class="pick sm" id="pTags"></div></fieldset>
+    <fieldset class="field"><legend>الأهمية</legend><div class="seg" id="pPrio"></div></fieldset>
+    <button type="submit" class="btn primary block">إتمام</button>
   </form>
 </dialog>
 
@@ -536,14 +541,14 @@ const tileIc = (t, cls = '') => `<span class="tile-ic ${cls} c-${t.color}">${ic(
 function row(it){
   const t = tagOf(it.tag), p = PRIO.find(p => p.id === it.prio);
   return `<div class="row ${it.done ? 'is-done' : ''}" data-id="${it.id}" data-flip="${it.id}">
-    <div class="row-bg" aria-hidden="true">${ic(it.done ? 'undo' : 'check')}</div>
+    <div class="row-bg" aria-hidden="true"><span class="bg-ok">${ic(it.done ? 'undo' : 'check')}</span><span class="bg-del">${ic('trash')}</span></div>
     <article class="card">
       <button class="check" data-toggle="${it.id}" aria-label="${it.done ? 'إرجاع' : 'إنهاء'} «${esc(it.title)}»"><span>${ic('check')}</span></button>
       <button class="body" data-edit="${it.id}" aria-label="تعديل «${esc(it.title)}»">
         <div class="title">${esc(it.title)}</div>
         <div class="meta">
           <span class="tg c-${t.color}"><i class="dot"></i>${esc(t.name)}</span>
-          <span class="p-${p.id}" style="color:var(--pc)">${ic(p.icon)}${p.name}</span>
+          ${it.prio !== 'soon' || it.done ? `<span class="p-${p.id}" style="color:var(--pc)">${ic(p.icon)}${p.name}</span>` : ''}
           ${it.due && !it.done ? `<span>${ic('bell')}${fmtDue(it.due)}</span>` : ''}
         </div>
       </button>
@@ -574,20 +579,19 @@ function render(){
 
   const title = S.view === 'done' ? 'منتهي' : cur ? cur.name : S.space.name;
   $('#ltitle').textContent = $('#barTitle').textContent = title;
-  $('#eyebrow').textContent = S.view === 'done' ? `${doneN} غرض مكتمل` : cur ? `${list.length} بانتظاركم` : `${new Date().getHours() < 12 ? 'صباح الخير' : 'مساء الخير'}، ${memOf(S.me).name}`;
+  $('#eyebrow').textContent = S.view === 'done' ? `${doneN} غرض مكتمل` : cur ? `${list.length} بانتظاركم` : `${new Date().getHours() < 12 ? 'صباح الخير' : 'مساء الخير'}، ${memOf(S.me).name}${all.some(i => i.prio === 'urgent') ? ' · ' + all.filter(i => i.prio === 'urgent').length + ' مستعجلة' : ''}`;
   $('#barAv').innerHTML = S.space.members.map(m => avatar(m)).join('');
 
-  $('#hero').hidden = !home || !!cur;
-  const pct = S.items.length ? doneN / S.items.length : 0, urgent = all.filter(i => i.prio === 'urgent').length;
+  const pct = S.items.length ? doneN / S.items.length : 0;
+  $('#ring').hidden = !home;
   $('#ringPr').style.strokeDashoffset = 163.4 * (1 - pct);
-  $('#ringPct').textContent = Math.round(pct * 100) + '%';
-  $('#heroN').innerHTML = `${all.length}<small>غرض بانتظاركم</small>`;
-  $('#heroS').innerHTML = `<span class="p-urgent"><i class="pip"></i>${urgent} مستعجلة</span><span style="--pc:var(--ok)"><i class="pip"></i>أُنجز ${doneN}</span>`;
+  $('#ringPct').textContent = list.length;
+  $('#ring').setAttribute('aria-label', `${list.length} بانتظاركم، أُنجز ${doneN}`);
 
-  $('#tiles').hidden = $('#quick').hidden = $('#quickHint').hidden = !home;
-  $('#tiles').innerHTML = `<button class="tile c-gold" data-filter="all" aria-pressed="${S.filter === 'all'}"><span class="tile-top"><span class="tile-ic c-gold">${ic('grid')}</span><b class="num">${all.length}</b></span><span class="tile-name">الكل</span></button>`
-    + S.tags.map(t => `<button class="tile c-${t.color}" data-filter="${t.id}" aria-pressed="${S.filter === t.id}"><span class="tile-top">${tileIc(t)}<b class="num">${all.filter(i => i.tag === t.id).length}</b></span><span class="tile-name">${esc(t.name)}</span></button>`).join('')
-    + `<button class="tile new" data-newtag>${ic('plus')}تاق جديد</button>`;
+  $('#tiles').hidden = $('#quick').hidden = !home;
+  $('#tiles').innerHTML = `<button class="tile c-gold" data-filter="all" aria-pressed="${S.filter === 'all'}"><span class="tile-ic sm c-gold">${ic('grid')}</span><span class="tile-name">الكل</span><b class="num">${all.length}</b></button>`
+    + S.tags.map(t => `<button class="tile c-${t.color}" data-filter="${t.id}" aria-pressed="${S.filter === t.id}">${tileIc(t, 'sm')}<span class="tile-name">${esc(t.name)}</span><b class="num">${all.filter(i => i.tag === t.id).length}</b></button>`).join('')
+    + `<button class="tile new" data-newtag>${ic('plus')}تاق</button>`;
   $('#qIn').placeholder = cur ? `أضف إلى ${cur.name}…` : 'خبز، عصير، حليب…';
 
   view.innerHTML = S.view === 'done' ? viewDone() : viewHome(list, cur);
@@ -623,17 +627,23 @@ let undoFn = null, toastT;
 function toast(msg, undo){
   $('#toastMsg').textContent = msg; undoFn = undo || null; $('#toastUndo').hidden = !undo;
   $('#toast').classList.add('show'); clearTimeout(toastT);
-  toastT = setTimeout(() => $('#toast').classList.remove('show'), 5000);
+  toastT = setTimeout(() => $('#toast').classList.remove('show'), 6500);
 }
 $('#toastUndo').onclick = () => { if (undoFn) undoFn(); $('#toast').classList.remove('show'); render(); };
 
 /* ---------- Item actions ---------- */
 function addItems(text, tag, prio, due){
-  const titles = text.split(/[،,\n]+/).map(s => s.trim()).filter(Boolean);
+  const titles = splitTitles(text);
   const fresh = titles.map(title => ({id:uid(), title, tag, prio, by:S.me, due:due || undefined}));
   const ids = fresh.map(i => i.id); S.items.unshift(...fresh);
   if (ids.length){ buzz(8); db.saveItems(fresh); toast(ids.length > 1 ? `تمت إضافة ${ids.length} أغراض` : `تمت إضافة «${titles[0]}»`, () => { S.items = S.items.filter(i => !ids.includes(i.id)); db.delItems(ids); }); }
   return ids.length;
+}
+function removeItem(id){
+  const idx = S.items.findIndex(i => i.id === id); if (idx < 0) return;
+  const [it] = S.items.splice(idx, 1); buzz(12); db.delItems([it.id]);
+  toast(`تم حذف «${it.title}»`, () => { S.items.splice(Math.min(idx, S.items.length), 0, it); db.saveItems([it]); });
+  render();
 }
 function toggle(id, instant){
   const it = S.items.find(i => i.id === id); if (!it) return;
@@ -666,10 +676,66 @@ document.addEventListener('click', e => {
   }
 });
 $('#qIn').addEventListener('input', e => $('#quick').classList.toggle('has', !!e.target.value.trim()));
+/* ---------- Smart tagging: guess the tag from the words, otherwise ask ---------- */
+const norm = t => t.toLowerCase().replace(/[ً-ْـ]/g, '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/[^ء-يa-z0-9 ]/g, ' ');
+const words = t => norm(t).split(/\s+/).map(w => w.length > 4 ? w.replace(/^(وال|بال|لل|ال)/, '') : w).filter(w => w.length > 1);
+const LEX = {
+  'البقاله': 'خبز صامولي توست حليب لبن زبادي جبن جبنه بيض ببض رز ارز سكر ملح زيت طحين دقيق شاي قهوه عصير ماء مويه تمر دجاج لحم سمك خضار فواكه طماطم بطاطس بصل ثوم خيار خس جزر ليمون تفاح موز برتقال نعناع كزبره بقدونس فلفل مكرونه معكرونه شعيريه عسل مربي زبده قشطه كاتشب مايونيز بهارات فول حمص عدس تونه بسكويت شوكولاته شيبس مكدوس زيتون خل صلصه نسكافيه هيل زعفران ساندويش فطور بقاله سوبرماركت',
+  'صيانه البيت': 'سباك سباكه كهربائي كهرباء لمبه لمبات مكيف مكيفات فلتر فلاتر سيفون حنفيه خلاط مغسله تسريب دهان صبغ باب نافذه شباك قفل مفتاح مسكه مسكات دولاب درج ادراج رف ثلاجه غساله فرن سخان دفايه مضخه توصيله عمال نجار ستاره ستاير سجاد كنب مكنسه مكانس علاقه صمغ قلو مسمار برغي مطرقه بخاخ مغناطيس كراج حديقه زرع سقف بلاط حمام مطبخ مجلس',
+  'صيانه السياره': 'سياره زيت كفر كفرات كفره اطارات بنشر بطاريه فحص استماره تامين مساحات فرامل فحمات بنزين مكينه قير رديتر تظليل ورشه ميكانيكي ديزل',
+  'منظفات وعنايه': 'صابون شامبو بلسم منظف منظفات كلوركس ديتول مناديل محارم حفاظات معجون فرشاه مزيل عطر كريم ليف اسفنج قفازات اكياس معطر ملمع مسحوق بودره',
+  'الصحه': 'دواء علاج مضاد مسكن بنادول فيتامين تطعيم تطعيمه موعد مستشفي عياده دكتور طبيب اسنان نظر مضمضه لصقات شاش حراره صيدليه',
+  'البنات': 'مدرسه لانش دفتر دفاتر اقلام شنطه حقيبه مريول ملابس فنايل بجايم بيجامه هيلاهوبات قبعات جوارب حذاء احذيه العاب لعبه قماش'
+};
+const LEXW = Object.fromEntries(Object.entries(LEX).map(([k, v]) => [k, v.split(' ')]));
+const hit = (w, k) => w === k || (k.length >= 4 && w.startsWith(k)) || (w.length >= 4 && k.startsWith(w));
+// Returns a tag id when one tag clearly wins, otherwise null (and the app asks).
+function guessTag(title){
+  const key = norm(title).trim(), ws = words(title), score = new Map();
+  const add = (id, v) => score.set(id, (score.get(id) || 0) + v);
+  for (const it of S.items){                                   // what the household chose before counts most
+    if (!it.tag || !S.tags.some(t => t.id === it.tag)) continue;
+    if (norm(it.title).trim() === key) add(it.tag, 6);
+    else { const o = words(it.title).filter(w => ws.includes(w)).length; if (o) add(it.tag, o * 1.5); }
+  }
+  for (const t of S.tags){
+    const lex = LEXW[norm(t.name).trim()]; if (!lex) continue;
+    const m = ws.filter(w => lex.some(k => hit(w, k))).length; if (m) add(t.id, m);
+  }
+  const top = [...score.entries()].sort((a, b) => b[1] - a[1]);
+  return top.length && (top.length === 1 || top[0][1] > top[1][1]) ? top[0][0] : null;
+}
+const splitTitles = text => text.split(/[،,\n]+/).map(s => s.trim()).filter(Boolean);
+let pending = [];
+function openPick(titles){
+  pending = titles;
+  $('#pickNames').textContent = titles.join('، ');
+  $('#pTags').innerHTML = S.tags.map((t, i) => `<label class="c-${t.color}"><input type="radio" name="tag" value="${t.id}" ${i === 0 ? 'checked' : ''}>${tileIc(t, 'sm')}${esc(t.name)}</label>`).join('');
+  $('#pPrio').innerHTML = '<span class="thumb"></span>' + PRIO.map(p => `<label class="p-${p.id}"><input type="radio" name="prio" value="${p.id}" ${p.id === 'soon' ? 'checked' : ''}>${ic(p.icon)}${p.name}</label>`).join('');
+  openSheet($('#pickDlg'));
+}
+$('#pickForm').onsubmit = e => {
+  e.preventDefault();
+  const f = new FormData(e.target);
+  addItems(pending.join('،'), f.get('tag'), f.get('prio'));
+  pending = []; $('#qIn').value = ''; $('#quick').classList.remove('has');
+  closeSheet($('#pickDlg')); render();
+};
 $('#quick').onsubmit = e => {
   e.preventDefault();
-  const tag = S.filter === 'all' ? S.tags[0]?.id : S.filter;
-  if (addItems($('#qIn').value, tag, 'soon')){ $('#qIn').value = ''; $('#quick').classList.remove('has'); render(); }
+  const titles = splitTitles($('#qIn').value); if (!titles.length) return;
+  $('#qIn').blur();
+  if (S.filter !== 'all'){ addItems(titles.join('،'), S.filter, 'soon'); $('#qIn').value = ''; $('#quick').classList.remove('has'); return render(); }
+  const known = [], unknown = [];
+  for (const t of titles){ const g = guessTag(t); g ? known.push([t, g]) : unknown.push(t); }
+  for (const [t, g] of known) addItems(t, g, 'soon');
+  if (known.length){
+    const names = [...new Set(known.map(k => tagOf(k[1]).name))], ids = S.items.slice(0, known.length).map(i => i.id);
+    toast(known.length === 1 ? `أُضيف «${known[0][0]}» إلى ${names[0]}` : `أُضيفت ${known.length} أغراض إلى ${names.join(' و')}`,
+      () => { S.items = S.items.filter(i => !ids.includes(i.id)); db.delItems(ids); });
+  }
+  if (unknown.length){ $('#qIn').value = unknown.join('، '); render(); openPick(unknown); }
+  else { $('#qIn').value = ''; $('#quick').classList.remove('has'); render(); }
 };
 $('#plus').onclick = $('#sideNew').onclick = () => openItem();
 $('#view').addEventListener('pointermove', e => {
@@ -705,7 +771,7 @@ const endSwipe = e => {
   const v = s.tr.v(), x = s.x, id = s.row.dataset.id;
   const commit = e.type === 'pointerup' && (Math.abs(x) > TH || (Math.abs(v) > 700 && Math.sign(v) === Math.sign(x) && Math.abs(x) > 24));
   s.row.classList.remove('dragging');
-  if (commit) spring({from:x, to:Math.sign(x) * (s.row.offsetWidth + 60), velocity:v, damping:1, response:.3, onUpdate:n => setX(s, n), onDone:() => toggle(id, true)});
+  if (commit) spring({from:x, to:Math.sign(x) * (s.row.offsetWidth + 60), velocity:v, damping:1, response:.3, onUpdate:n => setX(s, n), onDone:() => x < 0 ? removeItem(id) : toggle(id, true)});
   else spring({from:x, to:0, velocity:v, damping:.8, response:.36, onUpdate:n => setX(s, n), onDone:() => { s.row.classList.remove('armed'); s.card.style.transform = ''; }});
 };
 addEventListener('pointerup', endSwipe); addEventListener('pointercancel', endSwipe);
@@ -718,7 +784,7 @@ function setSheet(d, y){
   sh.style.opacity = isPhone() ? 1 : p;
 }
 function openSheet(d){
-  d.showModal(); d._a && d._a.stop();
+  d.showModal(); d.scrollTop = 0; d._a && d._a.stop();
   d._H = isPhone() ? d.querySelector('.sheet').offsetHeight + 24 : 48;
   setSheet(d, d._H);
   d._a = spring({from:d._H, to:0, damping:1, response:.4, onUpdate:y => setSheet(d, y)});
@@ -773,11 +839,7 @@ $('#itemForm').onsubmit = e => {
   else addItems(title, f.get('tag'), f.get('prio'), $('#fDue').value);
   closeSheet($('#itemDlg')); render();
 };
-$('#fDelete').onclick = () => {
-  const it = editing, idx = S.items.indexOf(it);
-  S.items.splice(idx, 1); closeSheet($('#itemDlg')); db.delItems([it.id]);
-  toast(`تم حذف «${it.title}»`, () => { S.items.splice(idx, 0, it); db.saveItems([it]); }); render();
-};
+$('#fDelete').onclick = () => { const id = editing.id; closeSheet($('#itemDlg')); removeItem(id); };
 
 /* ---------- Tag sheet ---------- */
 function openTag(){
