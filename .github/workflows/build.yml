@@ -2,11 +2,9 @@ name: Build apps
 
 # Builds an Android debug APK and UNSIGNED iOS IPAs (sign them yourself with your own certificate),
 # then publishes them as the "latest" release so they can be downloaded straight to a phone.
+# Manual only: day-to-day builds run on Codemagic (codemagic.yaml). Start this one by hand from the Actions tab if ever needed.
 on:
   workflow_dispatch:
-  push:
-    branches: [main]
-    paths-ignore: ['**.md', 'supabase/**', 'codemagic.yaml']
 
 permissions:
   contents: write
