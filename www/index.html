@@ -298,6 +298,10 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .chat-in input::placeholder{color:var(--fg3);font-weight:300}
 .chat-in .send{transform:none;opacity:1;pointer-events:auto;flex:none}
 .chat-in .send:disabled{opacity:.4}
+.mic{width:42px;height:42px;border-radius:50%;flex:none;display:grid;place-items:center;color:var(--accent)}
+.mic.on{background:var(--danger);color:#fff;animation:micPulse 1.2s ease-in-out infinite}
+@keyframes micPulse{50%{box-shadow:0 0 0 8px color-mix(in srgb,var(--danger) 22%,transparent)}}
+@media (prefers-reduced-motion:reduce){.mic.on{animation:none}}
 .chat-foot{display:flex;align-items:center;gap:10px;font-size:.75rem;color:var(--fg3);min-height:32px}
 .chat-foot span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:end}
 .chat-foot select{max-width:42%;height:32px;border:0;border-radius:10px;background:var(--fill);color:var(--fg2);font:inherit;padding-inline:12px}
@@ -463,6 +467,7 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
       <div class="chat-in">
         <label class="sr" for="gptText">رسالتك للمساعد</label>
         <input id="gptText" autocomplete="off" enterkeyhint="send" placeholder="وش تحتاجون؟">
+        <button class="mic press" type="button" id="gptMic" aria-label="تكلّم" data-ic="mic" hidden></button>
         <button class="send" type="submit" id="gptSendBtn" aria-label="إرسال" data-ic="up"></button>
       </div>
       <div class="chat-foot"><button type="button" id="gptOutBtn">خروج</button><label class="sr" for="gptModel">النموذج</label><select id="gptModel"></select><span id="gptWho"></span></div>
@@ -501,6 +506,7 @@ const I = {
   users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
   userPlus:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/>',
   spark:'<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>',
+  mic:'<rect x="9" y="2" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v4"/>',
   plus:'<path d="M12 5v14M5 12h14"/>', check:'<path d="M20 6 9 17l-5-5"/>', x:'<path d="M18 6 6 18M6 6l12 12"/>', up:'<path d="M12 19V5M5 12l7-7 7 7"/>',
   grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
   cart:'<circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>',
@@ -1314,6 +1320,23 @@ $('#gptOutBtn').onclick = async () => {
     const cfg = await (await fetch('https://auth.openai.com/.well-known/openid-configuration')).json();
     if (cfg.revocation_endpoint && refresh) await fetch(cfg.revocation_endpoint, {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:new URLSearchParams({token:refresh, token_type_hint:'refresh_token', client_id:client})});
   } catch (e) { console.warn('revoke', e); }
+};
+// Voice: the phone's own speech recognition turns the words into text, then it is sent like a typed message.
+let gHearing = false;
+$('#gptMic').hidden = !isNative();
+$('#gptMic').onclick = async () => {
+  const b = $('#gptMic'), inp = $('#gptText');
+  if (gHearing){ native('WidgetBridge', 'stopListening').catch(() => {}); return; }
+  if (gBusy) return;
+  gHearing = true; b.classList.add('on'); inp.placeholder = 'أسمعك…'; buzz(8);
+  try {
+    const r = await native('WidgetBridge', 'listen', {lang:'ar-SA'}), text = ((r && r.text) || '').trim();
+    if (text){ inp.value = text; $('#gptForm').requestSubmit(); }
+  } catch (e) {
+    console.warn('voice', e); const m = String((e && e.message) || e);
+    toast(/denied/.test(m) ? 'اسمح للتطبيق بالمايكروفون والتعرف على الكلام من إعدادات الجوال.' : 'التعرف على الصوت غير متاح على هذا الجهاز.');
+  }
+  gHearing = false; b.classList.remove('on'); inp.placeholder = 'وش تحتاجون؟';
 };
 $('#gptForm').onsubmit = async e => {
   e.preventDefault();

@@ -3,9 +3,88 @@ import Capacitor
 import WidgetKit
 import SafariServices
 import Network
+import Speech
+import AVFoundation
 
 /// App Group shared with the home-screen / lock-screen widgets.
 let baytnaGroup = "group.65170c5db5fc6542.1"
+
+/// Voice input for the assistant: listens until the speaker pauses, then hands back the text.
+final class Dictation {
+    static let shared = Dictation()
+    private let engine = AVAudioEngine()
+    private var request: SFSpeechAudioBufferRecognitionRequest?
+    private var task: SFSpeechRecognitionTask?
+    private var timer: Timer?
+    private var text = ""
+    private var done: ((String, String?) -> Void)?
+
+    func start(lang: String, done: @escaping (String, String?) -> Void) {
+        finish(nil)
+        SFSpeechRecognizer.requestAuthorization { status in
+            guard status == .authorized else { DispatchQueue.main.async { done("", "denied") }; return }
+            AVAudioSession.sharedInstance().requestRecordPermission { granted in
+                DispatchQueue.main.async {
+                    if granted { self.begin(lang: lang, done: done) } else { done("", "denied") }
+                }
+            }
+        }
+    }
+
+    private func begin(lang: String, done: @escaping (String, String?) -> Void) {
+        guard let recognizer = SFSpeechRecognizer(locale: Locale(identifier: lang)), recognizer.isAvailable else { done("", "unavailable"); return }
+        self.done = done
+        text = ""
+        do {
+            let session = AVAudioSession.sharedInstance()
+            try session.setCategory(.record, mode: .measurement, options: .duckOthers)
+            try session.setActive(true, options: .notifyOthersOnDeactivation)
+            let made = SFSpeechAudioBufferRecognitionRequest()
+            made.shouldReportPartialResults = true
+            request = made
+            let input = engine.inputNode
+            input.removeTap(onBus: 0)
+            input.installTap(onBus: 0, bufferSize: 1024, format: input.outputFormat(forBus: 0)) { buffer, _ in made.append(buffer) }
+            engine.prepare()
+            try engine.start()
+            task = recognizer.recognitionTask(with: made) { [weak self] result, error in
+                DispatchQueue.main.async {
+                    guard let self = self, self.done != nil else { return }
+                    if let result = result {
+                        self.text = result.bestTranscription.formattedString
+                        if result.isFinal { self.finish(nil) } else { self.wait(1.6) }
+                    } else if error != nil {
+                        self.finish(nil)
+                    }
+                }
+            }
+            wait(7)
+        } catch {
+            finish("unavailable")
+        }
+    }
+
+    /// Ends after this much silence.
+    private func wait(_ seconds: TimeInterval) {
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { [weak self] _ in self?.finish(nil) }
+    }
+
+    func finish(_ error: String?) {
+        timer?.invalidate()
+        timer = nil
+        if engine.isRunning { engine.stop() }
+        engine.inputNode.removeTap(onBus: 0)
+        request?.endAudio()
+        request = nil
+        task?.cancel()
+        task = nil
+        guard let deliver = done else { return }
+        done = nil
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+        deliver(text, error)
+    }
+}
 
 /// Catches the "Sign in with ChatGPT" callback: one request on 127.0.0.1, while the in-app browser is on screen.
 final class AuthLoopback {
@@ -65,7 +144,9 @@ public class WidgetBridgePlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "secureSet", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "openUrl", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "authListen", returnType: CAPPluginReturnPromise),
-        CAPPluginMethod(name: "authResult", returnType: CAPPluginReturnPromise)
+        CAPPluginMethod(name: "authResult", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "listen", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "stopListening", returnType: CAPPluginReturnPromise)
     ]
     static var pendingAction: String?
     private weak var browser: SFSafariViewController?
@@ -102,6 +183,22 @@ public class WidgetBridgePlugin: CAPPlugin, CAPBridgedPlugin {
             call.resolve()
         } catch {
             call.reject("port busy")
+        }
+    }
+
+    @objc func listen(_ call: CAPPluginCall) {
+        let lang = call.getString("lang") ?? "ar-SA"
+        DispatchQueue.main.async {
+            Dictation.shared.start(lang: lang) { text, error in
+                if let error = error { call.reject(error) } else { call.resolve(["text": text]) }
+            }
+        }
+    }
+
+    @objc func stopListening(_ call: CAPPluginCall) {
+        DispatchQueue.main.async {
+            Dictation.shared.finish(nil)
+            call.resolve()
         }
     }
 

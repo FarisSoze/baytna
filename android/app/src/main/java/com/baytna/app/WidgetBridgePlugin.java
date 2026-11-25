@@ -1,7 +1,11 @@
 package com.baytna.app;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
+import android.speech.RecognizerIntent;
+import androidx.activity.result.ActivityResult;
+import com.getcapacitor.annotation.ActivityCallback;
 import com.getcapacitor.JSObject;
 import com.getcapacitor.Plugin;
 import com.getcapacitor.PluginCall;
@@ -76,6 +80,35 @@ public class WidgetBridgePlugin extends Plugin {
         } catch (Exception e) {
             call.reject("no browser", e);
         }
+    }
+
+    /** Voice input: the system speech dialog listens and hands back the text, so the app itself needs no microphone permission. */
+    @PluginMethod
+    public void listen(PluginCall call) {
+        Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH)
+            .putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+            .putExtra(RecognizerIntent.EXTRA_LANGUAGE, call.getString("lang", "ar-SA"))
+            .putExtra(RecognizerIntent.EXTRA_PROMPT, "وش تحتاجون؟");
+        try {
+            startActivityForResult(call, intent, "speechResult");
+        } catch (Exception e) {
+            call.reject("unavailable", e);
+        }
+    }
+
+    @ActivityCallback
+    private void speechResult(PluginCall call, ActivityResult result) {
+        if (call == null) return;
+        java.util.ArrayList<String> found = result.getResultCode() == Activity.RESULT_OK && result.getData() != null
+            ? result.getData().getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS) : null;
+        JSObject res = new JSObject();
+        res.put("text", found == null || found.isEmpty() ? "" : found.get(0));
+        call.resolve(res);
+    }
+
+    @PluginMethod
+    public void stopListening(PluginCall call) {
+        call.resolve();   // the system dialog closes itself
     }
 
     /** Listens on 127.0.0.1 only, for one sign-in callback, for at most ten minutes. */

@@ -205,3 +205,10 @@ begin
     end if;
   end loop;
 end $$;
+
+-- Keep-awake: free projects pause after a quiet week. One tiny request a day through the project's own API.
+create extension if not exists pg_cron with schema pg_catalog;
+create extension if not exists pg_net with schema extensions;
+create or replace function public.keep_awake() returns int language sql stable set search_path = '' as $f$ select 1 $f$;
+grant execute on function public.keep_awake() to anon, authenticated;
+select cron.schedule('baytna-keep-awake', '17 6 * * *', $job$ select net.http_get(url := 'https://xejnfjagypsjpucgccpq.supabase.co/rest/v1/rpc/keep_awake', headers := '{"apikey":"sb_publishable_68Jic6MZaKlgMsVfnzK-3w_5pNMte8G"}'::jsonb) $job$);
