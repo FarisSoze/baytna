@@ -1,7 +1,9 @@
 package com.baytna.app;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.speech.RecognizerIntent;
 import androidx.activity.result.ActivityResult;
@@ -55,6 +57,23 @@ public class WidgetBridgePlugin extends Plugin {
         res.put("action", pendingAction == null ? "" : pendingAction);
         pendingAction = null;
         call.resolve(res);
+    }
+
+    /** Switches the launcher icon between its night and day versions by enabling one of two activity aliases. */
+    @PluginMethod
+    public void setIcon(PluginCall call) {
+        boolean day = "day".equals(call.getString("name", "night"));
+        PackageManager pm = getContext().getPackageManager();
+        String pkg = getContext().getPackageName();
+        try {
+            pm.setComponentEnabledSetting(new ComponentName(pkg, "com.baytna.app.IconDay"),
+                day ? PackageManager.COMPONENT_ENABLED_STATE_ENABLED : PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+            pm.setComponentEnabledSetting(new ComponentName(pkg, "com.baytna.app.IconNight"),
+                day ? PackageManager.COMPONENT_ENABLED_STATE_DISABLED : PackageManager.COMPONENT_ENABLED_STATE_ENABLED, PackageManager.DONT_KILL_APP);
+            call.resolve();
+        } catch (Exception e) {
+            call.reject("icon", e);
+        }
     }
 
     @PluginMethod

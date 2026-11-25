@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>بيتنا — أيقونة التطبيق، جولة ثانية</title>
+<style>
+@font-face{font-family:'Thmanyah Sans';font-weight:400;src:url('fonts/thmanyahsans-Regular.woff2') format('woff2')}
+@font-face{font-family:'Thmanyah Sans';font-weight:700;src:url('fonts/thmanyahsans-Bold.woff2') format('woff2')}
+*{box-sizing:border-box;margin:0}
+body{background:#E4E5EA;color:#15171C;font-family:'Thmanyah Sans',system-ui,sans-serif;padding:28px 16px 64px}
+.intro{max-width:1100px;margin:0 auto 28px}
+.intro h1{font-size:1.5rem;font-weight:700}
+.intro p{margin-top:8px;color:#3D4350;max-width:68ch;line-height:1.85}
+.intro a{color:#0B5FD0}
+.wall{max-width:1100px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.card{background:#fff;border-radius:24px;padding:24px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center}
+.card h2{font-size:1.0625rem;font-weight:700;align-self:stretch;text-align:start}
+.card p{font-size:.9375rem;color:#3D4350;line-height:1.75;align-self:stretch;text-align:start}
+.big{width:168px;height:168px;border-radius:38px;overflow:hidden;box-shadow:0 20px 40px -18px rgba(20,24,60,.6)}
+.big svg,.sm svg{display:block;width:100%;height:100%}
+.strip{align-self:stretch;border-radius:18px;padding:16px;display:flex;justify-content:center;gap:20px;background:linear-gradient(160deg,#27456E,#3A2B63 45%,#5B3140 80%,#1F4A44)}
+.strip.l{background:linear-gradient(160deg,#BFE3FF,#E3D4FF 50%,#FFE0D0)}
+.sm{width:56px;height:56px;border-radius:13px;overflow:hidden;box-shadow:0 6px 14px -6px rgba(0,0,0,.5)}
+.sm.t{width:30px;height:30px;border-radius:7px;align-self:center}
+</style>
+</head>
+<body>
+<header class="intro">
+  <h1>بيتنا — ست أفكار جديدة للأيقونة</h1>
+  <p>جولة ثانية بأفكار مختلفة عن الأولى. كل فكرة معروضة كبيرة، ثم بحجمها الحقيقي على خلفية داكنة وفاتحة، وبحجم الإشعارات الصغير. <a href="index.html">رجوع لمعاينة التطبيق</a></p>
+</header>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+  <radialGradient id="g1" cx="100%" cy="0%" r="75%"><stop offset="0" stop-color="#1D4F8C"/><stop offset="1" stop-color="#1D4F8C" stop-opacity="0"/></radialGradient>
+  <radialGradient id="g2" cx="0%" cy="25%" r="70%"><stop offset="0" stop-color="#4A2E8E"/><stop offset="1" stop-color="#4A2E8E" stop-opacity="0"/></radialGradient>
+  <radialGradient id="g3" cx="85%" cy="70%" r="65%"><stop offset="0" stop-color="#70352B"/><stop offset="1" stop-color="#70352B" stop-opacity="0"/></radialGradient>
+  <radialGradient id="g4" cx="10%" cy="100%" r="70%"><stop offset="0" stop-color="#136052"/><stop offset="1" stop-color="#136052" stop-opacity="0"/></radialGradient>
+  <radialGradient id="p1" cx="100%" cy="0%" r="80%"><stop offset="0" stop-color="#9CD8FF"/><stop offset="1" stop-color="#9CD8FF" stop-opacity="0"/></radialGradient>
+  <radialGradient id="p2" cx="0%" cy="25%" r="75%"><stop offset="0" stop-color="#CDB3FF"/><stop offset="1" stop-color="#CDB3FF" stop-opacity="0"/></radialGradient>
+  <radialGradient id="p3" cx="85%" cy="75%" r="70%"><stop offset="0" stop-color="#FFD0BA"/><stop offset="1" stop-color="#FFD0BA" stop-opacity="0"/></radialGradient>
+  <radialGradient id="p4" cx="10%" cy="100%" r="70%"><stop offset="0" stop-color="#A9F1DC"/><stop offset="1" stop-color="#A9F1DC" stop-opacity="0"/></radialGradient>
+  <linearGradient id="gl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".32"/><stop offset="1" stop-color="#fff" stop-opacity=".1"/></linearGradient>
+  <linearGradient id="tl" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#7DF0DD"/><stop offset="1" stop-color="#19B8A0"/></linearGradient>
+  <g id="bg"><rect width="512" height="512" fill="#080A12"/><rect width="512" height="512" fill="url(#g1)"/><rect width="512" height="512" fill="url(#g2)"/><rect width="512" height="512" fill="url(#g3)"/><rect width="512" height="512" fill="url(#g4)"/></g>
+  <g id="bgl"><rect width="512" height="512" fill="#EEF4FF"/><rect width="512" height="512" fill="url(#p1)"/><rect width="512" height="512" fill="url(#p2)"/><rect width="512" height="512" fill="url(#p3)"/><rect width="512" height="512" fill="url(#p4)"/></g>
+
+  <!-- A: the arched door of a Najdi house, light on inside -->
+  <symbol id="a" viewBox="0 0 512 512"><use href="#bg"/>
+    <path d="M150 412V246a106 106 0 0 1 212 0v166z" fill="url(#gl)" stroke="#fff" stroke-opacity=".55" stroke-width="6"/>
+    <path d="M204 412V256a52 52 0 0 1 104 0v156z" fill="url(#tl)"/>
+    <circle cx="288" cy="330" r="9" fill="#06241F"/>
+    <path d="m214 112 20 30h-40zM256 100l20 30h-40zM298 112l20 30h-40z" fill="#fff" fill-opacity=".8"/></symbol>
+
+  <!-- B: two tiles sharing one corner — the shared home -->
+  <symbol id="b" viewBox="0 0 512 512"><use href="#bg"/>
+    <rect x="106" y="106" width="212" height="212" rx="56" fill="url(#gl)" stroke="#fff" stroke-opacity=".55" stroke-width="6"/>
+    <rect x="194" y="194" width="212" height="212" rx="56" fill="url(#tl)" fill-opacity=".92"/>
+    <path d="m254 300 32 32 60-66" fill="none" stroke="#06241F" stroke-width="28" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+
+  <!-- C: only the check, on a glass disc -->
+  <symbol id="c" viewBox="0 0 512 512"><use href="#bg"/>
+    <circle cx="256" cy="256" r="156" fill="url(#gl)" stroke="#fff" stroke-opacity=".5" stroke-width="6"/>
+    <path d="m176 262 56 56 108-120" fill="none" stroke="url(#tl)" stroke-width="46" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+
+  <!-- D: a house whose body is the list -->
+  <symbol id="d" viewBox="0 0 512 512"><use href="#bg"/>
+    <path d="M124 228 256 118l132 110" fill="none" stroke="#fff" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/>
+    <rect x="150" y="262" width="150" height="34" rx="17" fill="#fff" fill-opacity=".9"/><circle cx="345" cy="279" r="17" fill="url(#tl)"/>
+    <rect x="150" y="318" width="150" height="34" rx="17" fill="#fff" fill-opacity=".45"/><circle cx="345" cy="335" r="17" fill="#fff" fill-opacity=".45"/>
+    <rect x="150" y="374" width="150" height="34" rx="17" fill="#fff" fill-opacity=".45"/><circle cx="345" cy="391" r="17" fill="#fff" fill-opacity=".45"/></symbol>
+
+  <!-- E: daytime colours -->
+  <symbol id="e" viewBox="0 0 512 512"><use href="#bgl"/>
+    <path d="M120 236 256 122l136 114v132a28 28 0 0 1-28 28H148a28 28 0 0 1-28-28z" fill="#fff" fill-opacity=".6" stroke="#0D1B2E" stroke-width="22" stroke-linejoin="round"/>
+    <path d="m204 292 38 38 70-76" fill="none" stroke="#0B8A78" stroke-width="34" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+
+  <!-- F: the shopping bag -->
+  <symbol id="f" viewBox="0 0 512 512"><use href="#bg"/>
+    <path d="M206 196v-22a50 50 0 0 1 100 0v22" fill="none" stroke="#fff" stroke-width="22" stroke-linecap="round"/>
+    <path d="M142 196h228l-16 186a30 30 0 0 1-30 28H188a30 30 0 0 1-30-28z" fill="url(#tl)"/>
+    <path d="m206 300 36 36 66-72" fill="none" stroke="#06241F" stroke-width="30" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</defs></svg>
+
+<main class="wall" id="wall"></main>
+<script>
+const O = [
+  ['a', '١ · باب البيت', 'باب بقوس مثل أبواب البيوت النجدية، والنور الفيروزي طالع من داخله، وفوقه ثلاث مثلثات من زخرفة الشرفات. يقول «بيت» بطابع سعودي.'],
+  ['b', '٢ · مربعين متشاركين', 'مربع زجاجي ومربع فيروزي متداخلين في زاوية، وعلامة الصح في المشترك بينهم. يرمز لأن القائمة مشتركة بينك وبين أهلك.'],
+  ['c', '٣ · علامة الصح', 'علامة صح فيروزية كبيرة على قرص زجاجي. أبسط شيء وأوضحه، لكنه يشبه تطبيقات المهام الثانية.'],
+  ['d', '٤ · بيت من قائمة', 'سقف بيت، وتحته ثلاثة أسطر مثل القائمة، وأول سطر عليه نقطة الإنجاز الفيروزية. يجمع البيت والقائمة في رسمة وحدة.'],
+  ['e', '٥ · ألوان النهار', 'نفس فكرة البيت بعلامة الصح لكن على خلفية المظهر النهاري الفاتحة. تتميّز بين الأيقونات الداكنة الكثيرة.'],
+  ['f', '٦ · كيس المشتريات', 'كيس تسوق فيروزي بعلامة صح. أوضح الأفكار في إنه تطبيق مستلزمات، لكنه ما يعبّر عن المواعيد والفواتير.']
+];
+const use = id => `<svg viewBox="0 0 512 512" aria-hidden="true"><use href="#${id}"/></svg>`;
+document.querySelector('#wall').innerHTML = O.map(([id, t, d]) => `<section class="card"><h2>${t}</h2><div class="big">${use(id)}</div>
+  <div class="strip"><span class="sm">${use(id)}</span><span class="sm t">${use(id)}</span></div>
+  <div class="strip l"><span class="sm">${use(id)}</span><span class="sm t">${use(id)}</span></div><p>${d}</p></section>`).join('');
+</script>
+</body>
+</html>

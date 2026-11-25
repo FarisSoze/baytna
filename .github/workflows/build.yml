@@ -1,9 +1,7 @@
 name: Build apps
 
-# Builds an Android debug APK and UNSIGNED iOS IPAs (sign them yourself with your own certificate),
-# then publishes them as the "latest" release so they can be downloaded straight to a phone.
-# Manual only: day-to-day builds run on Codemagic (codemagic.yaml). Start this one by hand from the Actions tab if ever needed.
-# A tag named build-<anything> also starts it:  git tag build-1 && git push origin build-1
+# Builds the Android APK and ONE unsigned iPhone IPA (with the widgets); sign the IPA yourself before installing.
+# Nothing builds on push. Start a build by hand from the Actions tab, or with a tag:  git tag build-1 && git push origin build-1
 on:
   workflow_dispatch:
   push:
@@ -15,6 +13,9 @@ permissions:
 concurrency:
   group: build-${{ github.ref }}
   cancel-in-progress: true
+
+env:
+  FONT_KEY: ${{ secrets.FONT_KEY }}     # unlocks the licensed typeface bundle; without it the app falls back to its old font
 
 jobs:
   android:
@@ -30,6 +31,8 @@ jobs:
       - run: npm ci
       - name: Stamp the version shown inside the app
         run: sed -i.bak "s/APP_VER = 'dev'/APP_VER = '1.0.$BUILD_NUMBER'/" www/index.html && rm www/index.html.bak
+      - name: Unpack the typeface
+        run: sh scripts/unpack_font.sh
       - run: npm run vendor
       - run: npx cap sync android
       - run: chmod +x gradlew && ./gradlew assembleDebug --console=plain
@@ -42,14 +45,6 @@ jobs:
 
   ios:
     runs-on: macos-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - variant: plain          # the app only
-            ipa: baytna-unsigned.ipa
-          - variant: widgets        # the app + home-screen and lock-screen widgets
-            ipa: baytna-widgets-unsigned.ipa
     steps:
       - uses: actions/checkout@v4
       - name: Build number from the commit time (same on every CI, always increasing)
@@ -59,38 +54,29 @@ jobs:
       - run: npm ci
       - name: Stamp the version shown inside the app
         run: sed -i.bak "s/APP_VER = 'dev'/APP_VER = '1.0.$BUILD_NUMBER'/" www/index.html && rm www/index.html.bak
+      - name: Unpack the typeface
+        run: sh scripts/unpack_font.sh
       - run: npm run vendor
       - run: npx cap sync ios
       - name: Add the widget extension target
-        if: matrix.variant == 'widgets'
         run: |
           gem install xcodeproj --no-document --user-install
           ruby scripts/add_ios_widget.rb
-      - name: Archive without code signing
-        run: |
-          set -o pipefail
-          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release -sdk iphoneos \
-            -destination 'generic/platform=iOS' -archivePath build/App.xcarchive archive \
-            MARKETING_VERSION="1.0.$BUILD_NUMBER" CURRENT_PROJECT_VERSION="$BUILD_NUMBER"             CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY="" 2>&1 | tee build.log | tail -n 40
-      - name: Package unsigned IPA
-        run: |
-          mkdir Payload
-          cp -R build/App.xcarchive/Products/Applications/App.app Payload/
-          ls Payload/App.app/PlugIns 2>/dev/null || true
-          zip -qry "${{ matrix.ipa }}" Payload
+      - name: Archive and package without code signing
+        run: sh scripts/ios_ipa.sh baytna-unsigned.ipa
       - uses: actions/upload-artifact@v4
         with:
-          name: ipa-${{ matrix.variant }}
-          path: ${{ matrix.ipa }}
+          name: ipa
+          path: out/baytna-unsigned.ipa
       - name: Keep the error lines when the build fails
         if: failure()
         run: |
-          (grep -nE "error:|fatal|ARCHIVE FAILED" -A3 build.log || tail -n 150 build.log) > "ios-${{ matrix.variant }}-errors.txt"
+          (grep -nE "error:|fatal|ARCHIVE FAILED" -A3 build.log || tail -n 150 build.log) > ios-errors.txt
       - uses: actions/upload-artifact@v4
         if: failure()
         with:
-          name: log-${{ matrix.variant }}
-          path: ios-${{ matrix.variant }}-errors.txt
+          name: log-ios
+          path: ios-errors.txt
 
   release:
     needs: [android, ios]
@@ -106,5 +92,8 @@ jobs:
         run: |
           ls -la out
           # Never delete the previous release: new files replace old ones, anything that failed to build keeps its last good copy.
-          gh release view latest >/dev/null 2>&1 || gh release create latest --target "$GITHUB_SHA" --title "Latest build" --notes "The IPA files are unsigned: sign them with your own certificate before installing."
+          gh release view latest >/dev/null 2>&1 || gh release create latest --target "$GITHUB_SHA" --title "Latest build" --notes "The IPA is unsigned: sign it with your own certificate before installing."
+          rm -f out/ios-errors.txt
           gh release upload latest out/* --clobber
+          # There is one iPhone file now (it includes the widgets); drop the old separate one once the new one is up.
+          if [ -f out/baytna-unsigned.ipa ]; then gh release delete-asset latest baytna-widgets-unsigned.ipa --yes || true; fi

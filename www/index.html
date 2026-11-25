@@ -3,8 +3,8 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0B0B0C" media="(prefers-color-scheme: dark)">
-<meta name="theme-color" content="#F4F1EB" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#07090F" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#EAF2FF" media="(prefers-color-scheme: light)">
 <title>بيتنا — مستلزمات وتذكيرات البيت</title>
 <style>
 @font-face{font-family:"Readex Pro";font-style:normal;font-weight:160 700;font-display:swap;src:url(vendor/readex-pro-arabic-wght-normal.woff2) format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0898-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
@@ -307,51 +307,227 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 .chat-foot select{max-width:42%;height:32px;border:0;border-radius:10px;background:var(--fill);color:var(--fg2);font:inherit;padding-inline:12px}
 .chat-foot button{color:var(--fg2);text-decoration:underline;min-height:32px}
 @media (prefers-contrast:more){:root{--line:currentColor}.card,.tile,.panel,.quick{box-shadow:inset 0 0 0 1px var(--fg)}}
+:root{--sat:env(safe-area-inset-top,0px)}
+
+/* ================= Glass redesign: tokens ================= */
+@font-face{font-family:"Thmanyah Sans";font-weight:400;font-display:swap;src:url(vendor/thmanyahsans-Regular.woff2) format("woff2")}
+@font-face{font-family:"Thmanyah Sans";font-weight:500;font-display:swap;src:url(vendor/thmanyahsans-Medium.woff2) format("woff2")}
+@font-face{font-family:"Thmanyah Sans";font-weight:700;font-display:swap;src:url(vendor/thmanyahsans-Bold.woff2) format("woff2")}
+:root{
+  --font:"Thmanyah Sans","Readex Pro",-apple-system,"SF Arabic","Segoe UI",Tahoma,sans-serif;
+  --bg:#EAF2FF; --surface:rgba(244,247,253,.94); --raised:#FFFFFF; --solid:#F3F6FC; --fill:rgba(13,27,46,.08);
+  --fg:#0D1B2E; --fg2:#33445C; --fg3:#4A5B73; --line:rgba(13,27,46,.12);
+  --accent:#0B6E63; --accent-soft:rgba(11,110,99,.12); --cta-bg:#0B6E63; --cta-fg:#FFFFFF; --on-ink:#FFFFFF;
+  --ok:#0B6E63; --danger:#B3122A; --urgent:#B3122A; --soon:#33445C; --later:#33445C;
+  --glass:rgba(255,255,255,.76); --cellg:rgba(255,255,255,.55); --cline:rgba(255,255,255,.85);
+  --shadow:0 10px 26px -18px rgba(30,50,110,.5); --shadow-lg:0 20px 60px -20px rgba(20,40,90,.45);
+  --wash:radial-gradient(120% 60% at 100% 0%,#9CD8FF 0%,transparent 60%),radial-gradient(90% 55% at 0% 22%,#CDB3FF 0%,transparent 62%),radial-gradient(110% 60% at 80% 62%,#FFD0BA 0%,transparent 60%),radial-gradient(100% 60% at 10% 100%,#A9F1DC 0%,transparent 60%),#EAF2FF;
+}
+.c-green{--c:#11884D;--ct:#0C6B3C}.c-blue{--c:#1C63D5;--ct:#164FAB}.c-amber,.c-orange{--c:#B85F06;--ct:#8F4A05}.c-violet{--c:#6B3FD4;--ct:#5632AC}
+.c-rose,.c-pink{--c:#C02670;--ct:#9A1E5A}.c-slate{--c:#5B6472;--ct:#454D59}.c-gold{--c:#8F6A06;--ct:#735505}.c-teal{--c:#0B7F84;--ct:#096669}.c-red{--c:#C0392B;--ct:#9B2E23}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#07090F; --surface:rgba(26,27,34,.94); --raised:#34353D; --solid:#1A1B22; --fill:rgba(255,255,255,.12);
+    --fg:#F5F5F7; --fg2:#B9BAC4; --fg3:#A3A5B0; --line:rgba(255,255,255,.14);
+    --accent:#3DD6BF; --accent-soft:rgba(61,214,191,.16); --cta-bg:#3DD6BF; --cta-fg:#00231E; --on-ink:#0A0B10;
+    --ok:#3DD6BF; --danger:#FF8D9B; --urgent:#FF8D9B; --soon:#B9BAC4; --later:#B9BAC4;
+    --glass:rgba(40,41,48,.74); --cellg:rgba(255,255,255,.09); --cline:rgba(255,255,255,.15);
+    --shadow:0 10px 26px -18px rgba(0,0,0,.8); --shadow-lg:0 24px 70px -20px rgba(0,0,0,.8);
+    --wash:radial-gradient(120% 60% at 100% 0%,#143A66 0%,transparent 60%),radial-gradient(90% 55% at 0% 22%,#3A2470 0%,transparent 62%),radial-gradient(110% 60% at 80% 62%,#5A2A22 0%,transparent 60%),radial-gradient(100% 60% at 10% 100%,#0F4A40 0%,transparent 60%),#07090F;
+  }
+  .c-green{--c:#1FA862;--ct:#6FE0A4}.c-blue{--c:#3D83F2;--ct:#8DB8FF}.c-amber,.c-orange{--c:#D9801F;--ct:#FFB866}.c-violet{--c:#8E63F0;--ct:#BDA3FF}
+  .c-rose,.c-pink{--c:#E0488E;--ct:#FF93C1}.c-slate{--c:#7C8594;--ct:#B9BAC4}.c-gold{--c:#C99A1E;--ct:#F0C95A}.c-teal{--c:#14A3A8;--ct:#6FDDE0}.c-red{--c:#E0524F;--ct:#FF9A97}
+}
+body{background:var(--bg)}
+body::before{inset:0;height:auto;background:var(--wash)}
+.gl{background:var(--cellg);border:1px solid var(--cline);-webkit-backdrop-filter:blur(26px) saturate(1.7);backdrop-filter:blur(26px) saturate(1.7)}
+.tile-ic{background:var(--c);box-shadow:none}
+.av{background:var(--c);color:#fff;box-shadow:0 0 0 2px var(--cline)}
+.btn.primary{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 12px 24px -14px rgba(0,0,0,.5);border-radius:999px}
+.msg.u{background:var(--cta-bg);color:var(--cta-fg)}
+.send{background:var(--cta-bg);color:var(--cta-fg)}
+
+/* ================= Shell ================= */
+.x-app{max-width:560px;margin-inline:auto;min-height:100dvh;padding:0 20px calc(110px + env(safe-area-inset-bottom));position:relative}
+.x-tools{position:absolute;top:calc(env(safe-area-inset-top) + 12px);inset-inline-end:20px;z-index:6;display:flex;gap:8px}
+.x-tool{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:var(--glass);border:1px solid var(--cline);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px);color:var(--fg)}
+.x-tool svg{width:18px;height:18px}
+.x-title{padding-top:calc(env(safe-area-inset-top) + 64px)}
+.x-title h1{margin:0;font-size:1.625rem;font-weight:700;line-height:1.3}
+.x-title p{margin:0;font-size:.875rem;color:var(--fg2)}
+.x-chips{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding:14px 20px;margin-inline:-20px}
+.x-chips::-webkit-scrollbar{display:none}
+.x-chip{flex:none;min-height:32px;padding:0 12px;border-radius:999px;font-size:.75rem;font-weight:500;display:flex;align-items:center;gap:6px;position:relative}
+.x-chip::after{content:"";position:absolute;inset:-6px 0}                       /* 44px touch target behind a 32px chip */
+.x-chip[aria-pressed="true"]{background:var(--fg);color:var(--on-ink);border-color:transparent;font-weight:700}
+.x-cats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.x-cat{border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:14px;min-height:104px;justify-content:space-between;text-align:start;width:100%;box-shadow:inset 0 1px 0 rgba(255,255,255,.14),var(--shadow)}
+.x-cat .r{display:flex;justify-content:space-between;align-items:flex-start}
+.x-cat .ic{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;color:#fff;background:var(--c)}
+.x-cat .n{font-size:1.25rem;font-weight:700;line-height:1}
+.x-cat b{font-size:.9375rem;font-weight:700;display:block;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.x-cat small{font-size:.75rem;color:var(--fg2)}
+.x-listwrap{position:relative;padding-top:22px}
+
+/* The add field. Its body, hint, plus and assistant button are separate layers so it can fold into the plus. */
+.quick{position:relative;z-index:5;height:46px;border-radius:16px;background:none;box-shadow:none;padding-inline:10px 6px;margin-bottom:14px;gap:10px}
+.quick:focus-within{box-shadow:none}
+.quick:focus-within .qbg{box-shadow:0 0 0 2px var(--accent)}
+.quick .qbg{position:absolute;inset:0;border-radius:16px;transform-origin:100% 50%;will-change:transform,opacity;transition:box-shadow .2s}
+.quick .qp{position:relative;width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--cta-fg);display:grid;place-items:center;flex:none;will-change:transform}
+.quick .qp svg{width:15px;height:15px;stroke-width:2.6}
+.quick input{position:relative;font-size:1rem}
+.quick .qa{position:relative;width:34px;height:34px;border-radius:50%;background:var(--fill);color:var(--accent);display:grid;place-items:center;flex:none;will-change:transform}
+.quick .qa svg{width:17px;height:17px}
+.quick .send{position:relative;width:34px;height:34px;display:none}
+.quick.has .send{display:grid}.quick.has .qa{display:none}
+
+/* The list header pins to the top. Nothing sits behind it: the list dissolves where it meets it. */
+.x-lh{position:sticky;top:0;z-index:4;display:flex;justify-content:space-between;align-items:center;pointer-events:none;
+  margin:calc(-1*(env(safe-area-inset-top) + 2px)) 0 -8px;padding:calc(env(safe-area-inset-top) + 12px) 4px 18px}
+.x-lh .lt2{display:flex;align-items:center;gap:10px;min-width:0}
+.x-lh b{font-size:1rem;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.x-lh .hp,.x-lh .ha{width:30px;height:30px;flex:none;visibility:hidden}
+.x-lh .ha{position:absolute;inset-inline-end:4px;bottom:16px}
+.x-lh .sort{font-size:.75rem;color:var(--fg2);pointer-events:auto}
+.x-lh .sort.link{color:var(--accent);min-height:32px;padding:0 4px;font-weight:500}
+
+/* Rows: one glass sheet with hairlines, instead of a card each */
+#view .grid{gap:0;border-radius:22px;overflow:hidden;background:var(--cellg);border:1px solid var(--cline);-webkit-backdrop-filter:blur(26px) saturate(1.7);backdrop-filter:blur(26px) saturate(1.7)}
+#view .row{border-radius:0}
+#view .row+.row{border-top:1px solid var(--line)}
+#view .row-bg{border-radius:0}
+#view .card{background:none;box-shadow:none;border-radius:0;min-height:54px;padding-inline:4px 14px;gap:0}
+#view .card::after{display:none}
+#view .row.dragging .card,#view .row.armed .card{background:var(--solid)}
+#view .check{width:44px;height:48px}
+#view .check span{width:22px;height:22px;box-shadow:inset 0 0 0 1.5px var(--fg2)}
+#view .row.is-done .check span,#view .row.checking .check span{background:var(--accent);color:var(--cta-fg);box-shadow:none}
+#view .check svg{width:12px;height:12px;stroke-width:3.4}
+#view .body{padding:8px 0}
+#view .title{font-size:.9375rem;font-weight:500}
+#view .meta{font-size:.75rem;font-weight:400;gap:2px 8px;margin-top:0}
+#view .meta .hot{color:var(--urgent);font-weight:700}
+.mi{flex:none;width:26px;height:26px;border-radius:9px;display:grid;place-items:center;color:#fff;background:var(--c)}
+.mi svg{width:14px;height:14px}
+.amt{flex:none;font-size:.875rem;font-weight:700;margin-inline-end:10px;font-variant-numeric:tabular-nums}
+.x-sec{margin:22px 4px 10px;font-size:.875rem;font-weight:700;color:var(--fg2)}
+.x-sec:first-child{margin-top:0}
+.empty{padding:44px 16px}
+.empty .tile-ic{background:var(--fill);color:var(--accent)}
+
+/* Bills summary and next appointment */
+.x-sum{border-radius:22px;padding:16px;display:flex;align-items:center;gap:16px;margin-top:18px;box-shadow:var(--shadow)}
+.x-ring{width:64px;height:64px;flex:none;position:relative;display:grid;place-items:center;font-weight:700;font-size:1rem}
+.x-ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.x-ring circle{fill:none;stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset .7s var(--ease)}
+.x-sum b{font-size:1rem;font-weight:700;display:block}
+.x-sum small{font-size:.8125rem;color:var(--fg2);line-height:1.6;display:block}
+.x-note{margin:12px 4px 0;font-size:.75rem;color:var(--fg2);display:flex;align-items:center;gap:6px}
+.x-note svg{width:14px;height:14px}
+.x-next{border-radius:24px;padding:16px;display:flex;gap:14px;align-items:stretch;margin-top:18px;text-align:start;width:100%;box-shadow:var(--shadow)}
+.dt{flex:none;width:58px;border-radius:16px;background:var(--fill);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;line-height:1.15}
+.dt b{font-size:1.5rem;font-weight:700}
+.dt small{font-size:.6875rem;color:var(--urgent);font-weight:700}
+.dt.sm{width:44px;border-radius:13px;padding:6px 2px}.dt.sm b{font-size:1.0625rem}
+.x-next .in{flex:1;min-width:0}
+.x-next .tagline{font-size:.75rem;font-weight:700;color:var(--accent);padding:0;display:block}
+.x-next h2{margin:2px 0 0;font-size:1.125rem;font-weight:700;line-height:1.4}
+.x-next p{display:flex;align-items:center;gap:6px;font-size:.8125rem;color:var(--fg2);margin:4px 0 0}
+.x-next p svg{width:14px;height:14px}
+.bellx{flex:none;color:var(--fg2);display:flex;align-items:center;gap:4px;font-size:.6875rem;margin-inline-start:8px}
+.bellx svg{width:14px;height:14px}
+
+/* Floating tab bar */
+.x-tabs{position:fixed;z-index:30;bottom:calc(14px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:min(calc(100% - 32px),528px);height:58px;border-radius:999px;display:flex;align-items:center;padding:4px;
+  background:var(--glass);border:1px solid var(--cline);-webkit-backdrop-filter:blur(24px) saturate(1.8);backdrop-filter:blur(24px) saturate(1.8);box-shadow:var(--shadow-lg)}
+.x-tab{flex:1;height:50px;border-radius:999px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:.6875rem;font-weight:500;color:var(--fg2);transition:color .2s,background-color .25s,transform .14s ease-out}
+.x-tab:active{transform:scale(.94)}
+.x-tab svg{width:20px;height:20px}
+.x-tab[aria-current="true"]{background:var(--fill);color:var(--accent)}
+.toast{bottom:calc(86px + env(safe-area-inset-bottom))}
+
+/* Sheets in the new material */
+.sheet{background:var(--surface);-webkit-backdrop-filter:blur(30px) saturate(1.8);backdrop-filter:blur(30px) saturate(1.8);border-top:1px solid var(--cline);border-radius:32px 32px 0 0;gap:16px}
+.sheet::after,.sheet-h{background:var(--solid)}
+.sheet-h h2{font-size:1.125rem;font-weight:700}
+.field input:not([type=radio]){height:50px;border-radius:14px}
+.seg,.seg .thumb{border-radius:14px}.seg .thumb{border-radius:11px}
+.pick label:has(input:checked){background:var(--fg);color:var(--on-ink);box-shadow:none}
+.pick label:has(input:checked) .tile-ic{box-shadow:0 0 0 2px var(--on-ink)}
+.cols{display:flex;gap:10px;flex-wrap:wrap}
+.cols label{position:relative;width:32px;height:32px;border-radius:50%;background:var(--c);cursor:pointer}
+.cols input{position:absolute;inset:-6px;opacity:0;margin:0;width:44px;height:44px;cursor:pointer}
+.cols label:has(input:checked){box-shadow:0 0 0 2px var(--solid),0 0 0 4px var(--fg)}
+.icons{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;max-height:216px;overflow:auto;scrollbar-width:none;padding:2px}
+.icons label{position:relative;aspect-ratio:1;border-radius:12px;background:var(--fill);display:grid;place-items:center;cursor:pointer}
+.icons input{position:absolute;inset:0;opacity:0;margin:0;width:100%;height:100%;cursor:pointer}
+.icons label:has(input:checked){background:var(--pc,var(--accent));color:#fff}
+.icons svg{width:19px;height:19px}
+.prevtag{display:flex;align-items:center;gap:12px;border-radius:16px;padding:10px 12px;background:var(--fill)}
+.prevtag .tile-ic{width:40px;height:40px;border-radius:13px}
+.prevtag .tile-ic svg{width:20px;height:20px}
+.prevtag b{font-weight:700}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.setrow{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.setrow>span{font-size:.875rem}
+.setrow .seg{flex:none;width:170px}
+.auth{background:var(--bg)}
+.auth::before{background:var(--wash)}
+.auth-card .logo{background:var(--cta-bg);color:var(--cta-fg)}
+@media (prefers-reduced-transparency:reduce){.gl,.x-tabs,.x-tool,.sheet,#view .grid{-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--solid)}}
 </style>
 </head>
 <body>
 
-<div class="app">
-  <aside class="side" aria-label="القائمة الجانبية">
-    <div class="brand"><span class="logo" data-ic="home"></span>بيتنا</div>
-    <button class="btn primary block" id="sideNew"><span data-ic="plus" style="display:contents"></span>غرض جديد</button>
-    <nav aria-label="الأقسام"><ul class="nav-list" id="sideNav"></ul></nav>
-    <div><h2>التاقات</h2><ul class="nav-list" id="sideTags"></ul></div>
-    <button class="side-foot press" id="sideFoot" data-invite aria-label="الحساب والأشخاص"></button>
-  </aside>
+<div class="x-app" id="app">
+  <div class="x-tools" id="xTools"><button class="x-tool press" data-invite aria-label="الحساب والأشخاص" data-ic="users"></button></div>
 
-  <main class="main">
-    <div class="bar" id="bar">
-      <div class="bar-title" id="barTitle" aria-hidden="true"></div>
-      <button class="avatars press" id="barAv" data-invite aria-label="الحساب والأشخاص"></button>
-      <button class="round press" data-gpt aria-label="المساعد" data-ic="spark"></button>
-      <button class="round press" data-invite aria-label="دعوة شخص" data-ic="userPlus"></button>
-    </div>
-    <header class="lt"><div><p class="eyebrow" id="eyebrow"></p><h1 id="ltitle"></h1></div>
-      <div class="ring" id="ring" role="img"><svg viewBox="0 0 64 64" aria-hidden="true"><circle class="tr" cx="32" cy="32" r="26"/><circle class="pr" id="ringPr" cx="32" cy="32" r="26"/></svg><b class="num" id="ringPct"></b></div></header>
+  <header class="x-title" id="xTitle"><h1 id="ltitle"></h1><p id="eyebrow"></p></header>
+  <div class="x-chips" id="xChips" role="group" aria-label="تصفية حسب الفئة"></div>
+  <div id="xHero"></div>
 
-    <div class="tiles" id="tiles" role="group" aria-label="تصفية حسب التاق"></div>
-
+  <div class="x-listwrap">
     <form class="quick" id="quick">
-      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      <span class="qbg gl" aria-hidden="true"></span>
+      <button type="button" class="qp" id="qPlus" aria-label="إضافة" data-ic="plus"></button>
       <label class="sr" for="qIn">إضافة سريعة</label>
       <input id="qIn" autocomplete="off" enterkeyhint="done">
       <button class="send" type="submit" aria-label="إضافة" data-ic="up"></button>
+      <button type="button" class="qa" id="qAi" data-gpt aria-label="المساعد" data-ic="spark"></button>
     </form>
-    <button class="appt-add" id="apptAdd" hidden><span data-ic="plus" style="display:contents"></span>موعد جديد</button>
-
+    <div class="x-lh" id="xLh"><span class="lt2"><b id="lhTitle"></b><i class="hp"></i></span><span id="lhEnd"></span><i class="ha"></i></div>
     <div id="view"></div>
-  </main>
+  </div>
 </div>
 
-<div class="dock" id="dock">
-  <nav class="pill" id="pill" aria-label="التنقل الرئيسي">
-    <span class="thumb"></span>
-    <button class="tab" data-view="home"><span data-ic="home"></span>الرئيسية</button>
-    <button class="tab" data-view="done"><span data-ic="done"></span>منتهي</button>
-  </nav>
-  <button class="plus" id="plus" aria-label="غرض جديد" data-ic="plus"></button>
-</div>
+<nav class="x-tabs" id="xTabs" aria-label="التنقل الرئيسي">
+  <button class="x-tab" data-view="home"><span data-ic="home" style="display:contents"></span>الرئيسية</button>
+  <button class="x-tab" data-view="bills"><span data-ic="receipt" style="display:contents"></span>مصاريفي</button>
+  <button class="x-tab" data-view="appts"><span data-ic="cal" style="display:contents"></span>المواعيد</button>
+  <button class="x-tab" data-view="done"><span data-ic="done" style="display:contents"></span>منتهي</button>
+</nav>
+
+<dialog class="modal" id="billDlg" aria-labelledby="billTitle">
+  <div class="scrim" data-close></div>
+  <form class="sheet" id="billForm" novalidate>
+    <div class="sheet-h"><span class="grabber"></span><h2 id="billTitle">فاتورة جديدة</h2><button type="button" class="x press" data-close aria-label="إغلاق" data-ic="x"></button></div>
+    <div class="field">
+      <label for="bName">اسم الفاتورة</label>
+      <input id="bName" autocomplete="off" placeholder="فاتورة الكهرباء" aria-describedby="bErr">
+      <p class="err" id="bErr" role="alert">اكتب اسم الفاتورة.</p>
+    </div>
+    <div class="field">
+      <label for="bAmount">المبلغ بالريال (اختياري)</label>
+      <input id="bAmount" inputmode="decimal" autocomplete="off" placeholder="340" dir="ltr" style="text-align:end">
+      <p class="help">تتكرر كل شهر، وعلامة السداد تنمسح تلقائياً يوم ٢٠.</p>
+    </div>
+    <div class="actions">
+      <button type="button" class="del press" id="bDelete" aria-label="حذف الفاتورة" data-ic="trash" hidden></button>
+      <button type="submit" class="btn primary" id="bSubmit">إضافة الفاتورة</button>
+    </div>
+  </form>
+</dialog>
 
 <div class="toast" id="toast" role="status" aria-live="polite"><span id="toastMsg"></span><button id="toastUndo">تراجع</button></div>
 
@@ -365,7 +541,7 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
       <p class="help" id="fTitleHelp">افصل بفاصلة لإضافة أكثر من غرض مرة وحدة.</p>
       <p class="err" id="fTitleErr" role="alert">اكتب اسم الغرض أولاً.</p>
     </div>
-    <fieldset class="field"><legend>التاق</legend><div class="pick" id="fTags"></div></fieldset>
+    <fieldset class="field"><legend>الفئة</legend><div class="pick" id="fTags"></div></fieldset>
     <fieldset class="field"><legend>مستوى الأهمية</legend><div class="seg" id="fPrio"></div></fieldset>
     <div class="field"><label for="fDue">تذكير (اختياري)</label><input id="fDue" type="datetime-local"></div>
     <div class="actions">
@@ -405,7 +581,7 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
   <form class="sheet" id="pickForm" novalidate>
     <div class="sheet-h"><span class="grabber"></span><h2 id="pickTitle">وين نضيفها؟</h2><button type="button" class="x press" data-close aria-label="إغلاق" data-ic="x"></button></div>
     <p class="pick-names" id="pickNames"></p>
-    <fieldset class="field"><legend>التاق</legend><div class="pick sm" id="pTags"></div></fieldset>
+    <fieldset class="field"><legend>الفئة</legend><div class="pick sm" id="pTags"></div></fieldset>
     <fieldset class="field"><legend>الأهمية</legend><div class="seg" id="pPrio"></div></fieldset>
     <button type="submit" class="btn primary block">إتمام</button>
   </form>
@@ -414,14 +590,16 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 <dialog class="modal" id="tagDlg" aria-labelledby="tagDlgTitle">
   <div class="scrim" data-close></div>
   <form class="sheet" id="tagForm" novalidate>
-    <div class="sheet-h"><span class="grabber"></span><h2 id="tagDlgTitle">تاق جديد</h2><button type="button" class="x press" data-close aria-label="إغلاق" data-ic="x"></button></div>
+    <div class="sheet-h"><span class="grabber"></span><h2 id="tagDlgTitle">فئة جديدة</h2><button type="button" class="x press" data-close aria-label="إغلاق" data-ic="x"></button></div>
     <div class="field">
-      <label for="tName">اسم التاق</label>
-      <input id="tName" autocomplete="off" placeholder="الصيدلية" aria-describedby="tErr">
-      <p class="err" id="tErr" role="alert">اكتب اسم التاق.</p>
+      <label for="tName">اسم الفئة</label>
+      <input id="tName" autocomplete="off" placeholder="الصيدلية" aria-describedby="tErr" maxlength="24">
+      <p class="err" id="tErr" role="alert">اكتب اسم الفئة.</p>
     </div>
-    <fieldset class="field"><legend>اللون</legend><div class="pick" id="tColors"></div></fieldset>
-    <button type="submit" class="btn primary block">إنشاء التاق</button>
+    <div class="prevtag" id="tPrev"></div>
+    <fieldset class="field"><legend>اللون</legend><div class="cols" id="tColors"></div></fieldset>
+    <fieldset class="field"><legend>الأيقونة</legend><div class="icons" id="tIcons"></div></fieldset>
+    <button type="submit" class="btn primary block">إنشاء الفئة</button>
   </form>
 </dialog>
 
@@ -443,6 +621,7 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
       <p class="err" id="invErr" role="alert">اكتب الرمز كاملاً بهذا الشكل: BYT-XXXXXX</p>
     </div>
     <button type="submit" class="btn primary block">انضمام بالرمز</button>
+    <div class="setrow" id="iconRow"><span>أيقونة التطبيق</span><div class="seg two" id="iconSeg" role="tablist" data-i="0"><span class="thumb"></span><button type="button" role="tab" data-icon="night">ليلية</button><button type="button" role="tab" data-icon="day">نهارية</button></div></div>
     <button type="button" class="btn soft block" data-logout style="color:var(--danger)">تسجيل الخروج</button>
     <p class="help" id="appVer" style="margin:0;text-align:center" dir="ltr"></p>
   </form>
@@ -453,7 +632,7 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
   <form class="sheet" id="gptForm" novalidate>
     <div class="sheet-h"><span class="grabber"></span><h2 id="gptTitle">المساعد</h2><button type="button" class="x press" data-close aria-label="إغلاق" data-ic="x"></button></div>
     <div class="stack" id="gptOut">
-      <p style="margin:0 4px;color:var(--fg2);line-height:1.8">اكتب له بكلامك العادي وهو يضيف الأغراض والمواعيد ويرتبها بالتاقات. يشتغل باشتراكك في ChatGPT بدون أي رسوم إضافية.</p>
+      <p style="margin:0 4px;color:var(--fg2);line-height:1.8">اكتب له بكلامك العادي وهو يضيف الأغراض والمواعيد ويرتبها بالفئات. يشتغل باشتراكك في ChatGPT بدون أي رسوم إضافية.</p>
       <button type="button" class="btn primary block" id="gptLogin">Continue with ChatGPT</button>
       <div class="field" id="gptPasteBox" hidden>
         <label for="gptPaste">وافقت وما رجع التطبيق لحاله؟</label>
@@ -500,7 +679,7 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 
 <script src="vendor/supabase.js"></script>
 <script>
-const I = {
+const I_OLD = {
   home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',
   done:'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
   users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
@@ -524,6 +703,64 @@ const I = {
   undo:'<path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>',
   logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>'
 };
+const I_NEW = {
+  cart:'<circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>',
+  house:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',
+  car:'<path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M9 17h6"/>',
+  flower:'<circle cx="12" cy="12" r="2.4"/><circle cx="12" cy="5.6" r="3"/><circle cx="18.1" cy="10" r="3"/><circle cx="15.8" cy="17.2" r="3"/><circle cx="8.2" cy="17.2" r="3"/><circle cx="5.9" cy="10" r="3"/>',
+  heart:'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
+  wrench:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  pill:'<path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/>',
+  book:'<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>',
+  cap:'<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
+  shirt:'<path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>',
+  gift:'<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/>',
+  paw:'<circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z"/>',
+  plane:'<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
+  phone:'<rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/>',
+  wifi:'<path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 8.82a15 15 0 0 1 20 0M12 20h.01"/>',
+  bolt:'<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>',
+  drop:'<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>',
+  flame:'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+  leaf:'<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
+  moon:'<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+  star:'<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>',
+  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+  tv:'<rect x="2" y="7" width="20" height="15" rx="2"/><path d="m17 2-5 5-5-5"/>',
+  bed:'<path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/>',
+  bath:'<path d="M9 6 6.5 3.5a1.5 1.5 0 0 0-1-.5C4.683 3 4 3.683 4 4.5V17a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5M2 12h20M7 19v2M17 19v2"/>',
+  trash:'<path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  box:'<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/>',
+  key:'<circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/>',
+  lock:'<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  briefcase:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+  card:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',
+  receipt:'<path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+  bank:'<path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M12 2l8 5H4z"/>',
+  dumbbell:'<path d="M6.5 6.5l11 11M21 21l-1-1M3 3l1 1M18 22l4-4M2 6l4-4M3 10l7-7M14 21l7-7"/>',
+  fuel:'<path d="M3 22h12M4 9h10M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2 2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/>',
+  coffee:'<path d="M17 8h1a4 4 0 1 1 0 8h-1M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4ZM6 2v2M10 2v2M14 2v2"/>',
+  food:'<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>',
+  scissors:'<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.12 8.12 12 12M20 4 8.12 15.88M14.8 14.8 20 20"/>',
+  pencil:'<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>',
+  globe:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
+  pin:'<path d="M20 10c0 5-8 12-8 12s-8-7-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>',
+  clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  apple:'<path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/><path d="M10 2c1 .5 2 2 2 5"/>',
+  bag:'<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4ZM3 6h18M16 10a4 4 0 0 1-8 0"/>',
+  tag:'<path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5"/>',
+  camera:'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/>',
+  music:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+  users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  cal:'<rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  done:'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>', ok:'<path d="M20 6 9 17l-5-5"/>', x:'<path d="M18 6 6 18M6 6l12 12"/>',
+  spark:'<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>',
+  refresh:'<path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/>'
+};
+const I = {...I_OLD, ...I_NEW};
+
 const ic = n => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${I[n]}</svg>`;
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $ = s => document.querySelector(s), $$ = s => document.querySelectorAll(s);
@@ -532,6 +769,7 @@ const reduced = () => matchMedia('(prefers-reduced-motion:reduce)').matches;
 const EASE = 'cubic-bezier(.2,.8,.2,1)';
 const buzz = n => { try { navigator.vibrate && navigator.vibrate(n); } catch {} };
 $$('[data-ic]').forEach(e => e.innerHTML = ic(e.dataset.ic));
+
 
 /* ---------- Physics ---------- */
 // Spring with Apple-style parameters: damping ratio + response (seconds). Starts from the live value and carries velocity.
@@ -557,9 +795,11 @@ const tracker = () => { const h = []; return {
   add(x){ const t = performance.now(); h.push([t, x]); while (h.length > 2 && t - h[0][0] > 100) h.shift(); },
   v(){ if (h.length < 2) return 0; const a = h[0], b = h[h.length - 1], dt = (b[0] - a[0]) / 1000; return dt > 0 ? (b[1] - a[1]) / dt : 0; } }; };
 
+
 /* ---------- State ---------- */
 const PRIO = [{id:'urgent', name:'مستعجل', icon:'urgent'}, {id:'soon', name:'متى ما أمكن', icon:'soon'}, {id:'later', name:'مو ضروري', icon:'later'}];
-const COLORS = [['green','أخضر'],['blue','أزرق'],['amber','برتقالي'],['violet','بنفسجي'],['rose','وردي'],['slate','رمادي']];
+const COLORS = ['teal','green','blue','violet','rose','red','amber','gold','slate'];
+const TAG_ICONS = ['cart','house','car','flower','heart','wrench','pill','book','cap','shirt','gift','paw','plane','phone','wifi','bolt','drop','flame','leaf','sun','moon','star','bell','tv','bed','bath','trash','box','key','lock','briefcase','card','receipt','bank','dumbbell','fuel','coffee','food','scissors','pencil','globe','pin','clock','apple','bag','tag','camera','music'];
 const MCOL = ['blue','rose','green','violet','amber','slate'];           // avatar colour per person, by join order
 const CODE_RE = /^BYT-?[A-Z0-9]{6}$/i;
 
@@ -570,8 +810,8 @@ const sb = window.supabase.createClient(SB_URL, SB_KEY);
 
 const APP_VER = 'dev';                                    // CI replaces this with the build number
 $('#appVer').textContent = 'بيتنا ' + APP_VER;
-const KEY = 'baytna-cache-v1';
-const blank = () => ({view:'home', filter:'all', me:null, hid:null, space:{name:'بيتنا', code:'', members:[]}, tags:[], items:[]});
+const KEY = 'baytna-cache-v2';
+const blank = () => ({view:'home', filter:'all', me:null, hid:null, space:{name:'بيتنا', code:'', members:[]}, tags:[], items:[], bills:[]});
 let S = blank();
 try { const c = JSON.parse(localStorage.getItem(KEY)); if (c && c.me) S = Object.assign(blank(), c, {view:'home', filter:'all'}); } catch {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} };
@@ -582,26 +822,32 @@ const fromRow = r => ({kind:r.kind || 'item', loc:r.location || '', remind:r.rem
 const toRow = it => ({id:it.id, household_id:S.hid, title:it.title, tag_id:it.tag || null, prio:it.prio, created_by:it.by || null, due:it.due ? new Date(it.due).toISOString() : null,
   done:!!it.done, done_at:it.doneAt ? new Date(it.doneAt).toISOString() : null, done_by:it.doneBy || null,
   ...(it.kind === 'appt' ? {kind:'appt', location:it.loc || null, remind_min:it.remind == null ? null : it.remind} : {})});
+const billFrom = r => ({id:r.id, title:r.title, amount:r.amount == null ? null : +r.amount, icon:r.icon || 'receipt', color:r.color || 'teal', paid:!!r.paid, paidBy:r.paid_by || undefined});
+const billRow = b => ({id:b.id, household_id:S.hid, title:b.title, amount:b.amount == null ? null : b.amount, icon:b.icon, color:b.color, paid:!!b.paid, paid_by:b.paid ? b.paidBy || null : null, paid_at:b.paid ? new Date().toISOString() : null});
 
 // The UI updates first; the write follows. A failed write says so and reloads the truth.
 const run = async q => { const {error} = await q; if (error){ console.error(error); toast('تعذّر الحفظ، تحقق من الاتصال'); load(); } };
 const db = {
   saveItems: its => Promise.all([its.filter(i => i.kind !== 'appt'), its.filter(i => i.kind === 'appt')].filter(g => g.length).map(g => run(sb.from('items').upsert(g.map(toRow))))),
   delItems: ids => run(sb.from('items').delete().in('id', ids)),
-  addTag: t => run(sb.from('tags').insert({id:t.id, household_id:S.hid, name:t.name, color:t.color, icon:t.icon}))
+  addTag: t => run(sb.from('tags').insert({id:t.id, household_id:S.hid, name:t.name, color:t.color, icon:t.icon})),
+  saveBills: bs => run(sb.from('bills').upsert(bs.map(billRow))),
+  delBills: ids => run(sb.from('bills').delete().in('id', ids))
 };
 
 async function load(){
-  const [pr, hh, tg, it] = await Promise.all([
+  const [pr, hh, tg, it, bl] = await Promise.all([
     sb.from('profiles').select('id,name,email,created_at').order('created_at'),
     sb.from('households').select('id,code').maybeSingle(),
     sb.from('tags').select('id,name,color,icon').order('created_at'),
-    sb.from('items').select('*').order('created_at', {ascending:false})]);
+    sb.from('items').select('*').order('created_at', {ascending:false}),
+    sb.from('bills').select('*').order('created_at')]);
   if (pr.error || hh.error || tg.error || it.error || !hh.data){ console.error(pr.error || hh.error || tg.error || it.error || 'no household'); toast('تعذّر تحميل البيانات، تحقق من الاتصال'); return false; }
+  if (bl.error) console.warn('bills', bl.error);                  // an older database without the bills table still opens
   S.hid = hh.data.id; S.space.code = hh.data.code;
   S.space.members = pr.data.map((m, i) => ({id:m.id, name:m.name, email:m.email || '', color:MCOL[i % MCOL.length]}));
-  S.tags = tg.data; S.items = it.data.map(fromRow);
-  if (S.filter !== 'all' && S.filter !== 'appt' && !S.tags.some(t => t.id === S.filter)) S.filter = 'all';
+  S.tags = tg.data; S.items = it.data.map(fromRow); S.bills = bl.error ? S.bills : bl.data.map(billFrom);
+  if (S.filter !== 'all' && !S.tags.some(t => t.id === S.filter)) S.filter = 'all';
   render(); subscribe(); return true;
 }
 // Realtime: any change by anyone in the household refreshes the list. Row-level security limits what arrives.
@@ -610,109 +856,124 @@ const ping = () => { clearTimeout(relT); relT = setTimeout(() => (sw || !S.me) ?
 function subscribe(){
   if (chan) return;
   chan = sb.channel('household');
-  for (const table of ['items', 'tags', 'profiles']) chan.on('postgres_changes', {event:'*', schema:'public', table}, ping);
+  for (const table of ['items', 'tags', 'profiles', 'bills']) chan.on('postgres_changes', {event:'*', schema:'public', table}, ping);
   chan.subscribe();
 }
 function unsubscribe(){ if (chan){ sb.removeChannel(chan); chan = null; } }
 document.addEventListener('visibilitychange', () => { if (!document.hidden && S.me) ping(); });
 
-const tagOf = id => S.tags.find(t => t.id === id) || {name:'بدون تاق', color:'slate', icon:'tag'};
+const icOf = n => I[n] ? n : 'tag';
+const tagOf = id => { const t = S.tags.find(t => t.id === id); return t ? {...t, icon:icOf(t.icon)} : {name:'بدون فئة', color:'slate', icon:'tag'}; };
 const memOf = id => S.space.members.find(m => m.id === id) || {name:'؟', color:'slate'};
 const isAppt = i => i.kind === 'appt';
 const active = () => S.items.filter(i => !i.done && !isAppt(i));          // household items: the main thing
 const appts = () => S.items.filter(i => !i.done && isAppt(i)).sort((a, b) => (a.due || '').localeCompare(b.due || ''));
 const REMIND = [[0, 'وقت الموعد'], [15, 'قبل ١٥ دقيقة'], [60, 'قبل ساعة'], [1440, 'قبل يوم'], [null, 'بدون تذكير']];
-const fmtDue = d => new Intl.DateTimeFormat('ar-SA-u-nu-latn-ca-gregory', {weekday:'short', day:'numeric', month:'short', hour:'numeric', minute:'2-digit'}).format(new Date(d));
+const AR = 'ar-SA-u-nu-latn-ca-gregory';
+const fmtDue = d => new Intl.DateTimeFormat(AR, {weekday:'short', day:'numeric', month:'short', hour:'numeric', minute:'2-digit'}).format(new Date(d));
+const fmtTime = d => new Intl.DateTimeFormat(AR, {weekday:'long', hour:'numeric', minute:'2-digit'}).format(new Date(d));
+const fmtMoney = n => new Intl.NumberFormat('ar-SA-u-nu-latn', {maximumFractionDigits:2}).format(n);
 const avatar = (m, cls = '') => `<span class="av ${cls} c-${m.color}" title="${esc(m.name)}" aria-label="${esc(m.name)}">${esc(m.name[0])}</span>`;
-const tileIc = (t, cls = '') => `<span class="tile-ic ${cls} c-${t.color}">${ic(t.icon)}</span>`;
+const tileIc = (t, cls = '') => `<span class="tile-ic ${cls} c-${t.color}">${ic(icOf(t.icon))}</span>`;
+const dateTile = (d, sm) => { const x = new Date(d); return `<span class="dt${sm ? ' sm' : ''}"><small>${new Intl.DateTimeFormat(AR, {month:'short'}).format(x)}</small><b>${x.getDate()}</b></span>`; };
+const dayDiff = d => Math.round((new Date(d).setHours(0, 0, 0, 0) - new Date().setHours(0, 0, 0, 0)) / 864e5);
+const inDays = n => n < 0 ? 'فات موعده' : n === 0 ? 'اليوم' : n === 1 ? 'بكرة' : n === 2 ? 'بعد يومين' : n <= 10 ? `بعد ${n} أيام` : `بعد ${n} يوم`;
+const remindText = m => m == null ? '' : (REMIND.find(r => r[0] === m) || [0, ''])[1];
+const plural = (n, one, two, few, many) => n === 1 ? one : n === 2 ? two : n >= 3 && n <= 10 ? `${n} ${few}` : `${n} ${many}`;
+// Paid marks clear on the 20th of every month; this is only for telling the user how long is left.
+const daysToReset = () => { const now = new Date(), r = new Date(now.getFullYear(), now.getMonth() + (now.getDate() >= 20 ? 1 : 0), 20); return Math.round((r - new Date(now.getFullYear(), now.getMonth(), now.getDate())) / 864e5); };
 
 /* ---------- Views ---------- */
+const swipeBg = done => `<div class="row-bg" aria-hidden="true"><span class="bg-ok">${ic(done ? 'undo' : 'check')}</span><span class="bg-del">${ic('trash')}</span></div>`;
 function row(it){
-  const t = tagOf(it.tag), p = PRIO.find(p => p.id === it.prio);
-  return `<div class="row ${it.done ? 'is-done' : ''}" data-id="${it.id}" data-flip="${it.id}">
-    <div class="row-bg" aria-hidden="true"><span class="bg-ok">${ic(it.done ? 'undo' : 'check')}</span><span class="bg-del">${ic('trash')}</span></div>
+  const t = tagOf(it.tag), ap = isAppt(it);
+  const meta = ap ? `<span>${it.due ? fmtDue(it.due) : 'بدون تاريخ'}</span>${it.loc ? `<span>${esc(it.loc)}</span>` : ''}`
+    : `${it.prio === 'urgent' ? '<span class="hot">مستعجل</span>' : ''}<span>${esc(t.name)}</span>${it.prio === 'later' ? '<span>مو ضروري</span>' : ''}${it.due && !it.done ? `<span>${ic('bell')}${fmtDue(it.due)}</span>` : ''}`;
+  return `<div class="row ${it.done ? 'is-done' : ''}" data-id="${it.id}" data-flip="${it.id}">${swipeBg(it.done)}
     <article class="card">
       <button class="check" data-toggle="${it.id}" aria-label="${it.done ? 'إرجاع' : 'إنهاء'} «${esc(it.title)}»"><span>${ic('check')}</span></button>
-      <button class="body" data-edit="${it.id}" aria-label="تعديل «${esc(it.title)}»">
-        <div class="title">${esc(it.title)}</div>
-        <div class="meta">
-          ${isAppt(it) ? `<span class="tg c-gold">${ic('cal')}${it.due ? fmtDue(it.due) : 'بدون تاريخ'}</span>${it.loc ? `<span>${ic('pin')}${esc(it.loc)}</span>` : ''}` : `<span class="tg c-${t.color}"><i class="dot"></i>${esc(t.name)}</span>`}
-          ${!isAppt(it) && (it.prio !== 'soon' || it.done) ? `<span class="p-${p.id}" style="color:var(--pc)">${ic(p.icon)}${p.name}</span>` : ''}
-          ${it.due && !it.done && !isAppt(it) ? `<span>${ic('bell')}${fmtDue(it.due)}</span>` : ''}
-        </div>
-      </button>
-      ${avatar(memOf(it.done ? it.doneBy || it.by : it.by), 'sm')}
-    </article>
-  </div>`;
+      <button class="body" data-edit="${it.id}" aria-label="تعديل «${esc(it.title)}»"><div class="title">${esc(it.title)}</div><div class="meta">${meta}</div></button>
+      ${ap ? (it.remind != null && !it.done ? `<span class="bellx">${ic('bell')}${remindText(it.remind)}</span>` : '') + (it.due ? dateTile(it.due, 1) : '') : `<span class="mi c-${t.color}">${ic(t.icon)}</span>`}
+    </article></div>`;
 }
-const emptyBox = (icon, b, p) => `<div class="empty" data-flip="empty"><span class="tile-ic c-gold">${ic(icon)}</span><b>${b}</b>${p}</div>`;
+function billRowHtml(b){
+  return `<div class="row ${b.paid ? 'is-done' : ''}" data-id="${b.id}" data-kind="bill" data-flip="${b.id}">${swipeBg(b.paid)}
+    <article class="card">
+      <button class="check" data-pay="${b.id}" aria-label="${b.paid ? 'إلغاء سداد' : 'سداد'} «${esc(b.title)}»"><span>${ic('check')}</span></button>
+      <button class="body" data-bill="${b.id}" aria-label="تعديل «${esc(b.title)}»"><div class="title">${esc(b.title)}</div><div class="meta"><span>${b.paid ? 'سدّدها ' + esc(memOf(b.paidBy).name) : 'ما تسدّدت'}</span></div></button>
+      ${b.amount != null ? `<span class="amt">${fmtMoney(b.amount)}</span>` : ''}<span class="mi c-${b.color}">${ic(icOf(b.icon))}</span>
+    </article></div>`;
+}
+const emptyBox = (icon, b, p) => `<div class="empty" data-flip="empty"><span class="tile-ic">${ic(icon)}</span><b>${b}</b>${p}</div>`;
+const grid = rows => `<div class="grid">${rows.join('')}</div>`;
 
 const ORD = {urgent:0, soon:1, later:2};
-function viewHome(list, cur, appt){
-  if (appt) return list.length ? `<div class="grid">${list.map(row).join('')}</div>` : emptyBox('cal', 'ما فيه مواعيد قادمة', 'أضف موعداً من الزر فوق.');
-  if (!list.length) return emptyBox('done', 'كل شيء منتهي', cur ? 'ما فيه أغراض معلّقة في هذا التاق.' : 'أضف أول غرض من الحقل فوق.');
-  return `<div class="grid">${[...list].sort((a, b) => ORD[a.prio] - ORD[b.prio]).map(row).join('')}</div>`;
-}
-function viewDone(){
-  const list = S.items.filter(i => i.done).sort((a, b) => (b.doneAt || 0) - (a.doneAt || 0));
-  return list.length ? `<div class="row-h" data-flip="rh"><span class="hint" style="margin:0">اضغط الدائرة أو اسحب البطاقة لإرجاع الغرض.</span><button class="link" data-clear>مسح الكل</button></div><div class="grid">${list.map(row).join('')}</div>`
-    : emptyBox('done', 'ما فيه شيء هنا', 'الأغراض اللي تنهونها تنتقل لهذي القائمة.');
-}
-const NAV = [['home','الرئيسية','home'],['done','منتهي','done']];
+const TABS = {home:'الرئيسية', bills:'مصاريفي', appts:'المواعيد', done:'منتهي'};
 let lastView = null;
 function render(){
   const view = $('#view'), prev = new Map();
   $$('#view [data-flip]').forEach(e => prev.set(e.dataset.flip, e.getBoundingClientRect()));
-  const all = active(), ap = appts(), doneN = S.items.filter(i => i.done).length, home = S.view === 'home';
-  const appt = home && S.filter === 'appt';
-  const cur = home && S.filter !== 'all' && !appt ? tagOf(S.filter) : null;
-  const list = appt ? ap : cur ? all.filter(i => i.tag === S.filter) : all;
+  const all = active(), ap = appts(), doneList = S.items.filter(i => i.done).sort((a, b) => (b.doneAt || 0) - (a.doneAt || 0));
+  const V = S.view, cur = V === 'home' && S.filter !== 'all' ? tagOf(S.filter) : null;
+  const list = cur ? all.filter(i => i.tag === S.filter) : all;
+  const urgent = all.filter(i => i.prio === 'urgent').length, paid = S.bills.filter(b => b.paid), unpaid = S.bills.filter(b => !b.paid);
 
-  const title = S.view === 'done' ? 'منتهي' : appt ? 'المواعيد' : cur ? cur.name : S.space.name;
-  $('#ltitle').textContent = $('#barTitle').textContent = title;
-  $('#eyebrow').textContent = S.view === 'done' ? `${doneN} مكتمل` : appt ? `${list.length} موعد قادم` : cur ? `${list.length} بانتظاركم` : `${new Date().getHours() < 12 ? 'صباح الخير' : 'مساء الخير'}، ${memOf(S.me).name}${all.some(i => i.prio === 'urgent') ? ' · ' + all.filter(i => i.prio === 'urgent').length + ' مستعجلة' : ''}`;
-  $('#barAv').innerHTML = S.space.members.map(m => avatar(m)).join('');
+  $('#ltitle').textContent = V === 'home' ? (cur ? cur.name : S.space.name) : TABS[V];
+  $('#eyebrow').textContent = V === 'home' ? (list.length ? plural(list.length, 'غرض واحد ناقص', 'غرضين ناقصة', 'أغراض ناقصة', 'غرض ناقص') + (urgent && !cur ? `، ${plural(urgent, 'واحد مستعجل', 'اثنين مستعجلة', 'مستعجلة', 'مستعجل')}` : '') : 'ما فيه شيء ناقص')
+    : V === 'bills' ? 'فواتير شهر ' + new Intl.DateTimeFormat(AR, {month:'long'}).format(new Date())
+    : V === 'appts' ? (ap.length ? plural(ap.length, 'موعد واحد قادم', 'موعدين قادمة', 'مواعيد قادمة', 'موعد قادم') : 'ما فيه مواعيد قادمة')
+    : plural(doneList.length, 'غرض واحد مكتمل', 'غرضين مكتملة', 'أغراض مكتملة', 'غرض مكتمل');
 
-  const pct = S.items.length ? doneN / S.items.length : 0;
-  $('#ring').hidden = !home;
-  $('#ringPr').style.strokeDashoffset = 163.4 * (1 - pct);
-  $('#ringPct').textContent = list.length;
-  $('#ring').setAttribute('aria-label', `${list.length} بانتظاركم، أُنجز ${doneN}`);
+  // Small filter strip
+  $('#xChips').hidden = V !== 'home';
+  $('#xChips').innerHTML = `<button class="x-chip gl" data-filter="all" aria-pressed="${S.filter === 'all'}">الكل</button>`
+    + S.tags.map(t => `<button class="x-chip gl" data-filter="${t.id}" aria-pressed="${S.filter === t.id}">${esc(t.name)}</button>`).join('')
+    + `<button class="x-chip gl" data-newtag>+ فئة</button>`;
 
-  $('#tiles').hidden = !home; $('#quick').hidden = !home || appt; $('#apptAdd').hidden = !appt;
-  $('#tiles').innerHTML = `<button class="tile c-gold" data-filter="all" aria-pressed="${S.filter === 'all'}"><span class="tile-ic sm c-gold">${ic('grid')}</span><span class="tile-name">الكل</span><b class="num">${all.length}</b></button>`
-    + S.tags.map(t => `<button class="tile c-${t.color}" data-filter="${t.id}" aria-pressed="${S.filter === t.id}">${tileIc(t, 'sm')}<span class="tile-name">${esc(t.name)}</span><b class="num">${all.filter(i => i.tag === t.id).length}</b></button>`).join('')
-    + `<button class="tile c-gold" data-filter="appt" aria-pressed="${S.filter === 'appt'}"><span class="tile-ic sm c-slate">${ic('cal')}</span><span class="tile-name">المواعيد</span><b class="num">${ap.length}</b></button>`
-    + `<button class="tile new" data-newtag>${ic('plus')}تاق</button>`;
-  $('#qIn').placeholder = cur ? `أضف إلى ${cur.name}…` : 'خبز، عصير، حليب…';
+  // Hero: category cards on the home screen, the month's summary on bills, the next appointment on appointments
+  const hero = $('#xHero');
+  if (V === 'home' && !cur) hero.innerHTML = S.tags.length ? `<div class="x-cats">${S.tags.map(t0 => { const t = tagOf(t0.id), n = all.filter(i => i.tag === t.id).length;
+      return `<button class="x-cat gl press c-${t.color}" data-filter="${t.id}" data-fade><span class="r"><span class="ic">${ic(t.icon)}</span><span class="n num">${n}</span></span><span><b>${esc(t.name)}</b><small>${n ? plural(n, 'غرض واحد', 'غرضين', 'أغراض ناقصة', 'غرض ناقص') : 'ما فيه شيء ناقص'}</small></span></button>`; }).join('')}</div>` : '';
+  else if (V === 'bills' && S.bills.length){
+    const left = unpaid.filter(b => b.amount != null).reduce((s, b) => s + b.amount, 0), d = daysToReset();
+    hero.innerHTML = `<div class="x-sum gl" data-fade><div class="x-ring num"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27" stroke="var(--fill)"/><circle cx="32" cy="32" r="27" stroke="var(--accent)" stroke-dasharray="170" stroke-dashoffset="${170 - 170 * paid.length / S.bills.length}"/></svg>${paid.length}/${S.bills.length}</div>
+      <div><b>${unpaid.length ? `سدّدتوا ${paid.length} من ${S.bills.length}` : 'كل الفواتير مسدّدة'}</b><small>${unpaid.length ? `الباقي ${plural(unpaid.length, 'فاتورة وحدة', 'فاتورتين', 'فواتير', 'فاتورة')}${left ? `، مجموعها ${fmtMoney(left)} ريال` : ''}` : 'ما بقي شيء لهذا الشهر'}</small></div></div>
+      <p class="x-note" data-fade>${ic('refresh')}تنمسح علامات السداد تلقائياً يوم ٢٠، ${d ? 'باقي ' + plural(d, 'يوم واحد', 'يومين', 'أيام', 'يوم') : 'اليوم'}</p>`;
+  } else if (V === 'appts' && ap.length && ap[0].due){
+    const a = ap[0];
+    hero.innerHTML = `<button class="x-next gl press" data-edit="${a.id}" data-fade>${dateTile(a.due)}<span class="in"><span class="tagline">القادم، ${inDays(dayDiff(a.due))}</span><h2>${esc(a.title)}</h2><p>${ic('soon')}${fmtTime(a.due)}</p>${a.loc ? `<p>${ic('pin')}${esc(a.loc)}</p>` : ''}${a.remind != null ? `<p>${ic('bell')}يذكّرك ${remindText(a.remind)}</p>` : ''}</span></button>`;
+  } else hero.innerHTML = '';
 
-  view.innerHTML = S.view === 'done' ? viewDone() : viewHome(list, cur, appt);
+  // The add field speaks for the screen it is on
+  $('#quick').hidden = V === 'done';
+  $('#qIn').placeholder = V === 'bills' ? 'أضف فاتورة…' : V === 'appts' ? 'أضف موعداً…' : cur ? `أضف إلى ${cur.name}…` : 'أضف غرضاً…';
+  $('#qAi').hidden = V !== 'home';
+
+  $('#lhTitle').textContent = V === 'home' ? (cur ? cur.name : 'كل المهام') : V === 'bills' ? 'الفواتير' : V === 'appts' ? 'كل المواعيد' : 'منتهي';
+  $('#lhEnd').innerHTML = V === 'home' && list.length ? '<span class="sort">الأهم أولاً</span>' : V === 'done' && doneList.length ? '<button class="sort link" data-clear>مسح الكل</button>' : '<span class="sort"></span>';
+
+  if (V === 'home') view.innerHTML = list.length ? grid([...list].sort((a, b) => ORD[a.prio] - ORD[b.prio]).map(row)) : emptyBox('done', 'كل شيء منتهي', cur ? 'ما فيه أغراض ناقصة في هذي الفئة.' : 'أضف أول غرض من الخانة فوق.');
+  else if (V === 'bills') view.innerHTML = S.bills.length ? grid([...unpaid, ...paid].map(billRowHtml)) : emptyBox('receipt', 'ما فيه فواتير بعد', 'أضف فواتيرك الشهرية الثابتة من الخانة فوق، وعلّمها لما تسدد.');
+  else if (V === 'appts'){
+    const rest = ap.slice(ap.length && ap[0].due ? 1 : 0), groups = [['هذا الأسبوع', a => a.due && dayDiff(a.due) <= 7], ['لاحقاً', a => !a.due || dayDiff(a.due) > 7]];
+    view.innerHTML = ap.length ? groups.map(([name, f]) => { const g = rest.filter(f); return g.length ? `<p class="x-sec">${name}</p>${grid(g.map(row))}` : ''; }).join('') : emptyBox('cal', 'ما فيه مواعيد قادمة', 'أضف موعداً من الخانة فوق، ويذكّرك التطبيق قبله.');
+  } else view.innerHTML = doneList.length ? grid(doneList.map(row)) : emptyBox('done', 'ما فيه شيء هنا', 'الأغراض اللي تنهونها تنتقل لهذي القائمة.');
 
   // FLIP: survivors glide from their old spot, newcomers materialize
   if (!reduced()){
-    const fresh = lastView !== S.view + S.filter; let n = 0;
+    const fresh = lastView !== V + S.filter; let n = 0;
     $$('#view [data-flip]').forEach(e => {
       const p = prev.get(e.dataset.flip), r = e.getBoundingClientRect();
       if (p && !fresh){ const dx = p.left - r.left, dy = p.top - r.top;
         if (dx || dy) e.animate([{transform:`translate(${dx}px,${dy}px)`}, {transform:'none'}], {duration:480, easing:EASE});
-      } else e.animate([{opacity:0, transform:'translateY(14px) scale(.97)'}, {opacity:1, transform:'none'}], {duration:420, easing:EASE, delay:Math.min(n++ * 28, 280), fill:'backwards'});
+      } else e.animate([{opacity:0, transform:'translateY(12px)'}, {opacity:1, transform:'none'}], {duration:380, easing:EASE, delay:Math.min(n++ * 22, 240), fill:'backwards'});
     });
   }
-  lastView = S.view + S.filter;
-
-  const idx = NAV.findIndex(n => n[0] === S.view);
-  $('#pill').style.setProperty('--i', idx);
-  $$('#pill .tab').forEach(t => t.setAttribute('aria-current', t.dataset.view === S.view));
-  $('#plus').hidden = false;
-  const cnt = v => v === 'home' ? all.length : doneN;
-  $('#sideNav').innerHTML = NAV.map(([v, n, i]) => `<li><button class="nav-btn" data-view="${v}" aria-current="${S.view === v && (v !== 'home' || S.filter === 'all')}">${ic(i)}${n}<span class="count num">${cnt(v)}</span></button></li>`).join('');
-  $('#sideTags').innerHTML = S.tags.map(t => `<li><button class="nav-btn" data-filter="${t.id}" aria-current="${home && S.filter === t.id}">${tileIc(t, 'sm')}${esc(t.name)}<span class="count num">${all.filter(i => i.tag === t.id).length}</span></button></li>`).join('')
-    + `<li><button class="nav-btn" data-newtag style="color:var(--fg2)"><span class="tile-ic sm c-slate">${ic('plus')}</span>تاق جديد</button></li>`;
-  syncReminders(); syncWidget();
-  $('#sideFoot').innerHTML = `${avatar(memOf(S.me), 'lg')}<div><b>${esc(memOf(S.me).name)}</b><small>${S.space.members.length > 1 ? 'مع ' + S.space.members.filter(m => m.id !== S.me).map(m => esc(m.name)).join(' و') : 'ما فيه أحد معك بعد'}</small></div>`;
-  save();
+  lastView = V + S.filter;
+  $$('#xTabs .x-tab').forEach(t => t.setAttribute('aria-current', t.dataset.view === V));
+  syncReminders(); syncWidget(); save();
+  requestAnimationFrame(remeasure);
 }
-new IntersectionObserver(([e]) => $('#bar').classList.toggle('scrolled', !e.isIntersecting), {rootMargin:'-56px 0px 0px 0px'}).observe($('#ltitle'));
 
 /* ---------- Toast ---------- */
 let undoFn = null, toastT;
@@ -722,6 +983,7 @@ function toast(msg, undo){
   toastT = setTimeout(() => $('#toast').classList.remove('show'), 6500);
 }
 $('#toastUndo').onclick = () => { if (undoFn) undoFn(); $('#toast').classList.remove('show'); render(); };
+
 
 /* ---------- Item actions ---------- */
 function addItems(text, tag, prio, due){
@@ -751,24 +1013,9 @@ function toggle(id, instant){
   setTimeout(() => { el.animate([{opacity:1, transform:'none'}, {opacity:0, transform:'scale(.94)'}], {duration:200, easing:'ease-in', fill:'forwards'}).onfinish = apply; setTimeout(apply, 320); }, 240);
 }
 
-document.addEventListener('click', e => {
-  const b = e.target.closest('button,[data-close]'); if (!b) return;
-  const d = b.dataset;
-  if (d.view){ S.view = d.view; if (d.view === 'home') S.filter = 'all'; render(); scrollTo({top:0}); }
-  else if (d.filter){ S.view = 'home'; S.filter = d.filter; render(); }
-  else if (d.toggle) toggle(d.toggle);
-  else if (d.edit) (isAppt(S.items.find(i => i.id === d.edit) || {}) ? openAppt : openItem)(d.edit);
-  else if ('newtag' in d) openTag();
-  else if ('invite' in d) openInvite();
-  else if ('gpt' in d) openGpt();
-  else if ('close' in d) closeSheet(b.closest('dialog'));
-  else if ('logout' in d){ closeSheet($('#inviteDlg')); sb.auth.signOut(); }
-  else if ('clear' in d){
-    const gone = S.items.filter(i => i.done); S.items = S.items.filter(i => !i.done); db.delItems(gone.map(i => i.id));
-    toast(`تم مسح ${gone.length} غرض منتهي`, () => { S.items.push(...gone); db.saveItems(gone); }); render();
-  }
-});
+
 $('#qIn').addEventListener('input', e => $('#quick').classList.toggle('has', !!e.target.value.trim()));
+
 /* ---------- Smart tagging: guess the tag from the words, otherwise ask ---------- */
 const norm = t => t.toLowerCase().replace(/[ً-ْـ]/g, '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/[^ء-يa-z0-9 ]/g, ' ');
 const words = t => norm(t).split(/\s+/).map(w => w.length > 4 ? w.replace(/^(وال|بال|لل|ال)/, '') : w).filter(w => w.length > 1);
@@ -814,24 +1061,6 @@ $('#pickForm').onsubmit = e => {
   pending = []; $('#qIn').value = ''; $('#quick').classList.remove('has');
   closeSheet($('#pickDlg')); render();
 };
-$('#quick').onsubmit = e => {
-  e.preventDefault();
-  const titles = splitTitles($('#qIn').value); if (!titles.length) return;
-  $('#qIn').blur();
-  if (S.filter !== 'all'){ addItems(titles.join('،'), S.filter, 'soon'); $('#qIn').value = ''; $('#quick').classList.remove('has'); return render(); }
-  const known = [], unknown = [];
-  for (const t of titles){ const g = guessTag(t); g ? known.push([t, g]) : unknown.push(t); }
-  for (const [t, g] of known) addItems(t, g, 'soon');
-  if (known.length){
-    const names = [...new Set(known.map(k => tagOf(k[1]).name))], ids = S.items.slice(0, known.length).map(i => i.id);
-    toast(known.length === 1 ? `أُضيف «${known[0][0]}» إلى ${names[0]}` : `أُضيفت ${known.length} أغراض إلى ${names.join(' و')}`,
-      () => { S.items = S.items.filter(i => !ids.includes(i.id)); db.delItems(ids); });
-  }
-  if (unknown.length){ $('#qIn').value = unknown.join('، '); render(); openPick(unknown); }
-  else { $('#qIn').value = ''; $('#quick').classList.remove('has'); render(); }
-};
-$('#plus').onclick = $('#sideNew').onclick = () => S.view === 'home' && S.filter === 'appt' ? openAppt() : openItem();
-$('#apptAdd').onclick = () => openAppt();
 
 /* ---------- Appointments (secondary to household items) ---------- */
 let apEditing = null;
@@ -863,11 +1092,6 @@ $('#apptForm').onsubmit = e => {
   closeSheet($('#apptDlg')); render();
 };
 $('#apDelete').onclick = () => { const id = apEditing.id; closeSheet($('#apptDlg')); removeItem(id); };
-$('#view').addEventListener('pointermove', e => {
-  if (e.pointerType !== 'mouse') return;
-  const c = e.target.closest('.card'); if (!c) return;
-  const r = c.getBoundingClientRect(); c.style.setProperty('--mx', e.clientX - r.left + 'px'); c.style.setProperty('--my', e.clientY - r.top + 'px');
-});
 
 /* ---------- Swipe a card to finish it (1:1 tracking, velocity handoff) ---------- */
 const TH = 96; let sw = null;
@@ -896,10 +1120,11 @@ const endSwipe = e => {
   const v = s.tr.v(), x = s.x, id = s.row.dataset.id;
   const commit = e.type === 'pointerup' && (Math.abs(x) > TH || (Math.abs(v) > 700 && Math.sign(v) === Math.sign(x) && Math.abs(x) > 24));
   s.row.classList.remove('dragging');
-  if (commit) spring({from:x, to:Math.sign(x) * (s.row.offsetWidth + 60), velocity:v, damping:1, response:.3, onUpdate:n => setX(s, n), onDone:() => x < 0 ? removeItem(id) : toggle(id, true)});
+  if (commit) spring({from:x, to:Math.sign(x) * (s.row.offsetWidth + 60), velocity:v, damping:1, response:.3, onUpdate:n => setX(s, n), onDone:() => swipeDone(s.row, x < 0)});
   else spring({from:x, to:0, velocity:v, damping:.8, response:.36, onUpdate:n => setX(s, n), onDone:() => { s.row.classList.remove('armed'); s.card.style.transform = ''; }});
 };
 addEventListener('pointerup', endSwipe); addEventListener('pointercancel', endSwipe);
+
 
 /* ---------- Sheets: spring in, drag to dismiss, interruptible ---------- */
 const isPhone = () => matchMedia('(max-width:639px)').matches;
@@ -966,20 +1191,6 @@ $('#itemForm').onsubmit = e => {
 };
 $('#fDelete').onclick = () => { const id = editing.id; closeSheet($('#itemDlg')); removeItem(id); };
 
-/* ---------- Tag sheet ---------- */
-function openTag(){
-  $('#tName').value = ''; $('#tErr').classList.remove('show');
-  $('#tColors').innerHTML = COLORS.map(([c, n], i) => `<label class="c-${c}"><input type="radio" name="color" value="${c}" ${i === 3 ? 'checked' : ''}><span class="tile-ic sm">${ic('tag')}</span>${n}</label>`).join('');
-  openSheet($('#tagDlg')); if (!isPhone()) $('#tName').focus();
-}
-$('#tagForm').onsubmit = e => {
-  e.preventDefault();
-  const name = $('#tName').value.trim();
-  if (!name){ $('#tErr').classList.add('show'); $('#tName').focus(); return; }
-  const t = {id:uid(), name, color:new FormData(e.target).get('color'), icon:'tag'};
-  S.tags.push(t); db.addTag(t); S.view = 'home'; S.filter = t.id;
-  closeSheet($('#tagDlg')); toast(`تم إنشاء تاق «${name}»`); render();
-};
 
 /* ---------- Invite ---------- */
 function openInvite(){
@@ -1057,6 +1268,7 @@ sb.auth.onAuthStateChange(ev => {
   unsubscribe(); S = blank(); save(); render(); $('#auth').classList.add('show');
 });
 
+
 /* ---------- Native shell: reminders, home-screen widget, widget taps ---------- */
 const isNative = () => !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
 const native = (plugin, method, opts = {}) => {
@@ -1065,7 +1277,7 @@ const native = (plugin, method, opts = {}) => {
 };
 const LN = {getPending:() => native('LocalNotifications', 'getPending'), cancel:o => native('LocalNotifications', 'cancel', o), schedule:o => native('LocalNotifications', 'schedule', o),
   checkPermissions:() => native('LocalNotifications', 'checkPermissions'), requestPermissions:() => native('LocalNotifications', 'requestPermissions')};
-const HEX = {green:'#34C759', blue:'#0A84FF', amber:'#FF9F0A', violet:'#BF5AF2', rose:'#FF375F', slate:'#8E8E93'};
+const HEX = {green:'#1FA862', blue:'#3D83F2', amber:'#D9801F', orange:'#D9801F', violet:'#8E63F0', rose:'#E0488E', pink:'#E0488E', slate:'#7C8594', gold:'#C99A1E', teal:'#14A3A8', red:'#E0524F'};
 let wT;
 function syncWidget(){
   if (!isNative()) return;
@@ -1073,7 +1285,9 @@ function syncWidget(){
   wT = setTimeout(() => {
     const list = active().sort((a, b) => ORD[a.prio] - ORD[b.prio]);
     const items = list.slice(0, 12).map(i => { const t = tagOf(i.tag); return {t:i.title, g:t.name, c:HEX[t.color] || HEX.slate, p:i.prio}; });
-    native('WidgetBridge', 'setItems', {items:JSON.stringify(items), count:list.length, signedIn:!!S.me}).catch(e => console.warn('widget', e));
+    native('WidgetBridge', 'setItems', {items:JSON.stringify(items), count:list.length, signedIn:!!S.me,
+      cats:JSON.stringify(S.tags.slice(0, 4).map(t => ({n:t.name, c:HEX[t.color] || HEX.slate, x:list.filter(i => i.tag === t.id).length}))),
+      billsPaid:S.bills.filter(b => b.paid).length, billsTotal:S.bills.length}).catch(e => console.warn('widget', e));
   }, 400);
 }
 // The widget plus button opens the app with baytna://add; the shell keeps it until we ask.
@@ -1082,6 +1296,7 @@ async function consumeAction(){
   try { const r = await native('WidgetBridge', 'consumeAction');
     if (r && r.action === 'add' && !$('#itemDlg').open){ S.view = 'home'; render(); openItem(); }
     else if (r && r.action === 'gpt') gptReturn();
+    else if (r && r.action === 'bills'){ S.view = 'bills'; S.filter = 'all'; render(); }
   } catch (e) { console.warn('action', e); }
 }
 addEventListener('baytnaAction', consumeAction);
@@ -1228,17 +1443,17 @@ function gptPrompt(){
   const now = new Date(), day = new Intl.DateTimeFormat('ar-SA-u-nu-latn-ca-gregory', {weekday:'long'}).format(now);
   return `أنت مساعد داخل تطبيق «بيتنا» لمستلزمات البيت والمواعيد. تكلم بلهجة سعودية بسيطة وباختصار.
 ردّك دائماً كائن JSON واحد فقط بدون أي نص خارجه وبدون علامات كود، بهذا الشكل:
-{"reply":"رد قصير للمستخدم","items":[{"title":"اسم الغرض","tag":"اسم التاق","prio":"urgent|soon|later"}],"appts":[{"title":"اسم الموعد","when":"YYYY-MM-DDTHH:mm","loc":"الموقع أو فارغ","remind":0|15|60|1440|null}],"done":["اسم غرض موجود خلص"]}
+{"reply":"رد قصير للمستخدم","items":[{"title":"اسم الغرض","tag":"اسم الفئة","prio":"urgent|soon|later"}],"appts":[{"title":"اسم الموعد","when":"YYYY-MM-DDTHH:mm","loc":"الموقع أو فارغ","remind":0|15|60|1440|null}],"done":["اسم غرض موجود خلص"]}
 القواعد:
 - أضف إلى items فقط ما يطلب المستخدم إضافته أو يذكر أنه ناقص. كل غرض في عنصر مستقل باسم قصير. لا تكرر غرضاً موجوداً في القائمة الحالية.
-- tag لازم يكون واحداً من التاقات المتاحة بنفس الاسم حرفياً، وإذا ما يناسب شيء اتركه فارغاً.
+- tag لازم يكون واحداً من الفئات المتاحة بنفس الاسم حرفياً، وإذا ما يناسب شيء اتركه فارغاً.
 - prio: مستعجل = urgent، عادي = soon (الافتراضي)، مو ضروري = later.
 - appts للمواعيد فقط (دكتور، عمال، مراجعة). remind عدد الدقائق قبل الموعد، والافتراضي 60. إذا ما ذُكر وقت استخدم 09:00.
 - done: أسماء أغراض من القائمة الحالية قال المستخدم إنها خلصت أو انشرت، بنفس الاسم حرفياً.
 - إذا سأل سؤالاً عاماً (طبخة، نصيحة) جاوبه في reply باختصار واعرض عليه إضافة المقادير، ولا تضفها إلا إذا طلب.
 - المصفوفات الفارغة تبقى [].
 اليوم ${day} ${toLocal(now.toISOString())}.
-التاقات المتاحة: ${S.tags.map(t => t.name).join('، ') || 'لا يوجد'}.
+الفئات المتاحة: ${S.tags.map(t => t.name).join('، ') || 'لا يوجد'}.
 القائمة الحالية: ${active().slice(0, 80).map(i => i.title).join('، ') || 'فارغة'}.`;
 }
 async function gptAsk(){
@@ -1358,6 +1573,178 @@ $('#gptForm').onsubmit = async e => {
   m.wait = false; gBusy = false; $('#gptSendBtn').disabled = false;
   if (m.bad && !gSigned()) drawGpt(); else drawChat();
 };
+
+
+/* ---------- Taps ---------- */
+document.addEventListener('click', e => {
+  const b = e.target.closest('button,[data-close]'); if (!b) return;
+  const d = b.dataset;
+  if (d.view){ S.view = d.view; S.filter = 'all'; render(); scrollTo({top:0}); }
+  else if (d.filter){ S.view = 'home'; S.filter = d.filter; render(); if (scrollY > 0) scrollTo({top:0, behavior:reduced() ? 'auto' : 'smooth'}); }
+  else if (d.toggle) toggle(d.toggle);
+  else if (d.pay) payBill(d.pay);
+  else if (d.bill) openBill(d.bill);
+  else if (d.edit) (isAppt(S.items.find(i => i.id === d.edit) || {}) ? openAppt : openItem)(d.edit);
+  else if ('newtag' in d) openTag();
+  else if ('invite' in d) openInvite();
+  else if ('gpt' in d) openGpt();
+  else if ('close' in d) closeSheet(b.closest('dialog'));
+  else if ('logout' in d){ closeSheet($('#inviteDlg')); sb.auth.signOut(); }
+  else if ('clear' in d){
+    const gone = S.items.filter(i => i.done); S.items = S.items.filter(i => !i.done); db.delItems(gone.map(i => i.id));
+    toast(`تم مسح ${gone.length} غرض منتهي`, () => { S.items.push(...gone); db.saveItems(gone); }); render();
+  }
+});
+
+/* ---------- The add field ---------- */
+const clearQuick = () => { $('#qIn').value = ''; $('#quick').classList.remove('has'); };
+$('#quick').onsubmit = e => {
+  e.preventDefault();
+  const text = $('#qIn').value.trim(), titles = splitTitles(text); if (!titles.length) return;
+  $('#qIn').blur();
+  if (S.view === 'bills'){ titles.forEach(t => addBill(t)); clearQuick(); return render(); }
+  if (S.view === 'appts'){ clearQuick(); openAppt(); $('#apName').value = text; return; }
+  if (S.filter !== 'all'){ addItems(titles.join('،'), S.filter, 'soon'); clearQuick(); return render(); }
+  const known = [], unknown = [];
+  for (const t of titles){ const g = guessTag(t); g ? known.push([t, g]) : unknown.push(t); }
+  for (const [t, g] of known) addItems(t, g, 'soon');
+  if (known.length){
+    const names = [...new Set(known.map(k => tagOf(k[1]).name))], ids = S.items.slice(0, known.length).map(i => i.id);
+    toast(known.length === 1 ? `أُضيف «${known[0][0]}» إلى ${names[0]}` : `أُضيفت ${known.length} أغراض إلى ${names.join(' و')}`,
+      () => { S.items = S.items.filter(i => !ids.includes(i.id)); db.delItems(ids); });
+  }
+  if (unknown.length){ $('#qIn').value = unknown.join('، '); render(); openPick(unknown); }
+  else { clearQuick(); render(); }
+};
+// Folded into the plus, it opens the full sheet; unfolded, it just takes you to typing.
+let folded = false;
+$('#qPlus').onclick = () => {
+  if (!folded && !$('#qIn').value.trim()) return $('#qIn').focus();
+  if ($('#qIn').value.trim() && !folded) return $('#quick').requestSubmit();
+  S.view === 'bills' ? openBill() : S.view === 'appts' ? openAppt() : openItem();
+};
+
+/* ---------- Bills: fixed monthly ones, shared; the paid marks clear on the 20th (the database does that) ---------- */
+const BILL_LEX = [['bolt','gold','كهرب'],['drop','blue','ماء مويه مياه'],['wifi','violet','انترنت نت فايبر راوتر'],['phone','teal','جوال هاتف موبايل شريحه'],['car','blue','سياره قسط تامين'],
+  ['cap','amber','مدرس رسوم جامع روض حضان'],['house','green','ايجار عامل خادم شغال سكن'],['tv','rose','نتفلكس شاهد اشتراك'],['card','slate','بطاق قرض بنك تمويل']];
+function billLook(title){ const n = norm(title); for (const [icon, color, keys] of BILL_LEX) if (keys.split(' ').some(k => n.includes(k))) return {icon, color}; return {icon:'receipt', color:'teal'}; }
+const toNum = v => { v = String(v).replace(/[٠-٩]/g, d => '٠١٢٣٤٥٦٧٨٩'.indexOf(d)).replace(/[^\d.]/g, ''); return v && isFinite(+v) ? +v : null; };
+function addBill(title, amount = null){
+  const b = {id:uid(), title, amount, ...billLook(title), paid:false};
+  S.bills.push(b); db.saveBills([b]); buzz(8);
+  toast(`أُضيفت «${title}»`, () => { S.bills = S.bills.filter(x => x.id !== b.id); db.delBills([b.id]); });
+}
+function payBill(id){
+  const b = S.bills.find(x => x.id === id); if (!b) return;
+  const flip = () => { b.paid = !b.paid; b.paidBy = b.paid ? S.me : undefined; db.saveBills([b]); };
+  flip(); buzz(12); toast(b.paid ? `تم سداد «${b.title}»` : `رجعت «${b.title}» غير مسدّدة`, flip); render();
+}
+function removeBill(id){
+  const idx = S.bills.findIndex(x => x.id === id); if (idx < 0) return;
+  const [b] = S.bills.splice(idx, 1); buzz(12); db.delBills([b.id]);
+  toast(`تم حذف «${b.title}»`, () => { S.bills.splice(Math.min(idx, S.bills.length), 0, b); db.saveBills([b]); }); render();
+}
+let billEditing = null;
+function openBill(id){
+  billEditing = id ? S.bills.find(x => x.id === id) : null; const b = billEditing;
+  $('#billTitle').textContent = b ? 'تعديل الفاتورة' : 'فاتورة جديدة'; $('#bSubmit').textContent = b ? 'حفظ' : 'إضافة الفاتورة';
+  $('#bDelete').hidden = !b; $('#bErr').classList.remove('show');
+  $('#bName').value = b ? b.title : ''; $('#bAmount').value = b && b.amount != null ? b.amount : '';
+  openSheet($('#billDlg')); if (!isPhone()) $('#bName').focus();
+}
+$('#billForm').onsubmit = e => {
+  e.preventDefault();
+  const title = $('#bName').value.trim(), amount = toNum($('#bAmount').value);
+  if (!title){ $('#bErr').classList.add('show'); $('#bName').focus(); return; }
+  if (billEditing){ Object.assign(billEditing, {title, amount, ...billLook(title)}); db.saveBills([billEditing]); } else addBill(title, amount);
+  closeSheet($('#billDlg')); render();
+};
+$('#bDelete').onclick = () => { const id = billEditing.id; closeSheet($('#billDlg')); removeBill(id); };
+// A swipe lands here: delete, or finish / pay.
+function swipeDone(rowEl, del){
+  const id = rowEl.dataset.id;
+  if (rowEl.dataset.kind === 'bill') del ? removeBill(id) : payBill(id); else del ? removeItem(id) : toggle(id, true);
+}
+
+/* ---------- New category: a name, a colour, an icon ---------- */
+function drawTagPrev(){
+  const f = new FormData($('#tagForm')), c = f.get('color') || COLORS[0], i = f.get('icon') || 'tag';
+  $('#tPrev').innerHTML = `<span class="tile-ic c-${c}">${ic(i)}</span><b>${esc($('#tName').value.trim() || 'اسم الفئة')}</b>`;
+  $('#tIcons').className = 'icons c-' + c; $('#tIcons').style.setProperty('--pc', 'var(--c)');
+}
+function openTag(){
+  $('#tName').value = ''; $('#tErr').classList.remove('show');
+  $('#tColors').innerHTML = COLORS.map((c, i) => `<label class="c-${c}"><input type="radio" name="color" value="${c}" aria-label="لون ${i + 1}" ${i ? '' : 'checked'}></label>`).join('');
+  $('#tIcons').innerHTML = TAG_ICONS.map((n, i) => `<label><input type="radio" name="icon" value="${n}" aria-label="أيقونة ${i + 1}" ${i ? '' : 'checked'}>${ic(n)}</label>`).join('');
+  drawTagPrev(); openSheet($('#tagDlg')); if (!isPhone()) $('#tName').focus();
+}
+$('#tagForm').addEventListener('input', drawTagPrev);
+$('#tagForm').onsubmit = e => {
+  e.preventDefault();
+  const name = $('#tName').value.trim(), f = new FormData(e.target);
+  if (!name){ $('#tErr').classList.add('show'); $('#tName').focus(); return; }
+  const t = {id:uid(), name, color:f.get('color') || COLORS[0], icon:f.get('icon') || 'tag'};
+  S.tags.push(t); db.addTag(t); S.view = 'home'; S.filter = 'all';
+  closeSheet($('#tagDlg')); toast(`تم إنشاء فئة «${name}»`); render();
+};
+
+/* ---------- Scroll motion ----------
+   Everything above the list recedes in turn as the list comes up: the top goes first, then each row of the hero.
+   The add field folds into its own plus, which settles beside the list title as that title pins to the top. */
+const clamp01 = v => Math.min(Math.max(v, 0), 1);
+let parts = [];
+function measure(){
+  parts = [[$('#xTools'), 0], [$('#xTitle'), 1], [$('#xChips'), 1], ...[...$$('#xHero [data-fade]')].map(e => [e, 1])].filter(([e]) => e && !e.hidden);
+  for (const [el] of parts){ el.style.transform = ''; el._top = el.getBoundingClientRect().top + scrollY; el.style.willChange = 'transform,opacity'; el.style.transformOrigin = '50% 30%'; }
+}
+function motion(){
+  const y = Math.max(scrollY, 0), still = reduced();
+  const safe = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sat')) || 0;
+  for (const [el, travels] of parts){
+    const from = travels ? Math.max(0, el._top - safe - 130) : 0, p = clamp01((y - from) / (travels ? 120 : 60));
+    el.style.opacity = 1 - p;
+    el.style.transform = still || !p ? '' : `translateY(${travels ? (y - from) * .42 : 0}px) scale(${1 - .14 * p})`;
+    el.style.filter = still || !p ? '' : `blur(${p * 5}px)`;
+    el.style.pointerEvents = p > .6 ? 'none' : '';
+  }
+  const quick = $('#quick'), lh = $('#xLh'), view = $('#view'), shown = !quick.hidden, busy = document.activeElement === $('#qIn');
+  const q = shown && !busy ? clamp01((96 + safe - quick.getBoundingClientRect().top) / 112) : 0, e = q * q * (3 - 2 * q);
+  for (const [el, slot] of [[$('#qPlus'), lh.querySelector('.hp')], [$('#qAi'), lh.querySelector('.ha')]]){
+    el.style.transform = '';
+    if (!e || still || el.hidden) continue;
+    const a = el.getBoundingClientRect(), b = slot.getBoundingClientRect();
+    el.style.transform = `translate(${(b.left + b.width / 2 - a.left - a.width / 2) * e}px,${(b.top + b.height / 2 - a.top - a.height / 2) * e}px) scale(${1 + (b.width / a.width - 1) * e})`;
+  }
+  const bg = quick.querySelector('.qbg');
+  bg.style.opacity = 1 - e; bg.style.transform = still ? '' : `scale(${1 - .86 * e},${1 - .3 * e})`;
+  $('#qIn').style.opacity = clamp01(1 - e * 2.2); $('#qIn').style.pointerEvents = e > .5 ? 'none' : '';
+  folded = e > .5;
+  $('#lhEnd').style.opacity = S.view === 'home' ? clamp01(1 - e * 1.6) : 1;
+  // Nothing sits behind the pinned title: the list dissolves over a few pixels where it meets it.
+  const x = lh.getBoundingClientRect().bottom - 16 - view.getBoundingClientRect().top;
+  view.style.webkitMaskImage = view.style.maskImage = x > 0 ? `linear-gradient(to bottom,transparent ${x}px,#000 ${x + 5}px)` : '';
+}
+const remeasure = () => { measure(); motion(); };
+addEventListener('scroll', motion, {passive:true});
+addEventListener('resize', remeasure);
+$('#qIn').addEventListener('focus', motion); $('#qIn').addEventListener('blur', motion);
+new MutationObserver(() => requestAnimationFrame(remeasure)).observe($('#xHero'), {childList:true});
+
+/* ---------- App icon: night or day, chosen per phone ---------- */
+const ICON_KEY = 'baytna-icon';
+function drawIconSeg(){
+  const v = localStorage.getItem(ICON_KEY) || 'night';
+  $('#iconSeg').dataset.i = v === 'day' ? 1 : 0;
+  $$('#iconSeg [data-icon]').forEach(b => b.setAttribute('aria-selected', b.dataset.icon === v));
+}
+$('#iconRow').hidden = !isNative();
+$('#iconSeg').addEventListener('click', async e => {
+  const b = e.target.closest('[data-icon]'); if (!b || b.getAttribute('aria-selected') === 'true') return;
+  try { await native('WidgetBridge', 'setIcon', {name:b.dataset.icon}); localStorage.setItem(ICON_KEY, b.dataset.icon); drawIconSeg(); toast('تم تغيير أيقونة التطبيق'); }
+  catch (err) { console.warn('icon', err); toast('تعذّر تغيير الأيقونة على هذا الجهاز'); }
+});
+drawIconSeg();
+
 
 (async function boot(){
   render();

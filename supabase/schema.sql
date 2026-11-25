@@ -212,3 +212,79 @@ create extension if not exists pg_net with schema extensions;
 create or replace function public.keep_awake() returns int language sql stable set search_path = '' as $f$ select 1 $f$;
 grant execute on function public.keep_awake() to anon, authenticated;
 select cron.schedule('baytna-keep-awake', '17 6 * * *', $job$ select net.http_get(url := 'https://xejnfjagypsjpucgccpq.supabase.co/rest/v1/rpc/keep_awake', headers := '{"apikey":"sb_publishable_68Jic6MZaKlgMsVfnzK-3w_5pNMte8G"}'::jsonb) $job$);
+-- Redesign release: monthly bills, and an icon and colour per category. Safe to run more than once.
+
+create table if not exists public.bills (
+  id           uuid primary key default gen_random_uuid(),
+  household_id uuid not null references public.households (id) on delete cascade,
+  title        text not null check (char_length(title) between 1 and 120),
+  amount       numeric(12, 2) check (amount is null or amount >= 0),
+  icon         text not null default 'receipt',
+  color        text not null default 'teal',
+  paid         boolean not null default false,
+  paid_by      uuid references public.profiles (id) on delete set null,
+  paid_at      timestamptz,
+  created_at   timestamptz not null default now()
+);
+create index if not exists bills_household_idx on public.bills (household_id);
+
+revoke all on public.bills from anon;
+grant select, insert, update, delete on public.bills to authenticated;
+alter table public.bills enable row level security;
+drop policy if exists bills_all on public.bills;
+create policy bills_all on public.bills
+  for all to authenticated
+  using (household_id = public.my_household())
+  with check (household_id = public.my_household());
+
+do $$
+begin
+  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'bills') then
+    alter publication supabase_realtime add table public.bills;
+  end if;
+end $$;
+
+-- Joining someone's household now brings your bills along with your items.
+create or replace function public.join_household(p_code text)
+returns uuid language plpgsql security definer set search_path = public as $$
+declare
+  me     uuid := auth.uid();
+  old    uuid;
+  target uuid;
+begin
+  if me is null then raise exception 'not_authenticated'; end if;
+  select id into target from public.households where code = upper(trim(p_code));
+  if target is null then raise exception 'invalid_code'; end if;
+  select household_id into old from public.profiles where id = me;
+  if old = target then return target; end if;
+
+  update public.items i set tag_id = t2.id
+    from public.tags t1
+    join public.tags t2 on t2.household_id = target and t2.name = t1.name
+   where i.tag_id = t1.id and t1.household_id = old;
+  delete from public.tags t1
+   where t1.household_id = old
+     and exists (select 1 from public.tags t2 where t2.household_id = target and t2.name = t1.name);
+  update public.tags  set household_id = target where household_id = old;
+  update public.items set household_id = target where household_id = old;
+  update public.bills set household_id = target where household_id = old;
+  update public.profiles set household_id = target where id = me;
+  delete from public.households h
+   where h.id = old and not exists (select 1 from public.profiles p where p.household_id = old);
+  return target;
+end $$;
+revoke all on function public.join_household(text) from public, anon;
+grant execute on function public.join_household(text) to authenticated;
+
+-- The paid marks clear on the 20th of every month, at 00:05 Riyadh time (21:05 UTC on the 19th).
+select cron.schedule('baytna-bills-reset', '5 21 19 * *',
+  $job$ update public.bills set paid = false, paid_by = null, paid_at = null where paid $job$);
+
+-- Categories: a fitting icon and colour for the ones that already exist.
+update public.tags set icon = 'house', color = 'amber' where icon = 'wrench';
+update public.tags set color = 'blue' where icon = 'car';
+update public.tags set icon = 'flower', color = 'rose' where icon = 'tag' and name = 'البنات';
+
+-- The remaining two categories get an icon too.
+update public.tags set icon = 'pill', color = 'red' where icon = 'tag' and name = 'الصحة';
+update public.tags set icon = 'drop', color = 'teal' where icon = 'tag' and name = 'منظفات وعناية';

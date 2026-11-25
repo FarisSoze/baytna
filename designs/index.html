@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>بيتنا — المعاينة الكاملة</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&family=Almarai:wght@400;700&family=Readex+Pro:wght@400;500;600&family=Noto+Kufi+Arabic:wght@400;500;700&family=Vazirmatn:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:'Thmanyah Sans';font-weight:400;font-display:swap;src:url('fonts/thmanyahsans-Regular.woff2') format('woff2')}
+@font-face{font-family:'Thmanyah Sans';font-weight:500;font-display:swap;src:url('fonts/thmanyahsans-Medium.woff2') format('woff2')}
+@font-face{font-family:'Thmanyah Sans';font-weight:700;font-display:swap;src:url('fonts/thmanyahsans-Bold.woff2') format('woff2')}
+.dk{--bar:rgba(12,14,24,.9);--ink:#F5F5F7;--ink2:#B9BAC4;--cellg:rgba(255,255,255,.09);--line:rgba(255,255,255,.15);--fill:rgba(255,255,255,.12);--solid:#1E1F26;
+  --accent:#3DD6BF;--on-accent:#00231E;--red:#FF8D9B;--glass:rgba(40,41,48,.74);--sheet:rgba(28,29,36,.86);
+  --wash:radial-gradient(120% 60% at 100% 0%,#143A66 0%,transparent 60%),radial-gradient(90% 55% at 0% 22%,#3A2470 0%,transparent 62%),radial-gradient(110% 60% at 80% 62%,#5A2A22 0%,transparent 60%),radial-gradient(100% 60% at 10% 100%,#0F4A40 0%,transparent 60%),#07090F;
+  --c-green:#1FA862;--c-blue:#3D83F2;--c-orange:#D9801F;--c-pink:#E0488E;--c-violet:#8E63F0;--c-teal:#14A3A8;--c-red:#E0524F;--c-gold:#C99A1E}
+.lt{--bar:rgba(236,241,252,.92);--ink:#0D1B2E;--ink2:#33445C;--cellg:rgba(255,255,255,.55);--line:rgba(255,255,255,.85);--fill:rgba(13,27,46,.08);--solid:#FFFFFF;
+  --accent:#0B6E63;--on-accent:#FFFFFF;--red:#B3122A;--glass:rgba(255,255,255,.76);--sheet:rgba(246,248,252,.9);
+  --wash:radial-gradient(120% 60% at 100% 0%,#9CD8FF 0%,transparent 60%),radial-gradient(90% 55% at 0% 22%,#CDB3FF 0%,transparent 62%),radial-gradient(110% 60% at 80% 62%,#FFD0BA 0%,transparent 60%),radial-gradient(100% 60% at 10% 100%,#A9F1DC 0%,transparent 60%),#EAF2FF;
+  --c-green:#11884D;--c-blue:#1C63D5;--c-orange:#B85F06;--c-pink:#C02670;--c-violet:#6B3FD4;--c-teal:#0B7F84;--c-red:#C0392B;--c-gold:#8F6A06}
+:root{--font:'Thmanyah Sans'}
+*{box-sizing:border-box;margin:0}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer;text-align:inherit}
+button:focus-visible{outline:3px solid #1463FF;outline-offset:3px}
+body{background:#E4E5EA;color:#15171C;font-family:'Tajawal',system-ui,sans-serif;padding:28px 16px 64px}
+.intro{max-width:1180px;margin:0 auto 20px}
+.intro h1{font-size:1.5rem;font-weight:700}
+.intro p{margin-top:8px;color:#3D4350;max-width:70ch;line-height:1.85;font-size:1.0625rem}
+.ctrl{max-width:1180px;margin:0 auto 28px;display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center;background:#fff;border-radius:18px;padding:14px 18px}
+.ctrl b{font-size:.9375rem}
+.ctrl div{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.ctrl button{height:44px;padding:0 16px;border-radius:999px;background:#EEF0F4;font-size:1rem}
+.ctrl button.on{background:#15171C;color:#fff}
+.wall{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:40px 24px;justify-items:center}
+.opt{width:100%;max-width:372px}
+.opt h2{font-size:1.1875rem;font-weight:700}
+.opt .why{color:#3D4350;line-height:1.8;margin:8px 0 16px;min-height:7.2em}
+.phone{position:relative;height:780px;border-radius:48px;overflow:hidden;border:9px solid #101114;box-shadow:0 34px 70px -30px rgba(20,24,40,.6);color:var(--ink);font-family:var(--font),system-ui,sans-serif;background:#07090F}
+.screen{position:absolute;inset:0;overflow:auto;scrollbar-width:none;background:var(--wash);background-attachment:local}
+.screen::-webkit-scrollbar{display:none}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.gl{background:var(--cellg);border:1px solid var(--line);-webkit-backdrop-filter:blur(26px) saturate(1.7);backdrop-filter:blur(26px) saturate(1.7)}
+
+/* floating controls */
+.tools{position:absolute;top:48px;inset-inline:20px;display:flex;justify-content:flex-end;gap:8px;pointer-events:none}
+.tools button{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;pointer-events:auto;background:var(--glass);border:1px solid var(--line);-webkit-backdrop-filter:blur(24px);backdrop-filter:blur(24px)}
+.tools svg{width:18px;height:18px}
+.tabs{position:absolute;bottom:18px;inset-inline-start:16px;height:56px;border-radius:999px;display:flex;align-items:center;padding:4px;background:var(--glass);border:1px solid var(--line);-webkit-backdrop-filter:blur(24px) saturate(1.8);backdrop-filter:blur(24px) saturate(1.8);box-shadow:0 10px 30px -12px rgba(0,0,0,.6)}
+.tabs span{height:48px;min-width:60px;padding:0 9px;border-radius:999px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:.6875rem;font-weight:500;color:var(--ink2)}
+.tabs svg{width:19px;height:19px}
+.tabs .on{background:var(--fill);color:var(--accent)}
+.plus{position:absolute;bottom:18px;inset-inline-end:16px;width:56px;height:56px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;box-shadow:0 12px 26px -10px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.3)}
+.plus svg{width:24px;height:24px;stroke-width:2.4}
+
+/* where the add button lives: four takes, switched from the bar above */
+.quick{display:none;align-items:center;gap:10px;height:46px;border-radius:16px;padding:0 14px;margin-bottom:14px;font-size:.875rem;color:var(--ink2)}
+.quick i{width:26px;height:26px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;flex:none}
+.quick svg{width:15px;height:15px;stroke-width:2.6}
+.quick span{flex:1}
+.quick .ai{width:34px;height:34px;border-radius:50%;background:var(--fill);color:var(--accent);display:grid;place-items:center;flex:none;margin-inline-end:-6px}
+.quick .ai svg{width:17px;height:17px;stroke-width:2}
+.p-inline .tools .sp{display:none}
+.p-top .tabs,.p-inline .tabs,.p-center .tabs{inset-inline:16px}
+.p-top .tabs span,.p-inline .tabs span,.p-center .tabs span{flex:1}
+.p-top .plus{top:48px;bottom:auto;inset-inline-end:auto;inset-inline-start:20px;width:38px;height:38px;box-shadow:none}
+.p-top .plus svg{width:19px;height:19px}
+.p-inline .plus{display:none}
+.p-inline .quick{display:flex;position:relative;z-index:5}
+.quick .qbg{position:absolute;inset:0;border-radius:16px;transform-origin:100% 50%;will-change:transform,opacity;text-decoration:none}
+.quick .qp,.quick .ai,.quick span{position:relative;will-change:transform,opacity}
+.p-center .tabs span:nth-child(2){margin-inline-end:62px}
+.p-center .plus{inset-inline-end:auto;left:50%;margin-left:-25px;bottom:21px;width:50px;height:50px}
+
+/* content */
+.title{padding:100px 22px 0}
+.title h3{font-size:1.625rem;font-weight:700;line-height:1.3}
+.title p{font-size:.875rem;color:var(--ink2)}
+.chips{display:flex;gap:6px;overflow:auto;scrollbar-width:none;padding:14px 22px}
+.chips span{flex:none;height:30px;padding:0 12px;border-radius:999px;font-size:.75rem;font-weight:500;display:flex;align-items:center}
+.chips .on{background:var(--ink);color:#0A0B10;border-color:transparent}
+.lt .chips .on{color:#fff}
+.cats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:0 22px;transform-origin:50% 30%;will-change:transform,opacity}
+.cat{border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:14px;min-height:104px;justify-content:space-between;box-shadow:inset 0 1px 0 rgba(255,255,255,.14)}
+.cat .ic{width:36px;height:36px;border-radius:12px;display:grid;place-items:center;color:#fff}
+.cat b{font-size:.9375rem;font-weight:700;display:block;line-height:1.4}
+.cat small{font-size:.75rem;color:var(--ink2)}
+.cat .row{display:flex;justify-content:space-between;align-items:flex-start}
+.cat .n{font-size:1.25rem;font-weight:700;line-height:1}
+.listwrap{position:relative;padding:22px 22px 0}
+.lh{display:flex;justify-content:space-between;align-items:center;padding:0 4px 10px}
+#lh{position:sticky;top:0;z-index:4;margin:-44px -22px -8px;padding:54px 26px 18px;pointer-events:none}
+#lh .lt2{display:flex;align-items:center;gap:10px}
+#lh .hp,#lh .ha{width:30px;height:30px;flex:none;visibility:hidden}
+#lh .ha{position:absolute;inset-inline-end:26px;bottom:16px}
+#lh .sort{will-change:opacity}
+.lh b{font-size:1rem;font-weight:700}.lh small{font-size:.75rem;color:var(--ink2)}
+.list{border-radius:22px;overflow:hidden}
+.li{display:flex;align-items:center;gap:12px;width:100%;min-height:52px;padding:8px 14px}
+.li+.li{border-top:1px solid var(--line)}
+.ck{flex:none;width:22px;height:22px;border-radius:50%;border:1.5px solid var(--ink2);display:grid;place-items:center}
+.ck svg{width:12px;height:12px;stroke:var(--on-accent);stroke-width:3.4;opacity:0}
+.li .t{flex:1;min-width:0;font-size:.9375rem;font-weight:500;line-height:1.45}
+.li .t small{display:block;font-size:.75rem;font-weight:400;color:var(--ink2)}
+.li .t small.hot{color:var(--red);font-weight:700}
+.li .mi{flex:none;width:26px;height:26px;border-radius:9px;display:grid;place-items:center;color:#fff}
+.li .mi svg{width:14px;height:14px}
+.li .amt{flex:none;font-size:.875rem;font-weight:700;direction:ltr}
+.li.done .t{color:var(--ink2)}.li.done .t .n{text-decoration:line-through}
+.li.done .ck{background:var(--accent);border-color:var(--accent)}.li.done .ck svg{opacity:1}
+.space{height:120px}
+
+/* bills */
+.sum{margin:18px 22px 0;border-radius:22px;padding:16px;display:flex;align-items:center;gap:16px}
+.ring{width:64px;height:64px;flex:none;position:relative;display:grid;place-items:center;font-weight:700;font-size:1rem}
+.ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:7;stroke-linecap:round}
+.sum b{font-size:1rem;font-weight:700;display:block}
+.sum small{font-size:.8125rem;color:var(--ink2);line-height:1.6;display:block}
+.note{margin:12px 26px 0;font-size:.75rem;color:var(--ink2);display:flex;align-items:center;gap:6px}
+.note svg{width:14px;height:14px}
+
+/* appointments */
+.next{margin:18px 22px 0;border-radius:24px;padding:16px;display:flex;gap:14px;align-items:stretch}
+.dt{flex:none;width:58px;border-radius:16px;background:var(--fill);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px 4px;line-height:1.15}
+.dt b{font-size:1.5rem;font-weight:700}
+.dt small{font-size:.6875rem;color:var(--red);font-weight:700}
+.dt.sm{width:44px;border-radius:13px;padding:6px 2px}.dt.sm b{font-size:1.0625rem}
+.next .in{flex:1;min-width:0}
+.next .tagline{font-size:.75rem;font-weight:700;color:var(--accent)}
+.next h4{font-size:1.125rem;font-weight:700;line-height:1.4;margin-top:2px}
+.meta{display:flex;align-items:center;gap:6px;font-size:.8125rem;color:var(--ink2);margin-top:4px}
+.meta svg{width:14px;height:14px}
+.sec3{padding:22px 26px 10px;font-size:.875rem;font-weight:700;color:var(--ink2)}
+.ap{display:flex;align-items:center;gap:12px;min-height:62px;padding:9px 14px}
+.ap+.ap{border-top:1px solid var(--line)}
+.ap .t{flex:1;min-width:0;font-size:.9375rem;font-weight:500;line-height:1.45}
+.ap .t small{display:block;font-size:.75rem;font-weight:400;color:var(--ink2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ap .bell{flex:none;color:var(--ink2);display:flex;align-items:center;gap:4px;font-size:.6875rem}
+.ap .bell svg{width:14px;height:14px}
+.f{margin-top:10px;min-height:46px;border-radius:14px;background:var(--fill);display:flex;align-items:center;gap:10px;padding:0 14px;font-size:.9375rem}
+.f svg{width:16px;height:16px;color:var(--ink2)}
+.f span{flex:1}.f em{font-style:normal;color:var(--ink2);font-size:.8125rem}
+.two{display:grid;grid-template-columns:1.25fr 1fr;gap:8px}
+.rem{display:flex;flex-wrap:wrap;gap:8px}
+.rem span{height:36px;padding:0 13px;border-radius:999px;background:var(--fill);font-size:.8125rem;display:flex;align-items:center}
+.rem .sel{background:var(--ink);color:#0A0B10;font-weight:700}
+.lt .rem .sel{color:#fff}
+
+/* sheet */
+.dim{position:absolute;inset:0;background:rgba(0,0,0,.4)}
+.sheet{position:absolute;inset:auto 0 0 0;border-radius:32px 32px 0 0;padding:8px 20px 22px;background:var(--sheet);-webkit-backdrop-filter:blur(30px) saturate(1.8);backdrop-filter:blur(30px) saturate(1.8);border-top:1px solid var(--line)}
+.grab{width:36px;height:5px;border-radius:5px;background:var(--line);margin:0 auto 12px}
+.sh{display:flex;align-items:center;justify-content:space-between}
+.sh b{font-size:1.0625rem;font-weight:700}
+.sh span{width:36px;height:36px;border-radius:50%;background:var(--fill);display:grid;place-items:center}
+.sh svg{width:16px;height:16px}
+.prev{display:flex;align-items:center;gap:12px;margin-top:12px;border-radius:16px;padding:10px 12px;background:var(--fill)}
+.prev .ic{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;color:#fff;background:var(--c-teal)}
+.prev b{font-size:1rem;font-weight:700}
+.lbl{font-size:.75rem;color:var(--ink2);margin:16px 4px 8px}
+.cols{display:flex;gap:10px}
+.cols i{width:30px;height:30px;border-radius:50%;display:block}
+.cols i.sel{box-shadow:0 0 0 2px var(--sheet),0 0 0 4px var(--ink)}
+.icons{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;max-height:232px;overflow:auto;scrollbar-width:none;padding:2px}
+.icons span{aspect-ratio:1;border-radius:12px;background:var(--fill);display:grid;place-items:center}
+.icons span.sel{background:var(--c-teal);color:#fff}
+.icons svg{width:19px;height:19px}
+.cta{margin-top:16px;width:100%;height:48px;border-radius:999px;background:var(--accent);color:var(--on-accent);font-weight:700;font-size:.9375rem;display:grid;place-items:center}
+</style>
+</head>
+<body>
+<header class="intro">
+  <h1>بيتنا — المعاينة الكاملة قبل الاعتماد</h1>
+  <p>فيها كل اللي طلبته: شريط الفئات أصغر، مربعات كبيرة للفئات، قائمة بكل المهام تحتها، حركة الاختفاء للخلف عند السحب، أيقونة ولون لكل فئة، مكتبة أيقونات للفئات الجديدة، وقائمة «مصاريفي». جرّب الخطوط من الأزرار تحت، واسحب القائمة في الجوال الأول لتشوف الحركة.</p>
+</header>
+<div class="ctrl">
+  <div><b>الخط:</b><span id="fonts" style="display:contents"></span></div>
+  <div><b>زر الإضافة:</b><button data-plus-at="">جنب الشريط</button><button data-plus-at="p-center">وسط الشريط</button><button data-plus-at="p-top">فوق</button><button data-plus-at="p-inline" class="on">خانة في القائمة</button></div>
+  <div><b>المظهر:</b><button data-mode="dk" class="on">ليلي</button><button data-mode="lt">نهاري</button></div>
+</div>
+
+<main class="wall">
+  <section class="opt">
+    <h2>١ · الرئيسية</h2>
+    <p class="why">اسحب القائمة لفوق: كل شيء يختفي بالتدريج، والصف الأعلى يسبق اللي تحته. «كل المهام» يثبت فوق بدون أي طبقة خلفه، وخانة الإضافة نفسها تنكمش وتتحول إلى الزائد جنبه.</p>
+    <div class="phone dk p-inline"><div class="screen" id="home"></div>
+      <div class="tools" data-tools></div><div class="tabs" data-tabs="home"></div><div class="plus" data-plus></div></div>
+  </section>
+  <section class="opt">
+    <h2>٢ · مصاريفي</h2>
+    <p class="why">الفواتير الشهرية الثابتة، مشتركة بينكم. تضغط الصح لما تسدد ويبان من سدّدها. يوم ٢٠ من كل شهر كل علامات الصح تنمسح تلقائياً عشان تبدأ شهر جديد.</p>
+    <div class="phone dk p-inline"><div class="screen" id="bills"></div>
+      <div class="tools" data-tools></div><div class="tabs" data-tabs="bills"></div><div class="plus" data-plus></div></div>
+  </section>
+  <section class="opt">
+    <h2>٣ · فئة جديدة</h2>
+    <p class="why">لما تضيف فئة تختار اسمها ولونها وأيقونتها من مكتبة جاهزة (٤٨ أيقونة هنا وتزيد)، وتشوف شكلها قبل ما تحفظ.</p>
+    <div class="phone dk p-inline"><div class="screen" id="back"></div><div class="dim"></div><div class="sheet" id="sheet"></div></div>
+  </section>
+  <section class="opt">
+    <h2>٤ · المواعيد</h2>
+    <p class="why">الموعد القادم بطاقة كبيرة فوق، بتاريخه ووقته ومكانه وكم باقي عليه. تحتها بقية المواعيد مرتبة بالتاريخ، وجنب كل موعد وقت التذكير. اضغط الموعد لتعلّمه منتهياً.</p>
+    <div class="phone dk p-inline"><div class="screen" id="appts"></div>
+      <div class="tools" data-tools></div><div class="tabs" data-tabs="cal"></div><div class="plus" data-plus></div></div>
+  </section>
+  <section class="opt">
+    <h2>٥ · موعد جديد</h2>
+    <p class="why">اسم الموعد، التاريخ والوقت، المكان لو تبي، ومتى يذكّرك. التذكير يوصل كإشعار على جوالك وجوال من يشاركك.</p>
+    <div class="phone dk p-inline"><div class="screen" id="back2"></div><div class="dim"></div><div class="sheet" id="sheet2"></div></div>
+  </section>
+</main>
+
+<script>
+const I = {
+  cart:'<circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>',
+  house:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',
+  car:'<path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M9 17h6"/>',
+  flower:'<circle cx="12" cy="12" r="2.4"/><circle cx="12" cy="5.6" r="3"/><circle cx="18.1" cy="10" r="3"/><circle cx="15.8" cy="17.2" r="3"/><circle cx="8.2" cy="17.2" r="3"/><circle cx="5.9" cy="10" r="3"/>',
+  heart:'<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>',
+  wrench:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  pill:'<path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/>',
+  book:'<path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"/>',
+  cap:'<path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/>',
+  shirt:'<path d="M20.38 3.46 16 2a4 4 0 0 1-8 0L3.62 3.46a2 2 0 0 0-1.34 2.23l.58 3.47a1 1 0 0 0 .99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 0 0 2-2V10h2.15a1 1 0 0 0 .99-.84l.58-3.47a2 2 0 0 0-1.34-2.23z"/>',
+  gift:'<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5A4.8 8 0 0 1 12 8a4.8 8 0 0 1 4.5-5 2.5 2.5 0 0 1 0 5"/>',
+  paw:'<circle cx="11" cy="4" r="2"/><circle cx="18" cy="8" r="2"/><circle cx="20" cy="16" r="2"/><path d="M9 10a5 5 0 0 1 5 5v3.5a3.5 3.5 0 0 1-6.84 1.045Q6.52 17.48 4.46 16.84A3.5 3.5 0 0 1 5.5 10Z"/>',
+  plane:'<path d="M17.8 19.2 16 11l3.5-3.5C21 6 21.5 4 21 3c-1-.5-3 0-4.5 1.5L13 8 4.8 6.2c-.5-.1-.9.1-1.1.5l-.3.5c-.2.5-.1 1 .3 1.3L9 12l-2 3H4l-1 1 3 2 2 3 1-1v-3l3-2 3.5 5.3c.3.4.8.5 1.3.3l.5-.2c.4-.3.6-.7.5-1.2z"/>',
+  phone:'<rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/>',
+  wifi:'<path d="M5 13a10 10 0 0 1 14 0M8.5 16.5a5 5 0 0 1 7 0M2 8.82a15 15 0 0 1 20 0M12 20h.01"/>',
+  bolt:'<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>',
+  drop:'<path d="M12 22a7 7 0 0 0 7-7c0-2-1-3.9-3-5.5s-3.5-4-4-6.5c-.5 2.5-2 4.9-4 6.5C6 11.1 5 13 5 15a7 7 0 0 0 7 7z"/>',
+  flame:'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+  leaf:'<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>',
+  sun:'<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
+  moon:'<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+  star:'<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>',
+  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+  tv:'<rect x="2" y="7" width="20" height="15" rx="2"/><path d="m17 2-5 5-5-5"/>',
+  bed:'<path d="M2 4v16M2 8h18a2 2 0 0 1 2 2v10M2 17h20M6 8v9"/>',
+  bath:'<path d="M9 6 6.5 3.5a1.5 1.5 0 0 0-1-.5C4.683 3 4 3.683 4 4.5V17a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5M2 12h20M7 19v2M17 19v2"/>',
+  trash:'<path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  box:'<path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/>',
+  key:'<circle cx="7.5" cy="15.5" r="5.5"/><path d="m21 2-9.6 9.6M15.5 7.5l3 3L22 7l-3-3"/>',
+  lock:'<rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>',
+  briefcase:'<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>',
+  card:'<rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/>',
+  receipt:'<path d="M4 2v20l2-1 2 1 2-1 2 1 2-1 2 1 2-1 2 1V2l-2 1-2-1-2 1-2-1-2 1-2-1-2 1Z"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+  bank:'<path d="M3 22h18M6 18v-7M10 18v-7M14 18v-7M18 18v-7M12 2l8 5H4z"/>',
+  dumbbell:'<path d="M6.5 6.5l11 11M21 21l-1-1M3 3l1 1M18 22l4-4M2 6l4-4M3 10l7-7M14 21l7-7"/>',
+  fuel:'<path d="M3 22h12M4 9h10M14 22V4a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v18M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 2 2 2 2 0 0 0 2-2V9.83a2 2 0 0 0-.59-1.42L18 5"/>',
+  coffee:'<path d="M17 8h1a4 4 0 1 1 0 8h-1M3 8h14v9a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4ZM6 2v2M10 2v2M14 2v2"/>',
+  food:'<path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2M7 2v20M21 15V2a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"/>',
+  scissors:'<circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M8.12 8.12 12 12M20 4 8.12 15.88M14.8 14.8 20 20"/>',
+  pencil:'<path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/>',
+  globe:'<circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>',
+  pin:'<path d="M20 10c0 5-8 12-8 12s-8-7-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>',
+  clock:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  apple:'<path d="M12 20.94c1.5 0 2.75 1.06 4 1.06 3 0 6-8 6-12.22A4.91 4.91 0 0 0 17 5c-2.22 0-4 1.44-5 2-1-.56-2.78-2-5-2a4.9 4.9 0 0 0-5 4.78C2 14 5 22 8 22c1.25 0 2.5-1.06 4-1.06Z"/><path d="M10 2c1 .5 2 2 2 5"/>',
+  bag:'<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4ZM3 6h18M16 10a4 4 0 0 1-8 0"/>',
+  tag:'<path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5"/>',
+  camera:'<path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3z"/><circle cx="12" cy="13" r="3"/>',
+  music:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+  users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  cal:'<rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  done:'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>', ok:'<path d="M20 6 9 17l-5-5"/>', x:'<path d="M18 6 6 18M6 6l12 12"/>',
+  spark:'<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>',
+  refresh:'<path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/>'
+};
+const ic = n => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${I[n]}</svg>`;
+const CK = `<span class="ck">${ic('ok')}</span>`;
+const CAT = {g:{n:'البقالة', i:'cart', c:'green'}, c:{n:'السيارة', i:'car', c:'blue'}, h:{n:'البيت', i:'house', c:'orange'}, k:{n:'البنات', i:'flower', c:'pink'}};
+const TASKS = [['حليب','g',1],['خبز','g'],['بقدونس وكزبرة','g'],['إصلاح سيفون الحمام','h'],['تغيير زيت السيارة','c'],['قماش ملابس للبنات','k'],['بطاطس','g'],['رز','g'],['بيض','g'],['لمبات المجلس','h'],['دفاتر المدرسة','k'],['شاي','g'],['فحص الكفرات','c'],['منظف الأرضيات','h']];
+const count = k => TASKS.filter(t => t[1] === k).length;
+const li = ([t, k, hot]) => `<button class="li it">${CK}<span class="t"><span class="n">${t}</span><small class="${hot ? 'hot' : ''}">${hot ? 'مستعجل، ' : ''}${CAT[k].n}</small></span><span class="mi" style="background:var(--c-${CAT[k].c})">${ic(CAT[k].i)}</span></button>`;
+const cats = () => Object.entries(CAT).map(([k, c]) => `<div class="cat gl"><span class="row"><span class="ic" style="background:var(--c-${c.c})">${ic(c.i)}</span><span class="n">${count(k)}</span></span><span><b>${c.n}</b><small>${count(k) === 1 ? 'غرض واحد' : 'أغراض ناقصة'}</small></span></div>`).join('');
+const chips = `<div class="chips"><span class="gl on">الكل</span>${Object.values(CAT).map(c => `<span class="gl">${c.n}</span>`).join('')}<span class="gl">+ فئة</span></div>`;
+
+document.querySelector('#home').innerHTML = `<div class="title"><h3>بيتنا</h3><p>${TASKS.length} غرض ناقص</p></div>${chips}
+  <div class="cats" id="cats">${cats()}</div>
+  <div class="listwrap"><div class="quick" id="quick"><u class="qbg gl"></u><i class="qp">${ic('plus')}</i><span>أضف غرضاً…</span><b class="ai" aria-label="المساعد">${ic('spark')}</b></div><div class="lh" id="lh"><span class="lt2"><b>كل المهام</b><i class="hp"></i></span><small class="sort">الأهم أولاً</small><i class="ha"></i></div><div class="list gl">${TASKS.map(li).join('')}</div></div><div class="space"></div>`;
+
+const BILLS = [['فاتورة الكهرباء','bolt','gold','٣٤٠',1,'فارس'],['فاتورة الماء','drop','blue','٨٥',1,'حياة'],['إنترنت البيت','wifi','violet','٣٤٥',1,'فارس'],['جوال فارس','phone','teal','١٧٢',0],['جوال حياة','phone','pink','١٧٢',0],['قسط السيارة','car','blue','١٬٤٥٠',0],['رسوم مدرسة البنات','cap','orange','٩٠٠',0],['العاملة المنزلية','house','green','١٬٨٠٠',0]];
+const paid = BILLS.filter(b => b[4]).length;
+document.querySelector('#bills').innerHTML = `<div class="title"><h3>مصاريفي</h3><p>فواتير شهر نوفمبر</p></div>
+  <div class="sum gl"><div class="ring"><svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="27" stroke="var(--fill)"/><circle cx="32" cy="32" r="27" stroke="var(--accent)" stroke-dasharray="170" stroke-dashoffset="${170 - 170 * paid / BILLS.length}"/></svg>${paid}/${BILLS.length}</div>
+    <div><b>سدّدتوا ${paid} من ${BILLS.length}</b><small>الباقي ٥ فواتير، مجموعها ٤٬٤٩٤ ريال</small></div></div>
+  <p class="note">${ic('refresh')}تنمسح علامات الصح تلقائياً يوم ٢٠ ديسمبر، باقي ٢٤ يوم</p>
+  <div class="listwrap" style="padding-top:16px"><div class="quick gl"><i>${ic('plus')}</i>أضف فاتورة…</div><div class="list gl">${BILLS.map(([t, i, c, a, p, who]) => `<button class="li it${p ? ' done' : ''}">${CK}<span class="t"><span class="n">${t}</span><small>${p ? 'سدّدها ' + who : 'ما تسدّدت'}</small></span><span class="amt">${a}</span><span class="mi" style="background:var(--c-${c})">${ic(i)}</span></button>`).join('')}</div></div><div class="space"></div>`;
+
+document.querySelector('#back').innerHTML = `<div class="title"><h3>بيتنا</h3><p>${TASKS.length} غرض ناقص</p></div>${chips}<div class="cats">${cats()}</div>`;
+const LIB = ['pill','cart','house','car','flower','heart','wrench','book','cap','shirt','gift','paw','plane','phone','wifi','bolt','drop','flame','leaf','sun','moon','star','bell','tv','bed','bath','trash','box','key','lock','briefcase','card','receipt','bank','dumbbell','fuel','coffee','food','scissors','pencil','globe','pin','clock','apple','bag','tag','camera','music'];
+const COLS = ['teal','green','blue','violet','pink','red','orange','gold'];
+document.querySelector('#sheet').innerHTML = `<div class="grab"></div><div class="sh"><b>فئة جديدة</b><span>${ic('x')}</span></div>
+  <div class="prev"><span class="ic">${ic('pill')}</span><b>الصيدلية</b></div>
+  <p class="lbl">اللون</p><div class="cols">${COLS.map((c, n) => `<i class="${n ? '' : 'sel'}" style="background:var(--c-${c})"></i>`).join('')}</div>
+  <p class="lbl">الأيقونة، ${LIB.length} أيقونة</p><div class="icons">${LIB.map((n, k) => `<span class="${k ? '' : 'sel'}">${ic(n)}</span>`).join('')}</div>
+  <div class="cta">إنشاء الفئة</div>`;
+
+const dt = (d, m, sm) => `<span class="dt${sm ? ' sm' : ''}"><small>${m}</small><b>${d}</b></span>`;
+const AP = [['٣','ديسمبر','فحص السيارة الدوري','الخميس ٩:٠٠ ص','الفحص الدوري، حي الصفا','قبل يوم','الأسبوع القادم'],['٧','ديسمبر','اجتماع أولياء الأمور','الاثنين ٦:٠٠ م','مدرسة البنات','قبل ساعة','الأسبوع القادم'],['١٤','ديسمبر','تطعيم جود','الاثنين ١٠:٣٠ ص','مركز صحي الخزامى','قبل يوم','لاحقاً'],['٢٢','ديسمبر','صيانة المكيفات','الثلاثاء ٤:٠٠ م','البيت','قبل ساعة','لاحقاً'],['٥','يناير','تجديد استمارة السيارة','الثلاثاء','','قبل يوم','لاحقاً']];
+const group = g => { const r = AP.filter(a => a[6] === g); return r.length ? `<p class="sec3">${g}</p><div class="listwrap" style="padding-top:0"><div class="list gl">${r.map(([d, m, t, w, l, rm]) => `<button class="ap li it" style="width:100%">${dt(d, m, 1)}<span class="t"><span class="n">${t}</span><small>${w}${l ? '، ' + l : ''}</small></span><span class="bell">${ic('bell')}${rm}</span></button>`).join('')}</div></div>` : ''; };
+const apHead = `<div class="title"><h3>المواعيد</h3><p>${AP.length + 1} مواعيد قادمة</p></div>
+  <div class="next gl">${dt('٢٨', 'نوفمبر')}<div class="in"><span class="tagline">القادم، بعد يومين</span><h4>موعد الأسنان</h4><p class="meta">${ic('clock')}السبت ٤:٣٠ م</p><p class="meta">${ic('pin')}عيادة النخبة</p><p class="meta">${ic('bell')}يذكّرك قبل ساعة</p></div></div>`;
+document.querySelector('#appts').innerHTML = apHead + `<div class="listwrap" style="padding-top:16px;padding-bottom:0"><div class="quick gl"><i>${ic('plus')}</i>أضف موعداً…</div></div>` + group('الأسبوع القادم') + group('لاحقاً') + '<div class="space"></div>';
+document.querySelector('#back2').innerHTML = apHead;
+document.querySelector('#sheet2').innerHTML = `<div class="grab"></div><div class="sh"><b>موعد جديد</b><span>${ic('x')}</span></div>
+  <div class="f"><span>تطعيم جود</span></div>
+  <div class="two"><div class="f">${ic('cal')}<span>١٤ ديسمبر</span></div><div class="f">${ic('clock')}<span>١٠:٣٠ ص</span></div></div>
+  <div class="f">${ic('pin')}<span>مركز صحي الخزامى</span><em>اختياري</em></div>
+  <p class="lbl">ذكّرني</p>
+  <div class="rem"><span>وقت الموعد</span><span>قبل ١٥ دقيقة</span><span>قبل ساعة</span><span class="sel">قبل يوم</span><span>بدون تذكير</span></div>
+  <div class="cta">إضافة الموعد</div>`;
+document.querySelectorAll('.it').forEach(b => b.onclick = () => b.classList.toggle('done'));
+document.querySelectorAll('[data-tools]').forEach(e => e.innerHTML = `<button class="sp" aria-label="المساعد">${ic('spark')}</button><button aria-label="الأشخاص">${ic('users')}</button>`);
+document.querySelectorAll('[data-tabs]').forEach(e => e.innerHTML = [['home','house','الرئيسية'],['bills','receipt','مصاريفي'],['cal','cal','المواعيد'],['done','done','منتهي']].map(([k, i, n]) => `<span class="${e.dataset.tabs === k ? 'on' : ''}">${ic(i)}${n}</span>`).join(''));
+document.querySelectorAll('[data-plus]').forEach(e => e.innerHTML = ic('plus'));
+
+
+// Everything above the list recedes in turn as the list comes up: the top goes first, then each row of category cards.
+// Each part travels slower than the scroll, shrinks a little, blurs and fades over its own stretch of the scroll.
+const home = document.querySelector('#home');
+const still = matchMedia('(prefers-reduced-motion:reduce)').matches;
+const cards = [...home.querySelectorAll('#cats .cat')];
+const STAGES = [
+  [[home.parentElement.querySelector('.tools')], 0, 60, false],
+  [[home.querySelector('.title')], 10, 100, true],
+  [[home.querySelector('.chips')], 55, 150, true],
+  [cards.slice(0, 2), 105, 235, true],          // top row of cards leaves first
+  [cards.slice(2), 185, 330, true]              // then the row under it
+];
+STAGES.forEach(([els]) => els.forEach(el => { el.style.willChange = 'transform,opacity'; el.style.transformOrigin = '50% 30%'; }));
+const quick = home.querySelector('#quick'), lh = home.querySelector('#lh'), list = home.querySelector('.list');
+const qp = quick.querySelector('.qp'), qa = quick.querySelector('.ai'), qbg = quick.querySelector('.qbg'), qtext = quick.querySelector('span');
+const clamp = v => Math.min(Math.max(v, 0), 1);
+function frame(){
+  const y = home.scrollTop;
+  for (const [els, from, to, travels] of STAGES){
+    const p = clamp((y - from) / (to - from));
+    for (const el of els){
+      el.style.opacity = 1 - p;
+      el.style.transform = still || !p ? '' : `translateY(${travels ? Math.max(y - from, 0) * .42 : 0}px) scale(${1 - .14 * p})`;
+      el.style.filter = still || !p ? '' : `blur(${p * 5}px)`;
+      el.style.pointerEvents = p > .6 ? 'none' : '';
+    }
+  }
+  // The add field itself becomes the plus: its body draws in around the plus circle, the hint fades,
+  // and the circle glides to its spot beside "كل المهام" while the assistant button glides to the far end.
+  const top = home.getBoundingClientRect().top, shown = !!quick.offsetParent;
+  const q = shown ? clamp((96 - (quick.getBoundingClientRect().top - top)) / 112) : 0;
+  const e = q * q * (3 - 2 * q);                                   // ease in and out
+  for (const [el, slot] of [[qp, lh.querySelector('.hp')], [qa, lh.querySelector('.ha')]]){
+    el.style.transform = '';
+    if (!e || !shown || still) continue;
+    const a = el.getBoundingClientRect(), b = slot.getBoundingClientRect();
+    el.style.transform = `translate(${(b.left + b.width / 2 - a.left - a.width / 2) * e}px,${(b.top + b.height / 2 - a.top - a.height / 2) * e}px) scale(${1 + (b.width / a.width - 1) * e})`;
+  }
+  qbg.style.opacity = 1 - e;
+  qbg.style.transform = still ? '' : `scale(${1 - .86 * e},${1 - .3 * e})`;
+  qtext.style.opacity = clamp(1 - e * 2.2);
+  quick.style.pointerEvents = e > .5 ? 'none' : '';
+  qp.style.pointerEvents = qa.style.pointerEvents = 'auto';
+  lh.querySelector('.sort').style.opacity = clamp(1 - e * 1.6);
+  // No bar behind the pinned header: the list simply dissolves where it meets it.
+  const x = lh.getBoundingClientRect().bottom - 16 - list.getBoundingClientRect().top;
+  list.style.webkitMaskImage = list.style.maskImage = x > 0 ? `linear-gradient(to bottom,transparent ${x}px,#000 ${x + 5}px)` : '';
+}
+home.addEventListener('scroll', frame, {passive:true});
+document.querySelector('.ctrl').addEventListener('click', () => requestAnimationFrame(frame));
+frame();
+
+const FONTS = [['Thmanyah Sans','ثمانية'],['-apple-system','خط آبل (يظهر على الايفون فقط)'],['Tajawal','تجوال'],['Almarai','المراعي'],['Readex Pro','ريدكس'],['Noto Kufi Arabic','كوفي'],['Vazirmatn','وزير']];
+document.querySelector('#fonts').innerHTML = FONTS.map(([f, n], k) => `<button data-font="${f}" class="${k ? '' : 'on'}" style="font-family:${f[0] === '-' ? f + ',system-ui' : `'${f}'`}">${n}</button>`).join('');
+document.querySelector('.ctrl').addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return;
+  if (b.dataset.font) document.documentElement.style.setProperty('--font', b.dataset.font[0] === '-' ? b.dataset.font : `'${b.dataset.font}'`);
+  if ('plusAt' in b.dataset) document.querySelectorAll('.phone').forEach(p => { p.classList.remove('p-center', 'p-top', 'p-inline'); if (b.dataset.plusAt) p.classList.add(b.dataset.plusAt); });
+  if (b.dataset.mode) document.querySelectorAll('.phone').forEach(p => { p.classList.remove('dk', 'lt'); p.classList.add(b.dataset.mode); });
+  b.parentElement.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+});
+</script>
+</body>
+</html>

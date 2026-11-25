@@ -6,3 +6,6 @@ dist/
 .claude/
 www/vendor/
 supabase/.temp/
+
+# Licensed font files: the Thmanyah licence forbids redistributing them, so they never go into this public repository.
+designs/fonts/

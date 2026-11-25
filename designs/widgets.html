@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>بيتنا — الويدجت وشاشة القفل</title>
+<style>
+@font-face{font-family:'Thmanyah Sans';font-weight:400;font-display:swap;src:url('fonts/thmanyahsans-Regular.woff2') format('woff2')}
+@font-face{font-family:'Thmanyah Sans';font-weight:500;font-display:swap;src:url('fonts/thmanyahsans-Medium.woff2') format('woff2')}
+@font-face{font-family:'Thmanyah Sans';font-weight:700;font-display:swap;src:url('fonts/thmanyahsans-Bold.woff2') format('woff2')}
+:root{--ink:#F5F5F7;--ink2:#B9BAC4;--line:rgba(255,255,255,.16);--fill:rgba(255,255,255,.12);--accent:#3DD6BF;--on-accent:#00231E;--red:#FF8D9B;
+  --green:#1FA862;--blue:#3D83F2;--orange:#D9801F;--pink:#E0488E;--gold:#C99A1E;--violet:#8E63F0;
+  --wash:radial-gradient(120% 60% at 100% 0%,#143A66 0%,transparent 60%),radial-gradient(90% 55% at 0% 22%,#3A2470 0%,transparent 62%),radial-gradient(110% 60% at 80% 62%,#5A2A22 0%,transparent 60%),radial-gradient(100% 60% at 10% 100%,#0F4A40 0%,transparent 60%),#07090F}
+*{box-sizing:border-box;margin:0}
+body{background:#E4E5EA;color:#15171C;font-family:'Thmanyah Sans',system-ui,sans-serif;padding:28px 16px 64px}
+.intro{max-width:1180px;margin:0 auto 28px}
+.intro h1{font-size:1.5rem;font-weight:700}
+.intro p{margin-top:8px;color:#3D4350;max-width:70ch;line-height:1.85}
+.intro a{color:#0B5FD0}
+.wall{max-width:1180px;margin:0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(330px,1fr));gap:40px 24px;justify-items:center}
+.opt{width:100%;max-width:372px}
+.opt h2{font-size:1.125rem;font-weight:700}
+.opt .why{color:#3D4350;line-height:1.8;margin:8px 0 16px;min-height:7.4em;font-size:.9375rem}
+.phone{position:relative;height:780px;border-radius:48px;overflow:hidden;border:9px solid #101114;box-shadow:0 34px 70px -30px rgba(20,24,40,.6);color:var(--ink);background:linear-gradient(160deg,#27456E 0%,#3A2B63 38%,#5B3140 70%,#1F4A44 100%)}
+.status{display:flex;justify-content:space-between;padding:18px 30px 0;font-size:.875rem;font-weight:700;direction:ltr}
+svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.pad{padding:26px 22px 0;display:grid;grid-template-columns:repeat(4,1fr);gap:18px 14px}
+
+/* widgets: the app's own night wash behind, solid text on top */
+.w{border-radius:26px;background:var(--wash);border:1px solid var(--line);padding:14px;position:relative;overflow:hidden;box-shadow:0 14px 30px -18px rgba(0,0,0,.8)}
+.w.s{grid-column:span 2;aspect-ratio:1}
+.w.m{grid-column:span 4;aspect-ratio:2.13}
+.w.l{grid-column:span 4;aspect-ratio:.95}
+.w .hd{display:flex;justify-content:space-between;align-items:center}
+.w .hd b{font-size:.8125rem;font-weight:700}
+.w .hd small{font-size:.6875rem;color:var(--ink2)}
+.add{width:30px;height:30px;border-radius:50%;background:var(--accent);color:var(--on-accent);display:grid;place-items:center;flex:none}
+.add svg{width:16px;height:16px;stroke-width:2.6}
+.big{font-size:2.6rem;font-weight:700;line-height:1;margin-top:10px}
+.cap{font-size:.75rem;color:var(--ink2);margin-top:2px}
+.hot{font-size:.75rem;color:var(--red);font-weight:700;margin-top:8px;display:flex;align-items:center;gap:6px}
+.hot::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--red)}
+.rows{margin-top:8px;display:grid;gap:0}
+.r{display:flex;align-items:center;gap:9px;min-height:27px;font-size:.8125rem;font-weight:500}
+.r+.r{border-top:1px solid var(--line)}
+.r .ck{width:15px;height:15px;border-radius:50%;border:1.5px solid var(--ink2);flex:none}
+.r .ck.on{background:var(--accent);border-color:var(--accent)}
+.r span{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r .mi{width:18px;height:18px;border-radius:6px;display:grid;place-items:center;color:#fff;flex:none}
+.r .mi svg{width:10px;height:10px;stroke-width:2.4}
+.r em{font-style:normal;font-size:.6875rem;color:var(--red);font-weight:700}
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:10px}
+.cats div{border-radius:14px;background:var(--fill);padding:10px 8px;text-align:center;font-size:.6875rem;color:var(--ink2)}
+.cats i{width:26px;height:26px;border-radius:9px;display:grid;place-items:center;color:#fff;margin:0 auto 5px}
+.cats i svg{width:14px;height:14px}
+.cats b{display:block;font-size:.9375rem;color:var(--ink);font-weight:700;line-height:1.2}
+.ring{width:70px;height:70px;position:relative;display:grid;place-items:center;font-weight:700;font-size:1rem;margin:10px auto 0}
+.ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:8;stroke-linecap:round}
+.cen{text-align:center}
+.app{aspect-ratio:1;border-radius:22%;background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.22)}
+.dockbar{position:absolute;inset:auto 14px 14px 14px;height:84px;border-radius:32px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.2);display:grid;grid-template-columns:repeat(4,1fr);gap:14px;padding:13px 16px}
+
+/* lock screen: the system draws these in one translucent tint, no colours */
+.lock{text-align:center;padding-top:44px}
+.inline{font-size:.9375rem;font-weight:500;display:flex;justify-content:center;align-items:center;gap:6px;opacity:.92}
+.time{font-size:6rem;font-weight:700;line-height:1.05;letter-spacing:-.02em;direction:ltr;opacity:.95}
+.acc{display:flex;gap:12px;justify-content:center;align-items:stretch;padding:14px 22px 0}
+.rect{flex:1;max-width:172px;border-radius:18px;background:rgba(255,255,255,.16);padding:12px 14px;text-align:start;font-size:.8125rem;line-height:1.65}
+.rect b{display:flex;align-items:center;gap:6px;font-size:.8125rem;font-weight:700}
+.rect span{display:block;opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.circ{width:72px;height:72px;border-radius:50%;background:rgba(255,255,255,.16);display:grid;place-items:center;position:relative;flex:none;align-self:center}
+.circ svg.g{position:absolute;inset:4px;transform:rotate(-90deg);width:auto;height:auto}
+.circ svg.g circle{fill:none;stroke-width:5;stroke-linecap:round}
+.circ b{font-size:1.125rem;font-weight:700;line-height:1}
+.circ small{display:block;font-size:.6875rem;opacity:.85;margin-top:1px}
+.note2{position:absolute;inset:auto 24px 150px 24px;border-radius:22px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.18);padding:12px 14px;text-align:start;display:flex;gap:12px;align-items:center}
+.note2 i{width:38px;height:38px;border-radius:11px;background:var(--wash);border:1px solid var(--line);display:grid;place-items:center;flex:none;color:var(--accent)}
+.note2 b{font-size:.875rem;font-weight:700;display:block}.note2 span{font-size:.8125rem;opacity:.9}
+.torch{position:absolute;bottom:44px;inset-inline:44px;display:flex;justify-content:space-between}
+.torch i{width:50px;height:50px;border-radius:50%;background:rgba(255,255,255,.18);display:block}
+</style>
+</head>
+<body>
+<header class="intro">
+  <h1>بيتنا — الويدجت وشاشة القفل بالتصميم الجديد</h1>
+  <p>هذي معاينة لشكل الويدجتس بنفس ألوان التطبيق الليلية وخط ثمانية. <a href="index.html">رجوع لمعاينة التطبيق</a></p>
+</header>
+
+<main class="wall">
+  <section class="opt">
+    <h2>١ · الشاشة الرئيسية، صغير ومتوسط</h2>
+    <p class="why">الصغير يعطيك العدد والمستعجل بنظرة، وجنبه ويدجت مصاريفي بكم فاتورة تسددت. المتوسط فيه أهم ثلاث مهام بأيقونة فئتها وزر إضافة سريع.</p>
+    <div class="phone">
+      <div class="status"><span>9:41</span><span>●●● 🔋</span></div>
+      <div class="pad">
+        <div class="w s"><div class="hd"><b>بيتنا</b><span class="add" data-ic="plus"></span></div><div class="big">١٤</div><div class="cap">غرض ناقص</div><div class="hot">حليب، مستعجل</div></div>
+        <div class="w s cen"><div class="hd"><b>مصاريفي</b><small>نوفمبر</small></div><div class="ring"><svg viewBox="0 0 70 70"><circle cx="35" cy="35" r="29" stroke="rgba(255,255,255,.14)"/><circle cx="35" cy="35" r="29" stroke="#3DD6BF" stroke-dasharray="182" stroke-dashoffset="114"/></svg>٣/٨</div><div class="cap" style="margin-top:8px">باقي ٥ فواتير</div></div>
+        <div class="w m"><div class="hd"><b>بيتنا <small>· ١٤ ناقص</small></b><span class="add" data-ic="plus"></span></div>
+          <div class="rows" data-rows="3"></div></div>
+        <span class="app"></span><span class="app"></span><span class="app"></span><span class="app"></span>
+        <span class="app"></span><span class="app"></span><span class="app"></span><span class="app"></span>
+      </div>
+      <div class="dockbar"><span class="app"></span><span class="app"></span><span class="app"></span><span class="app"></span></div>
+    </div>
+  </section>
+
+  <section class="opt">
+    <h2>٢ · الشاشة الرئيسية، كبير</h2>
+    <p class="why">نسخة مصغرة من التطبيق: الفئات الأربع بأعدادها فوق، وتحتها قائمة بست مهام. تضغط أي فئة فتفتح التطبيق عليها، والزائد يفتح الإضافة مباشرة.</p>
+    <div class="phone">
+      <div class="status"><span>9:41</span><span>●●● 🔋</span></div>
+      <div class="pad">
+        <div class="w l"><div class="hd"><b>بيتنا <small>· ١٤ ناقص</small></b><span class="add" data-ic="plus"></span></div>
+          <div class="cats" data-cats></div>
+          <div class="rows" data-rows="6" style="margin-top:10px"></div></div>
+        <span class="app"></span><span class="app"></span><span class="app"></span><span class="app"></span>
+        <span class="app"></span><span class="app"></span><span class="app"></span><span class="app"></span>
+      </div>
+      <div class="dockbar"><span class="app"></span><span class="app"></span><span class="app"></span><span class="app"></span></div>
+    </div>
+  </section>
+
+  <section class="opt">
+    <h2>٣ · شاشة القفل</h2>
+    <p class="why">سطر فوق الساعة بالعدد والمستعجل، وتحتها مستطيل بأهم ثلاث مهام ودائرتين: عدد الناقص وفواتير الشهر. النظام يرسمها كلها بلون واحد شفاف، فما فيها ألوان الفئات.</p>
+    <div class="phone">
+      <div class="lock">
+        <div class="inline"><span data-ic="cart"></span>١٤ غرض ناقص، حليب مستعجل</div>
+        <div class="time">9:41</div>
+        <div class="acc">
+          <div class="rect"><b><span data-ic="house"></span>بيتنا</b><span>حليب</span><span>خبز</span><span>بقدونس وكزبرة</span></div>
+          <div class="circ"><div><b>١٤</b><small>ناقص</small></div></div>
+          <div class="circ"><svg class="g" viewBox="0 0 64 64"><circle cx="32" cy="32" r="29" stroke="rgba(255,255,255,.25)"/><circle cx="32" cy="32" r="29" stroke="#fff" stroke-dasharray="182" stroke-dashoffset="114"/></svg><div><b>٣/٨</b><small>فواتير</small></div></div>
+        </div>
+      </div>
+      <div class="note2"><i data-ic="bell"></i><div><b>موعد الأسنان بعد ساعة</b><span>السبت ٤:٣٠ م، عيادة النخبة</span></div></div>
+      <div class="torch"><i></i><i></i></div>
+    </div>
+  </section>
+</main>
+
+<script>
+const I = {
+  cart:'<circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>',
+  house:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',
+  car:'<path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M9 17h6"/>',
+  flower:'<circle cx="12" cy="12" r="2.4"/><circle cx="12" cy="5.6" r="3"/><circle cx="18.1" cy="10" r="3"/><circle cx="15.8" cy="17.2" r="3"/><circle cx="8.2" cy="17.2" r="3"/><circle cx="5.9" cy="10" r="3"/>',
+  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>'
+};
+const ic = n => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${I[n]}</svg>`;
+document.querySelectorAll('[data-ic]').forEach(e => e.innerHTML = ic(e.dataset.ic));
+const CAT = {g:['البقالة','cart','green',7], c:['السيارة','car','blue',2], h:['البيت','house','orange',3], k:['البنات','flower','pink',2]};
+const T = [['حليب','g',1],['خبز','g'],['بقدونس وكزبرة','g'],['إصلاح سيفون الحمام','h'],['تغيير زيت السيارة','c'],['قماش ملابس للبنات','k'],['بطاطس','g']];
+document.querySelectorAll('[data-rows]').forEach(e => e.innerHTML = T.slice(0, +e.dataset.rows).map(([t, k, hot]) => `<div class="r"><i class="ck"></i><span>${t}</span>${hot ? '<em>مستعجل</em>' : ''}<i class="mi" style="background:var(--${CAT[k][2]})">${ic(CAT[k][1])}</i></div>`).join(''));
+document.querySelectorAll('[data-cats]').forEach(e => e.innerHTML = Object.values(CAT).map(([n, i, c, x]) => `<div><i style="background:var(--${c})">${ic(i)}</i><b>${x}</b>${n}</div>`).join(''));
+</script>
+</body>
+</html>

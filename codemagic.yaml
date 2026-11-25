@@ -18,6 +18,8 @@ workflows:
         script: npm ci
       - name: Stamp the version shown inside the app
         script: sed -i.bak "s/APP_VER = 'dev'/APP_VER = '1.0.$BUILD_NUMBER'/" www/index.html && rm www/index.html.bak
+      - name: Unpack the typeface (needs the FONT_KEY variable set in Codemagic)
+        script: sh scripts/unpack_font.sh
       - name: Copy bundled assets
         script: npm run vendor
       - name: Android APK
@@ -25,15 +27,12 @@ workflows:
           npx cap sync android
           cd android && chmod +x gradlew && ./gradlew assembleDebug --console=plain
           mkdir -p "$CM_BUILD_DIR/out" && cp app/build/outputs/apk/debug/app-debug.apk "$CM_BUILD_DIR/out/baytna.apk"
-      - name: iOS without widgets
+      - name: iPhone IPA, with the widgets
         script: |
           npx cap sync ios
-          sh scripts/ios_ipa.sh baytna-unsigned.ipa
-      - name: iOS with home-screen and lock-screen widgets
-        script: |
           gem install xcodeproj --no-document --user-install
           ruby scripts/add_ios_widget.rb
-          sh scripts/ios_ipa.sh baytna-widgets-unsigned.ipa
+          sh scripts/ios_ipa.sh baytna-unsigned.ipa
     artifacts:
       - out/*.apk
       - out/*.ipa

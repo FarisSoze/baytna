@@ -2,7 +2,7 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="oval">
-            <gradient android:angle="270" android:startColor="#FFEBD3A2" android:endColor="#FFC8A662" />
+            <solid android:color="#FF3DD6BF" />
         </shape>
     </item>
     <item android:drawable="@drawable/widget_plus" android:gravity="center" android:width="22dp" android:height="22dp" />

@@ -145,6 +145,7 @@ public class WidgetBridgePlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "openUrl", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "authListen", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "authResult", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "setIcon", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "listen", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "stopListening", returnType: CAPPluginReturnPromise)
     ]
@@ -186,6 +187,17 @@ public class WidgetBridgePlugin: CAPPlugin, CAPBridgedPlugin {
         }
     }
 
+    /// Night is the primary icon; day is the alternate one compiled into the asset catalogue.
+    @objc func setIcon(_ call: CAPPluginCall) {
+        let name: String? = call.getString("name") == "day" ? "AppIconDay" : nil
+        DispatchQueue.main.async {
+            guard UIApplication.shared.supportsAlternateIcons else { call.reject("unsupported"); return }
+            UIApplication.shared.setAlternateIconName(name) { error in
+                if let error = error { call.reject(error.localizedDescription) } else { call.resolve() }
+            }
+        }
+    }
+
     @objc func listen(_ call: CAPPluginCall) {
         let lang = call.getString("lang") ?? "ar-SA"
         DispatchQueue.main.async {
@@ -213,6 +225,9 @@ public class WidgetBridgePlugin: CAPPlugin, CAPBridgedPlugin {
         store.set(call.getString("items") ?? "[]", forKey: "items")
         store.set(call.getInt("count") ?? 0, forKey: "count")
         store.set(call.getBool("signedIn") ?? false, forKey: "signedIn")
+        store.set(call.getString("cats") ?? "[]", forKey: "cats")
+        store.set(call.getInt("billsPaid") ?? 0, forKey: "billsPaid")
+        store.set(call.getInt("billsTotal") ?? 0, forKey: "billsTotal")
         WidgetCenter.shared.reloadAllTimelines()
         call.resolve()
     }
