@@ -130,6 +130,8 @@ svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke
 .send{width:42px;height:42px;border-radius:50%;background:var(--cta-bg);color:var(--cta-fg);display:grid;place-items:center;transform:scale(.6);opacity:0;pointer-events:none;transition:transform .35s var(--ease),opacity .2s}
 .quick.has .send{transform:none;opacity:1;pointer-events:auto}
 .quick.has .send:active{transform:scale(.9)}
+.appt-add{width:100%;height:52px;border-radius:18px;background:var(--surface);box-shadow:var(--shadow);color:var(--accent);font-weight:500;display:flex;align-items:center;justify-content:center;gap:8px;margin-bottom:14px;transition:transform .14s ease-out}
+.appt-add:active{transform:scale(.98)}
 .hint{font-size:.8125rem;color:var(--fg3);margin:0 4px 6px;font-weight:300}
 
 /* ---------- Rows / cards ---------- */
@@ -314,6 +316,8 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
       <input id="qIn" autocomplete="off" enterkeyhint="done">
       <button class="send" type="submit" aria-label="إضافة" data-ic="up"></button>
     </form>
+    <button class="appt-add" id="apptAdd" hidden><span data-ic="plus" style="display:contents"></span>موعد جديد</button>
+
     <div id="view"></div>
   </main>
 </div>
@@ -345,6 +349,31 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
     <div class="actions">
       <button type="button" class="del press" id="fDelete" aria-label="حذف الغرض" data-ic="trash" hidden></button>
       <button type="submit" class="btn primary" id="fSubmit">إضافة</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="modal" id="apptDlg" aria-labelledby="apptTitle">
+  <div class="scrim" data-close></div>
+  <form class="sheet" id="apptForm" novalidate>
+    <div class="sheet-h"><span class="grabber"></span><h2 id="apptTitle">موعد جديد</h2><button type="button" class="x press" data-close aria-label="إغلاق" data-ic="x"></button></div>
+    <div class="field">
+      <label for="apName">اسم الموعد</label>
+      <input id="apName" autocomplete="off" placeholder="فحص نظر، عمال المطبخ…" aria-describedby="apErr">
+    </div>
+    <div class="field">
+      <label for="apWhen">التاريخ والوقت</label>
+      <input id="apWhen" type="datetime-local" aria-describedby="apErr">
+    </div>
+    <div class="field">
+      <label for="apLoc">الموقع (اختياري)</label>
+      <input id="apLoc" autocomplete="off" placeholder="مركز صحي الخزامى">
+    </div>
+    <fieldset class="field"><legend>ذكّرني</legend><div class="pick sm" id="apRemind"></div></fieldset>
+    <p class="err" id="apErr" role="alert" style="margin:0"></p>
+    <div class="actions">
+      <button type="button" class="del press" id="apDelete" aria-label="حذف الموعد" data-ic="trash" hidden></button>
+      <button type="submit" class="btn primary" id="apSubmit">إضافة الموعد</button>
     </div>
   </form>
 </dialog>
@@ -435,6 +464,8 @@ const I = {
   urgent:'<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/>',
   soon:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
   later:'<circle cx="12" cy="12" r="10"/><path d="M8 12h8"/>',
+  cal:'<rect x="3" y="4" width="18" height="18" rx="3"/><path d="M16 2v4M8 2v4M3 10h18"/>',
+  pin:'<path d="M20 10c0 5-8 12-8 12s-8-7-8-12a8 8 0 0 1 16 0z"/><circle cx="12" cy="10" r="3"/>',
   bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
   copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
   trash:'<path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
@@ -493,14 +524,15 @@ const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch
 
 const pad = n => String(n).padStart(2, '0');
 const toLocal = iso => { if (!iso) return undefined; const d = new Date(iso); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`; };
-const fromRow = r => ({id:r.id, title:r.title, tag:r.tag_id, prio:r.prio, by:r.created_by, due:toLocal(r.due), done:r.done, doneAt:r.done_at ? Date.parse(r.done_at) : undefined, doneBy:r.done_by || undefined});
+const fromRow = r => ({kind:r.kind || 'item', loc:r.location || '', remind:r.remind_min == null ? null : r.remind_min, id:r.id, title:r.title, tag:r.tag_id, prio:r.prio, by:r.created_by, due:toLocal(r.due), done:r.done, doneAt:r.done_at ? Date.parse(r.done_at) : undefined, doneBy:r.done_by || undefined});
 const toRow = it => ({id:it.id, household_id:S.hid, title:it.title, tag_id:it.tag || null, prio:it.prio, created_by:it.by || null, due:it.due ? new Date(it.due).toISOString() : null,
-  done:!!it.done, done_at:it.doneAt ? new Date(it.doneAt).toISOString() : null, done_by:it.doneBy || null});
+  done:!!it.done, done_at:it.doneAt ? new Date(it.doneAt).toISOString() : null, done_by:it.doneBy || null,
+  ...(it.kind === 'appt' ? {kind:'appt', location:it.loc || null, remind_min:it.remind == null ? null : it.remind} : {})});
 
 // The UI updates first; the write follows. A failed write says so and reloads the truth.
 const run = async q => { const {error} = await q; if (error){ console.error(error); toast('تعذّر الحفظ، تحقق من الاتصال'); load(); } };
 const db = {
-  saveItems: its => run(sb.from('items').upsert(its.map(toRow))),
+  saveItems: its => Promise.all([its.filter(i => i.kind !== 'appt'), its.filter(i => i.kind === 'appt')].filter(g => g.length).map(g => run(sb.from('items').upsert(g.map(toRow))))),
   delItems: ids => run(sb.from('items').delete().in('id', ids)),
   addTag: t => run(sb.from('tags').insert({id:t.id, household_id:S.hid, name:t.name, color:t.color, icon:t.icon}))
 };
@@ -515,7 +547,7 @@ async function load(){
   S.hid = hh.data.id; S.space.code = hh.data.code;
   S.space.members = pr.data.map((m, i) => ({id:m.id, name:m.name, email:m.email || '', color:MCOL[i % MCOL.length]}));
   S.tags = tg.data; S.items = it.data.map(fromRow);
-  if (S.filter !== 'all' && !S.tags.some(t => t.id === S.filter)) S.filter = 'all';
+  if (S.filter !== 'all' && S.filter !== 'appt' && !S.tags.some(t => t.id === S.filter)) S.filter = 'all';
   render(); subscribe(); return true;
 }
 // Realtime: any change by anyone in the household refreshes the list. Row-level security limits what arrives.
@@ -532,7 +564,10 @@ document.addEventListener('visibilitychange', () => { if (!document.hidden && S.
 
 const tagOf = id => S.tags.find(t => t.id === id) || {name:'بدون تاق', color:'slate', icon:'tag'};
 const memOf = id => S.space.members.find(m => m.id === id) || {name:'؟', color:'slate'};
-const active = () => S.items.filter(i => !i.done);
+const isAppt = i => i.kind === 'appt';
+const active = () => S.items.filter(i => !i.done && !isAppt(i));          // household items: the main thing
+const appts = () => S.items.filter(i => !i.done && isAppt(i)).sort((a, b) => (a.due || '').localeCompare(b.due || ''));
+const REMIND = [[0, 'وقت الموعد'], [15, 'قبل ١٥ دقيقة'], [60, 'قبل ساعة'], [1440, 'قبل يوم'], [null, 'بدون تذكير']];
 const fmtDue = d => new Intl.DateTimeFormat('ar-SA-u-nu-latn-ca-gregory', {weekday:'short', day:'numeric', month:'short', hour:'numeric', minute:'2-digit'}).format(new Date(d));
 const avatar = (m, cls = '') => `<span class="av ${cls} c-${m.color}" title="${esc(m.name)}" aria-label="${esc(m.name)}">${esc(m.name[0])}</span>`;
 const tileIc = (t, cls = '') => `<span class="tile-ic ${cls} c-${t.color}">${ic(t.icon)}</span>`;
@@ -547,9 +582,9 @@ function row(it){
       <button class="body" data-edit="${it.id}" aria-label="تعديل «${esc(it.title)}»">
         <div class="title">${esc(it.title)}</div>
         <div class="meta">
-          <span class="tg c-${t.color}"><i class="dot"></i>${esc(t.name)}</span>
-          ${it.prio !== 'soon' || it.done ? `<span class="p-${p.id}" style="color:var(--pc)">${ic(p.icon)}${p.name}</span>` : ''}
-          ${it.due && !it.done ? `<span>${ic('bell')}${fmtDue(it.due)}</span>` : ''}
+          ${isAppt(it) ? `<span class="tg c-gold">${ic('cal')}${it.due ? fmtDue(it.due) : 'بدون تاريخ'}</span>${it.loc ? `<span>${ic('pin')}${esc(it.loc)}</span>` : ''}` : `<span class="tg c-${t.color}"><i class="dot"></i>${esc(t.name)}</span>`}
+          ${!isAppt(it) && (it.prio !== 'soon' || it.done) ? `<span class="p-${p.id}" style="color:var(--pc)">${ic(p.icon)}${p.name}</span>` : ''}
+          ${it.due && !it.done && !isAppt(it) ? `<span>${ic('bell')}${fmtDue(it.due)}</span>` : ''}
         </div>
       </button>
       ${avatar(memOf(it.done ? it.doneBy || it.by : it.by), 'sm')}
@@ -559,7 +594,8 @@ function row(it){
 const emptyBox = (icon, b, p) => `<div class="empty" data-flip="empty"><span class="tile-ic c-gold">${ic(icon)}</span><b>${b}</b>${p}</div>`;
 
 const ORD = {urgent:0, soon:1, later:2};
-function viewHome(list, cur){
+function viewHome(list, cur, appt){
+  if (appt) return list.length ? `<div class="grid">${list.map(row).join('')}</div>` : emptyBox('cal', 'ما فيه مواعيد قادمة', 'أضف موعداً من الزر فوق.');
   if (!list.length) return emptyBox('done', 'كل شيء منتهي', cur ? 'ما فيه أغراض معلّقة في هذا التاق.' : 'أضف أول غرض من الحقل فوق.');
   return `<div class="grid">${[...list].sort((a, b) => ORD[a.prio] - ORD[b.prio]).map(row).join('')}</div>`;
 }
@@ -573,13 +609,14 @@ let lastView = null;
 function render(){
   const view = $('#view'), prev = new Map();
   $$('#view [data-flip]').forEach(e => prev.set(e.dataset.flip, e.getBoundingClientRect()));
-  const all = active(), doneN = S.items.length - all.length, home = S.view === 'home';
-  const cur = home && S.filter !== 'all' ? tagOf(S.filter) : null;
-  const list = cur ? all.filter(i => i.tag === S.filter) : all;
+  const all = active(), ap = appts(), doneN = S.items.filter(i => i.done).length, home = S.view === 'home';
+  const appt = home && S.filter === 'appt';
+  const cur = home && S.filter !== 'all' && !appt ? tagOf(S.filter) : null;
+  const list = appt ? ap : cur ? all.filter(i => i.tag === S.filter) : all;
 
-  const title = S.view === 'done' ? 'منتهي' : cur ? cur.name : S.space.name;
+  const title = S.view === 'done' ? 'منتهي' : appt ? 'المواعيد' : cur ? cur.name : S.space.name;
   $('#ltitle').textContent = $('#barTitle').textContent = title;
-  $('#eyebrow').textContent = S.view === 'done' ? `${doneN} غرض مكتمل` : cur ? `${list.length} بانتظاركم` : `${new Date().getHours() < 12 ? 'صباح الخير' : 'مساء الخير'}، ${memOf(S.me).name}${all.some(i => i.prio === 'urgent') ? ' · ' + all.filter(i => i.prio === 'urgent').length + ' مستعجلة' : ''}`;
+  $('#eyebrow').textContent = S.view === 'done' ? `${doneN} مكتمل` : appt ? `${list.length} موعد قادم` : cur ? `${list.length} بانتظاركم` : `${new Date().getHours() < 12 ? 'صباح الخير' : 'مساء الخير'}، ${memOf(S.me).name}${all.some(i => i.prio === 'urgent') ? ' · ' + all.filter(i => i.prio === 'urgent').length + ' مستعجلة' : ''}`;
   $('#barAv').innerHTML = S.space.members.map(m => avatar(m)).join('');
 
   const pct = S.items.length ? doneN / S.items.length : 0;
@@ -588,13 +625,14 @@ function render(){
   $('#ringPct').textContent = list.length;
   $('#ring').setAttribute('aria-label', `${list.length} بانتظاركم، أُنجز ${doneN}`);
 
-  $('#tiles').hidden = $('#quick').hidden = !home;
+  $('#tiles').hidden = !home; $('#quick').hidden = !home || appt; $('#apptAdd').hidden = !appt;
   $('#tiles').innerHTML = `<button class="tile c-gold" data-filter="all" aria-pressed="${S.filter === 'all'}"><span class="tile-ic sm c-gold">${ic('grid')}</span><span class="tile-name">الكل</span><b class="num">${all.length}</b></button>`
     + S.tags.map(t => `<button class="tile c-${t.color}" data-filter="${t.id}" aria-pressed="${S.filter === t.id}">${tileIc(t, 'sm')}<span class="tile-name">${esc(t.name)}</span><b class="num">${all.filter(i => i.tag === t.id).length}</b></button>`).join('')
+    + `<button class="tile c-gold" data-filter="appt" aria-pressed="${S.filter === 'appt'}"><span class="tile-ic sm c-slate">${ic('cal')}</span><span class="tile-name">المواعيد</span><b class="num">${ap.length}</b></button>`
     + `<button class="tile new" data-newtag>${ic('plus')}تاق</button>`;
   $('#qIn').placeholder = cur ? `أضف إلى ${cur.name}…` : 'خبز، عصير، حليب…';
 
-  view.innerHTML = S.view === 'done' ? viewDone() : viewHome(list, cur);
+  view.innerHTML = S.view === 'done' ? viewDone() : viewHome(list, cur, appt);
 
   // FLIP: survivors glide from their old spot, newcomers materialize
   if (!reduced()){
@@ -665,7 +703,7 @@ document.addEventListener('click', e => {
   if (d.view){ S.view = d.view; if (d.view === 'home') S.filter = 'all'; render(); scrollTo({top:0}); }
   else if (d.filter){ S.view = 'home'; S.filter = d.filter; render(); }
   else if (d.toggle) toggle(d.toggle);
-  else if (d.edit) openItem(d.edit);
+  else if (d.edit) (isAppt(S.items.find(i => i.id === d.edit) || {}) ? openAppt : openItem)(d.edit);
   else if ('newtag' in d) openTag();
   else if ('invite' in d) openInvite();
   else if ('close' in d) closeSheet(b.closest('dialog'));
@@ -737,7 +775,39 @@ $('#quick').onsubmit = e => {
   if (unknown.length){ $('#qIn').value = unknown.join('، '); render(); openPick(unknown); }
   else { $('#qIn').value = ''; $('#quick').classList.remove('has'); render(); }
 };
-$('#plus').onclick = $('#sideNew').onclick = () => openItem();
+$('#plus').onclick = $('#sideNew').onclick = () => S.view === 'home' && S.filter === 'appt' ? openAppt() : openItem();
+$('#apptAdd').onclick = () => openAppt();
+
+/* ---------- Appointments (secondary to household items) ---------- */
+let apEditing = null;
+function openAppt(id){
+  apEditing = id ? S.items.find(i => i.id === id) : null;
+  const a = apEditing, sel = a ? a.remind : 60;
+  $('#apptTitle').textContent = a ? 'تعديل الموعد' : 'موعد جديد';
+  $('#apSubmit').textContent = a ? 'حفظ' : 'إضافة الموعد';
+  $('#apDelete').hidden = !a; $('#apErr').classList.remove('show');
+  $('#apName').value = a ? a.title : ''; $('#apLoc').value = a ? a.loc || '' : ''; $('#apWhen').value = a ? a.due || '' : '';
+  $('#apRemind').innerHTML = REMIND.map(([m, label]) => `<label class="c-gold"><input type="radio" name="remind" value="${m == null ? '' : m}" ${m === sel ? 'checked' : ''}>${label}</label>`).join('');
+  openSheet($('#apptDlg'));
+  if (!isPhone()) $('#apName').focus();
+}
+$('#apptForm').onsubmit = e => {
+  e.preventDefault();
+  const err = $('#apErr'), title = $('#apName').value.trim(), due = $('#apWhen').value, loc = $('#apLoc').value.trim();
+  const rv = new FormData(e.target).get('remind'), remind = rv === '' || rv == null ? null : +rv;
+  const bad = (m, el) => { err.textContent = m; err.classList.add('show'); el.focus(); };
+  err.classList.remove('show');
+  if (!title) return bad('اكتب اسم الموعد.', $('#apName'));
+  if (!due) return bad('اختر تاريخ ووقت الموعد.', $('#apWhen'));
+  if (apEditing){ Object.assign(apEditing, {title, due, loc, remind}); db.saveItems([apEditing]); }
+  else {
+    const a = {id:uid(), kind:'appt', title, due, loc, remind, tag:null, prio:'soon', by:S.me};
+    S.items.unshift(a); db.saveItems([a]); buzz(8);
+    toast(`أُضيف موعد «${title}»`, () => { S.items = S.items.filter(i => i.id !== a.id); db.delItems([a.id]); });
+  }
+  closeSheet($('#apptDlg')); render();
+};
+$('#apDelete').onclick = () => { const id = apEditing.id; closeSheet($('#apptDlg')); removeItem(id); };
 $('#view').addEventListener('pointermove', e => {
   if (e.pointerType !== 'mouse') return;
   const c = e.target.closest('.card'); if (!c) return;
@@ -964,12 +1034,13 @@ function syncReminders(){
   if (!isNative()) return;
   clearTimeout(lnT);
   lnT = setTimeout(async () => { try {
-    const now = Date.now(), due = active().filter(i => i.due && Date.parse(i.due) > now).slice(0, 60);
+    const now = Date.now(), at = i => Date.parse(i.due) - (isAppt(i) ? (i.remind || 0) * 60000 : 0);
+    const due = [...active(), ...appts().filter(i => i.remind != null)].filter(i => i.due && at(i) > now).slice(0, 60);
     const pend = await LN.getPending();
     if (pend.notifications.length) await LN.cancel({notifications:pend.notifications.map(n => ({id:n.id}))});
     if (!due.length) return;
     if ((await LN.checkPermissions()).display !== 'granted' && (await LN.requestPermissions()).display !== 'granted') return;
-    await LN.schedule({notifications:due.map(i => ({id:nid(i.id), title:i.title, body:`${tagOf(i.tag).name} · ${PRIO.find(p => p.id === i.prio).name}`, schedule:{at:new Date(i.due), allowWhileIdle:true}}))});
+    await LN.schedule({notifications:due.map(i => ({id:nid(i.id), title:i.title, body:isAppt(i) ? `موعد · ${fmtDue(i.due)}${i.loc ? ' · ' + i.loc : ''}` : `${tagOf(i.tag).name} · ${PRIO.find(p => p.id === i.prio).name}`, schedule:{at:new Date(at(i)), allowWhileIdle:true}}))});
   } catch (e) { console.warn('reminders', e); } }, 800);
 }
 

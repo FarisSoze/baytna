@@ -45,6 +45,16 @@ create table if not exists public.items (
 );
 create index if not exists items_household_idx on public.items (household_id, done);
 
+-- المواعيد: نفس جدول الأغراض بنوع مختلف (kind = 'appt')، مع موقع اختياري ووقت تذكير قبل الموعد بالدقائق.
+alter table public.items add column if not exists kind text not null default 'item';
+alter table public.items add column if not exists location text;
+alter table public.items add column if not exists remind_min integer;
+do $$ begin
+  if not exists (select 1 from pg_constraint where conname = 'items_kind_check') then
+    alter table public.items add constraint items_kind_check check (kind in ('item', 'appt'));
+  end if;
+end $$;
+
 -- ───────────── دوال مساعدة ─────────────
 -- مجموعة المستخدم الحالي. security definer حتى لا تدور سياسات RLS على نفسها.
 create or replace function public.my_household()
