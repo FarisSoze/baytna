@@ -1,0 +1,922 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B0B0C" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#F4F1EB" media="(prefers-color-scheme: light)">
+<title>بيتنا — مستلزمات وتذكيرات البيت</title>
+<style>
+@font-face{font-family:"Readex Pro";font-style:normal;font-weight:160 700;font-display:swap;src:url(vendor/readex-pro-arabic-wght-normal.woff2) format("woff2");unicode-range:U+0600-06FF,U+0750-077F,U+0870-088E,U+0890-0891,U+0898-08E1,U+08E3-08FF,U+200C-200E,U+2010-2011,U+204F,U+2E41,U+FB50-FDFF,U+FE70-FE74,U+FE76-FEFC}
+@font-face{font-family:"Readex Pro";font-style:normal;font-weight:160 700;font-display:swap;src:url(vendor/readex-pro-latin-wght-normal.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+:root{
+  --bg:#F4F1EB; --surface:#FFFFFF; --raised:#FFFFFF; --fill:rgba(60,50,30,.07);
+  --fg:#1B1A17; --fg2:#59554D; --fg3:#6C675E; --line:rgba(40,30,10,.10);
+  --accent:#775A22; --accent-soft:rgba(138,106,47,.12);
+  --cta-bg:linear-gradient(180deg,#2B2925,#191816); --cta-fg:#F5E9CF;
+  --ok:#1F8A43; --danger:#C8201A; --urgent:#C8201A; --soon:#775A22; --later:#59554D;
+  --glass:rgba(250,248,243,.72); --glow:rgba(190,150,70,.16);
+  --shadow:0 1px 2px rgba(40,30,10,.05),0 10px 28px rgba(40,30,10,.06);
+  --shadow-lg:0 20px 60px rgba(30,20,5,.22);
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --font:"Readex Pro",-apple-system,"SF Arabic","Segoe UI",Tahoma,sans-serif;
+}
+.c-green{--c:#34C759;--ct:#1B7A3A}.c-blue{--c:#0A84FF;--ct:#0A5FD1}.c-amber{--c:#FF9F0A;--ct:#A35A00}
+.c-violet{--c:#BF5AF2;--ct:#7B35C9}.c-rose{--c:#FF375F;--ct:#C8204A}.c-slate{--c:#8E8E93;--ct:#5B5B62}.c-gold{--c:#C9A45C;--ct:#775A22}
+@media (prefers-color-scheme:dark){
+  :root{
+    --bg:#0B0B0C; --surface:#18181A; --raised:#2A2A2D; --fill:rgba(255,245,225,.08);
+    --fg:#F6F2E9; --fg2:#A8A398; --fg3:#969186; --line:rgba(255,245,225,.09);
+    --accent:#DCC08A; --accent-soft:rgba(220,192,138,.14);
+    --cta-bg:linear-gradient(180deg,#EBD3A2,#C8A662); --cta-fg:#1C1505;
+    --ok:#32D169; --danger:#FF5A4F; --urgent:#FF6A60; --soon:#DCC08A; --later:#A8A398;
+    --glass:rgba(22,22,24,.68); --glow:rgba(220,185,120,.13);
+    --shadow:inset 0 1px 0 rgba(255,255,255,.05),0 8px 24px rgba(0,0,0,.35);
+    --shadow-lg:inset 0 1px 0 rgba(255,255,255,.07),0 24px 70px rgba(0,0,0,.6);
+  }
+  .c-green{--ct:#5EDC8A}.c-blue{--ct:#6CB2FF}.c-amber{--ct:#FFB751}.c-violet{--ct:#D08CFF}.c-rose{--ct:#FF7A95}.c-slate{--ct:#B4B4BC}.c-gold{--ct:#DCC08A}
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{margin:0;min-height:100%}
+body{font-family:var(--font);background:var(--bg);color:var(--fg);font-size:1rem;line-height:1.55;font-weight:400;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
+body::before{content:"";position:fixed;inset:0 0 auto;height:420px;z-index:-1;pointer-events:none;background:radial-gradient(60% 100% at 70% 0%,var(--glow),transparent 70%)}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;touch-action:manipulation;padding:0}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:10px}
+svg.i{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+.num{font-variant-numeric:tabular-nums}
+.press{transition:transform .14s ease-out,opacity .14s ease-out}
+.press:active{transform:scale(.96);opacity:.85}
+
+/* ---------- Layout ---------- */
+.app{display:grid;grid-template-columns:1fr;min-height:100dvh}
+.side{display:none}
+.main{min-width:0;width:100%;max-width:720px;margin-inline:auto;padding:0 16px calc(128px + env(safe-area-inset-bottom))}
+@media (min-width:900px){
+  .app{grid-template-columns:288px 1fr}
+  .side{display:flex;flex-direction:column;gap:24px;position:sticky;top:0;height:100dvh;overflow:auto;padding:24px 14px;background:var(--glass);backdrop-filter:blur(30px) saturate(160%);-webkit-backdrop-filter:blur(30px) saturate(160%);border-inline-end:1px solid var(--line)}
+  .main{padding:0 40px 56px}
+  .dock{display:none!important}
+}
+
+/* ---------- Sidebar ---------- */
+.brand{display:flex;align-items:center;gap:12px;font-weight:600;font-size:1.25rem;padding-inline:8px}
+.logo{width:40px;height:40px;border-radius:12px;background:var(--cta-bg);color:var(--cta-fg);display:grid;place-items:center;box-shadow:var(--shadow)}
+.side h2{font-size:.8125rem;font-weight:500;color:var(--fg3);margin:0 0 6px;padding-inline:12px}
+.nav-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:2px}
+.nav-btn{width:100%;min-height:46px;display:flex;align-items:center;gap:12px;padding:6px 12px;border-radius:12px;text-align:start;font-weight:400;transition:background-color .2s,transform .14s ease-out}
+.nav-btn:hover{background:var(--fill)}
+.nav-btn:active{transform:scale(.98)}
+.nav-btn[aria-current="true"]{background:var(--accent-soft);color:var(--accent);font-weight:500}
+.nav-btn .count{margin-inline-start:auto;font-size:.875rem;color:var(--fg3)}
+.plist{background:var(--fill);border-radius:16px;padding:0 14px}
+.side-foot{margin-top:auto;width:100%;text-align:start;display:flex;align-items:center;gap:10px;padding:12px;border-radius:16px;background:var(--fill)}
+.side-foot b{font-weight:500;display:block;line-height:1.3}
+.side-foot small{color:var(--fg3);font-size:.8125rem}
+
+/* ---------- Icon tiles / avatars ---------- */
+.tile-ic{width:32px;height:32px;border-radius:10px;display:grid;place-items:center;color:#fff;flex:none;background:linear-gradient(180deg,color-mix(in srgb,var(--c) 78%,#fff),var(--c));box-shadow:inset 0 1px 0 rgba(255,255,255,.3)}
+.tile-ic svg{width:17px;height:17px;stroke-width:2.2}
+.tile-ic.sm{width:26px;height:26px;border-radius:8px}
+.tile-ic.sm svg{width:14px;height:14px}
+.avatars{display:flex}
+.av{width:32px;height:32px;border-radius:50%;display:grid;place-items:center;font-size:.8125rem;font-weight:600;background:color-mix(in srgb,var(--c) 24%,var(--surface));color:var(--ct);box-shadow:0 0 0 2px var(--bg);margin-inline-start:-8px;flex:none}
+.av:first-child{margin-inline-start:0}
+.av.sm{width:24px;height:24px;font-size:.6875rem;box-shadow:none;margin:0}
+.av.lg{width:42px;height:42px;font-size:1rem;box-shadow:none;margin:0}
+
+/* ---------- Top bar + large title ---------- */
+.bar{position:sticky;top:0;z-index:20;height:calc(56px + env(safe-area-inset-top));padding-top:env(safe-area-inset-top);margin-inline:-16px;padding-inline:16px;display:flex;align-items:center;justify-content:flex-end;gap:10px;transition:background-color .25s,box-shadow .25s}
+.bar::before{content:"";position:absolute;inset:0;z-index:-1;opacity:0;background:var(--glass);backdrop-filter:blur(24px) saturate(180%);-webkit-backdrop-filter:blur(24px) saturate(180%);border-bottom:1px solid var(--line);transition:opacity .25s}
+.bar.scrolled::before{opacity:1}
+.bar-title{position:absolute;inset-inline:0;text-align:center;font-weight:600;font-size:1.0625rem;pointer-events:none;opacity:0;transform:translateY(6px);transition:opacity .25s,transform .35s var(--ease)}
+.bar.scrolled .bar-title{opacity:1;transform:none}
+@media (min-width:900px){.bar{margin-inline:-40px;padding-inline:40px}}
+.round{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;background:var(--fill);color:var(--accent)}
+.lt{padding:4px 0 14px}
+.eyebrow{margin:0;color:var(--fg2);font-size:.9375rem;font-weight:300}
+.lt h1{margin:0;font-size:clamp(2rem,6vw,2.75rem);font-weight:600;line-height:1.25}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;overflow:hidden;display:flex;align-items:center;gap:16px;padding:18px;border-radius:24px;background:var(--surface);box-shadow:var(--shadow);margin-bottom:14px}
+.hero::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(90% 140% at 100% 0%,var(--accent-soft),transparent 60%)}
+.ring{width:64px;height:64px;flex:none;position:relative;display:grid;place-items:center}
+.ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
+.ring circle{fill:none;stroke-width:5;stroke-linecap:round}
+.ring .tr{stroke:var(--fill)}
+.ring .pr{stroke:var(--accent);stroke-dasharray:163.4;stroke-dashoffset:163.4;transition:stroke-dashoffset .9s var(--ease)}
+.ring b{font-size:.9375rem;font-weight:600}
+.hero-t{position:relative;min-width:0}
+.hero-n{font-size:1.75rem;font-weight:600;line-height:1.2}
+.hero-n small{font-size:1rem;font-weight:400;color:var(--fg2);margin-inline-start:6px}
+.hero-s{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:4px;color:var(--fg2);font-size:.875rem}
+.hero-s span{display:inline-flex;align-items:center;gap:6px}
+.pip{width:8px;height:8px;border-radius:50%;background:var(--pc)}
+
+/* ---------- Tag tiles ---------- */
+.tiles{display:flex;gap:10px;overflow-x:auto;padding:4px 16px 14px;margin-inline:-16px;scrollbar-width:none;scroll-snap-type:x proximity}
+.tiles::-webkit-scrollbar{display:none}
+.tile{flex:none;width:124px;min-height:88px;scroll-snap-align:start;display:flex;flex-direction:column;justify-content:space-between;gap:8px;padding:12px;border-radius:20px;background:var(--surface);box-shadow:var(--shadow);text-align:start;position:relative;transition:transform .16s ease-out,background-color .25s,box-shadow .25s}
+.tile:active{transform:scale(.95)}
+.tile-top{display:flex;align-items:center;justify-content:space-between}
+.tile-top b{font-size:1.5rem;font-weight:600;line-height:1}
+.tile-name{font-size:.875rem;font-weight:500;color:var(--fg2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile[aria-pressed="true"]{background:color-mix(in srgb,var(--c) 20%,var(--surface));box-shadow:0 0 0 1.5px var(--ct),var(--shadow)}
+.tile[aria-pressed="true"] .tile-name{color:var(--ct)}
+.tile.new{align-items:center;justify-content:center;gap:6px;background:none;box-shadow:inset 0 0 0 1.5px var(--line);color:var(--fg2);width:96px;font-size:.875rem}
+
+/* ---------- Quick add ---------- */
+.quick{display:flex;align-items:center;gap:8px;height:54px;border-radius:18px;background:var(--surface);box-shadow:var(--shadow);padding-inline:16px 6px;margin-bottom:8px;transition:box-shadow .25s}
+.quick:focus-within{box-shadow:0 0 0 2px var(--accent),var(--shadow)}
+.quick>svg{color:var(--accent)}
+.quick input{flex:1;min-width:0;height:100%;border:0;background:none;outline:0;font-weight:400}
+.quick input::placeholder{color:var(--fg3);font-weight:300}
+.send{width:42px;height:42px;border-radius:50%;background:var(--cta-bg);color:var(--cta-fg);display:grid;place-items:center;transform:scale(.6);opacity:0;pointer-events:none;transition:transform .35s var(--ease),opacity .2s}
+.quick.has .send{transform:none;opacity:1;pointer-events:auto}
+.quick.has .send:active{transform:scale(.9)}
+.hint{font-size:.8125rem;color:var(--fg3);margin:0 4px 6px;font-weight:300}
+
+/* ---------- Rows / cards ---------- */
+.group-h{display:flex;align-items:center;gap:8px;font-size:.875rem;font-weight:500;margin:20px 4px 8px;color:var(--pc)}
+.group-h svg{width:16px;height:16px}
+.group-h .count{color:var(--fg3);font-weight:400}
+.p-urgent{--pc:var(--urgent)}.p-soon{--pc:var(--soon)}.p-later{--pc:var(--later)}
+.grid{display:grid;grid-template-columns:1fr;gap:8px}
+.row{position:relative;border-radius:18px;--p:0}
+.row-bg{position:absolute;inset:0;border-radius:18px;background:var(--ok);color:#fff;display:flex;align-items:center;padding-inline:22px;opacity:var(--p)}
+.row-bg svg{width:24px;height:24px;stroke-width:2.6;transform:scale(calc(.6 + var(--p)*.4));transition:transform .2s var(--ease)}
+.row.armed .row-bg svg{transform:scale(1.25)}
+.row[data-side="r"] .row-bg{justify-content:flex-end}
+.card{position:relative;overflow:hidden;display:flex;align-items:center;gap:2px;min-height:64px;background:var(--surface);border-radius:18px;box-shadow:var(--shadow);padding-inline:6px 14px;touch-action:pan-y;user-select:none;-webkit-user-select:none;transition:scale .16s ease-out}
+.card:has(.body:active){scale:.98}
+.row.dragging .card{transition:none;cursor:grabbing}
+@media (hover:hover){
+  .card::after{content:"";position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .3s;background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%),var(--accent-soft),transparent 70%)}
+  .card:hover::after{opacity:1}
+}
+.check{width:48px;height:48px;display:grid;place-items:center;flex:none;border-radius:50%;position:relative;z-index:1}
+.check span{width:26px;height:26px;border-radius:50%;box-shadow:inset 0 0 0 2px var(--fg3);display:grid;place-items:center;color:transparent;transition:background-color .2s,box-shadow .2s,color .2s,transform .35s cubic-bezier(.3,1.6,.5,1)}
+.check:hover span{box-shadow:inset 0 0 0 2px var(--ok)}
+.check:active span{transform:scale(.85)}
+.check svg{width:15px;height:15px;stroke-width:3.2}
+.row.is-done .check span,.row.checking .check span{background:var(--ok);box-shadow:none;color:#fff}
+.row.checking .check span{transform:scale(1.18)}
+.row.is-done.checking .check span{background:none;box-shadow:inset 0 0 0 2px var(--fg3);color:transparent}
+.body{flex:1;min-width:0;text-align:start;padding:10px 0;position:relative;z-index:1;border-radius:8px}
+.title{font-weight:500;font-size:1rem;line-height:1.45;overflow-wrap:anywhere;transition:color .25s}
+.row.is-done .title,.row.checking:not(.is-done) .title{color:var(--fg3);text-decoration:line-through}
+.meta{display:flex;flex-wrap:wrap;align-items:center;gap:4px 12px;margin-top:2px;font-size:.8125rem;color:var(--fg2);font-weight:300}
+.meta span{display:inline-flex;align-items:center;gap:6px}
+.meta svg{width:13px;height:13px}
+.meta .tg{color:var(--ct);font-weight:400}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--c);flex:none}
+.card>.av{position:relative;z-index:1}
+
+.empty{text-align:center;padding:64px 16px;color:var(--fg2);font-weight:300}
+.empty .tile-ic{width:56px;height:56px;border-radius:18px;margin:0 auto 14px}
+.empty .tile-ic svg{width:28px;height:28px}
+.empty b{display:block;color:var(--fg);font-size:1.125rem;font-weight:500}
+.row-h{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 4px 10px}
+.link{color:var(--accent);font-weight:500;min-height:44px;padding:0 8px}
+
+/* ---------- Panels (space) ---------- */
+.panel{background:var(--surface);box-shadow:var(--shadow);border-radius:22px;padding:6px 16px;margin-bottom:14px}
+.panel-h{font-size:.8125rem;color:var(--fg3);margin:18px 16px 6px;font-weight:400}
+.member{display:flex;align-items:center;gap:12px;min-height:64px;border-top:1px solid var(--line)}
+.member:first-child{border-top:0}
+.member b{font-weight:500;display:block;line-height:1.4}
+.member small{display:block;color:var(--fg3);font-size:.8125rem}
+.role{margin-inline-start:auto;font-size:.8125rem;color:var(--fg2)}
+.list-btn{width:100%;min-height:56px;display:flex;align-items:center;gap:12px;border-top:1px solid var(--line);text-align:start;font-weight:400;transition:opacity .14s}
+.list-btn:first-child{border-top:0}
+.list-btn:active{opacity:.55}
+.list-btn.accent{color:var(--accent)}.list-btn.red{color:var(--danger)}
+.tagline{display:flex;flex-wrap:wrap;gap:8px;padding:14px 0}
+.tagchip{display:inline-flex;align-items:center;gap:8px;padding-block:5px;padding-inline:6px 12px;border-radius:999px;background:var(--fill);font-size:.875rem}
+
+/* ---------- Buttons ---------- */
+.btn{min-height:52px;padding:0 20px;border-radius:16px;font-weight:500;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:transform .14s ease-out,opacity .14s}
+.btn:active{transform:scale(.97)}
+.btn:disabled{opacity:.6;pointer-events:none}
+.btn.primary{background:var(--cta-bg);color:var(--cta-fg);box-shadow:inset 0 1px 0 rgba(255,255,255,.25),0 6px 18px rgba(0,0,0,.18)}
+.btn.soft{background:var(--fill)}
+.btn.block{width:100%}
+
+/* ---------- Dock (floating tab bar) ---------- */
+.dock{position:fixed;inset-inline:0;bottom:0;z-index:30;display:flex;align-items:center;gap:10px;padding:10px 16px calc(12px + env(safe-area-inset-bottom));pointer-events:none}
+.pill{pointer-events:auto;flex:1;position:relative;display:grid;grid-template-columns:repeat(2,1fr);padding:4px;border-radius:999px;background:var(--glass);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);box-shadow:inset 0 0 0 1px var(--line),var(--shadow-lg)}
+.pill .thumb{position:absolute;inset-block:4px;inset-inline-start:4px;width:calc((100% - 8px)/2);border-radius:999px;background:var(--fill);transform:translateX(calc(var(--i,0)*-100%));transition:transform .5s var(--ease)}
+.tab{position:relative;min-height:54px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;font-size:.6875rem;font-weight:400;color:var(--fg2);border-radius:999px;transition:color .25s,transform .14s ease-out}
+.tab:active{transform:scale(.92)}
+.tab svg{width:22px;height:22px}
+.tab[aria-current="true"]{color:var(--accent);font-weight:500}
+.plus{pointer-events:auto;width:62px;height:62px;border-radius:50%;flex:none;background:var(--cta-bg);color:var(--cta-fg);display:grid;place-items:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.3),var(--shadow-lg);transition:transform .16s ease-out}
+.plus:active{transform:scale(.9)}
+.plus svg{width:26px;height:26px}
+
+/* ---------- Sheets ---------- */
+dialog.modal{border:0;padding:0;margin:0;background:none;color:var(--fg);position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;overflow:hidden}
+dialog.modal[open]{display:flex;align-items:flex-end;justify-content:center}
+dialog.modal::backdrop{background:none}
+.scrim{position:absolute;inset:0;background:rgba(0,0,0,.5);opacity:0}
+.sheet{position:relative;width:min(500px,100%);max-height:94dvh;overflow:auto;overscroll-behavior:contain;background:var(--surface);border-radius:28px 28px 0 0;box-shadow:var(--shadow-lg);padding:0 18px calc(18px + env(safe-area-inset-bottom));display:flex;flex-direction:column;gap:18px;will-change:transform}
+.sheet::after{content:"";position:absolute;inset:100% 0 auto;height:200px;background:var(--surface)}
+@media (min-width:640px){dialog.modal[open]{align-items:center}.sheet{border-radius:28px;padding-bottom:20px}.sheet::after,.grabber{display:none}.sheet-h{padding-top:20px!important}}
+.sheet-h{position:sticky;top:0;z-index:2;background:var(--surface);display:flex;align-items:center;justify-content:space-between;padding:26px 0 4px;touch-action:none;cursor:grab}
+.grabber{position:absolute;top:8px;inset-inline:0;margin:auto;width:40px;height:5px;border-radius:3px;background:var(--fg3);opacity:.5}
+.sheet-h h2{margin:0;font-size:1.375rem;font-weight:600}
+.x{width:36px;height:36px;border-radius:50%;background:var(--fill);display:grid;place-items:center;color:var(--fg2)}
+.x svg{width:16px;height:16px;stroke-width:2.6}
+.field>label,.field>legend{display:block;font-size:.8125rem;color:var(--fg2);margin-bottom:8px;padding:0;font-weight:400}
+.field input:not([type=radio]){width:100%;height:54px;border-radius:16px;border:0;background:var(--fill);padding:0 16px;outline:0;transition:box-shadow .2s}
+.field input:not([type=radio]):focus-visible{box-shadow:0 0 0 2px var(--accent)}
+.field input::placeholder{color:var(--fg3);font-weight:300}
+fieldset{border:0;margin:0;padding:0;min-width:0}
+.seg{position:relative;display:grid;grid-template-columns:repeat(3,1fr);background:var(--fill);border-radius:16px;padding:4px}
+.seg.two{grid-template-columns:repeat(2,1fr)}
+.seg .thumb{position:absolute;inset-block:4px;inset-inline-start:4px;width:calc((100% - 8px)/3);border-radius:12px;background:var(--raised);box-shadow:0 2px 8px rgba(0,0,0,.14);transition:transform .45s var(--ease)}
+.seg.two .thumb{width:calc((100% - 8px)/2)}
+.seg:has(label:nth-of-type(2) input:checked) .thumb,.seg[data-i="1"] .thumb{transform:translateX(-100%)}
+.seg:has(label:nth-of-type(3) input:checked) .thumb{transform:translateX(-200%)}
+.seg label,.seg button{position:relative;z-index:1;margin:0;min-height:46px;display:flex;align-items:center;justify-content:center;gap:6px;font-size:.875rem;font-weight:400;color:var(--fg2);border-radius:12px;cursor:pointer;transition:color .25s,transform .14s}
+.seg label:active,.seg button:active{transform:scale(.96)}
+.seg input{position:absolute;opacity:0;inset:0;width:100%;height:100%;cursor:pointer;margin:0}
+.seg label:has(input:checked){color:var(--pc,var(--fg));font-weight:500}
+.seg button[aria-selected="true"]{color:var(--fg);font-weight:500}
+.seg label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.seg svg{width:16px;height:16px}
+.pick{display:flex;flex-wrap:wrap;gap:8px}
+.pick label{position:relative;margin:0;min-height:46px;display:inline-flex;align-items:center;gap:8px;padding-inline:8px 14px;border-radius:999px;background:var(--fill);font-size:.875rem;cursor:pointer;transition:transform .14s ease-out,background-color .25s,box-shadow .25s}
+.pick label:active{transform:scale(.95)}
+.pick input{position:absolute;opacity:0;inset:0;width:100%;height:100%;cursor:pointer;margin:0}
+.pick label:has(input:checked){background:color-mix(in srgb,var(--c) 20%,transparent);box-shadow:0 0 0 1.5px var(--ct);color:var(--ct);font-weight:500}
+.pick label:has(input:focus-visible){outline:2px solid var(--accent);outline-offset:2px}
+.actions{display:flex;gap:10px}
+.actions .primary{flex:1}
+.del{width:52px;height:52px;border-radius:16px;background:var(--fill);color:var(--danger);display:grid;place-items:center;flex:none}
+.err{color:var(--danger);font-size:.8125rem;margin:8px 4px 0;display:none}
+.err.show{display:block}
+.help{font-size:.8125rem;color:var(--fg3);margin:8px 4px 0;font-weight:300}
+.code{display:flex;align-items:center;gap:10px;background:var(--fill);border-radius:16px;padding-block:8px;padding-inline:18px 8px}
+.code b{flex:1;font-size:1.375rem;font-weight:600;letter-spacing:.2em;direction:ltr;text-align:end;color:var(--accent)}
+.sep{display:flex;align-items:center;gap:12px;color:var(--fg3);font-size:.8125rem}
+.sep::before,.sep::after{content:"";flex:1;height:1px;background:var(--line)}
+
+/* ---------- Toast ---------- */
+.toast{position:fixed;inset-inline:16px;bottom:calc(98px + env(safe-area-inset-bottom));z-index:60;margin-inline:auto;max-width:400px;min-height:52px;background:var(--glass);backdrop-filter:blur(28px) saturate(180%);-webkit-backdrop-filter:blur(28px) saturate(180%);box-shadow:inset 0 0 0 1px var(--line),var(--shadow-lg);border-radius:999px;padding-block:4px;padding-inline:20px 6px;display:flex;align-items:center;gap:8px;transform:translateY(24px) scale(.94);opacity:0;pointer-events:none;transition:transform .45s var(--ease),opacity .25s}
+.toast.show{transform:none;opacity:1;pointer-events:auto}
+.toast span{flex:1;font-size:.9375rem;min-width:0}
+.toast button{min-height:44px;padding:0 16px;font-weight:500;color:var(--accent);border-radius:999px}
+@media (min-width:900px){.toast{bottom:28px}}
+
+/* ---------- Auth ---------- */
+.auth{position:fixed;inset:0;z-index:80;background:var(--bg);display:grid;place-items:center;padding:20px;overflow:auto;opacity:0;visibility:hidden;transform:scale(1.03);transition:opacity .35s,transform .5s var(--ease),visibility 0s .35s}
+.auth.show{opacity:1;visibility:visible;transform:none;transition:opacity .35s,transform .5s var(--ease)}
+.auth::before{content:"";position:absolute;inset:0;pointer-events:none;background:radial-gradient(70% 50% at 50% 0%,var(--glow),transparent 70%)}
+.auth-card{position:relative;width:min(420px,100%);display:flex;flex-direction:column;gap:16px}
+.auth-card .logo{width:64px;height:64px;border-radius:20px;margin-inline:auto}
+.auth-card .logo svg{width:30px;height:30px}
+.auth-card h1{margin:4px 0 0;font-size:2rem;font-weight:600;text-align:center;line-height:1.3}
+.auth-card>p{margin:0;color:var(--fg2);text-align:center;font-weight:300}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition-duration:.01ms!important}}
+@media (prefers-reduced-transparency:reduce){.side,.pill,.toast,.bar::before{backdrop-filter:none;-webkit-backdrop-filter:none;background:var(--surface)}}
+@media (prefers-contrast:more){:root{--line:currentColor}.card,.tile,.hero,.panel,.quick{box-shadow:inset 0 0 0 1px var(--fg)}}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <aside class="side" aria-label="القائمة الجانبية">
+    <div class="brand"><span class="logo" data-ic="home"></span>بيتنا</div>
+    <button class="btn primary block" id="sideNew"><span data-ic="plus" style="display:contents"></span>غرض جديد</button>
+    <nav aria-label="الأقسام"><ul class="nav-list" id="sideNav"></ul></nav>
+    <div><h2>التاقات</h2><ul class="nav-list" id="sideTags"></ul></div>
+    <button class="side-foot press" id="sideFoot" data-invite aria-label="الحساب والأشخاص"></button>
+  </aside>
+
+  <main class="main">
+    <div class="bar" id="bar">
+      <div class="bar-title" id="barTitle" aria-hidden="true"></div>
+      <button class="avatars press" id="barAv" data-invite aria-label="الحساب والأشخاص"></button>
+      <button class="round press" data-invite aria-label="دعوة شخص" data-ic="userPlus"></button>
+    </div>
+    <header class="lt"><p class="eyebrow" id="eyebrow"></p><h1 id="ltitle"></h1></header>
+
+    <section class="hero" id="hero" aria-label="ملخص">
+      <div class="ring"><svg viewBox="0 0 64 64" aria-hidden="true"><circle class="tr" cx="32" cy="32" r="26"/><circle class="pr" id="ringPr" cx="32" cy="32" r="26"/></svg><b class="num" id="ringPct"></b></div>
+      <div class="hero-t"><div class="hero-n num" id="heroN"></div><div class="hero-s" id="heroS"></div></div>
+    </section>
+
+    <div class="tiles" id="tiles" role="group" aria-label="تصفية حسب التاق"></div>
+
+    <form class="quick" id="quick">
+      <svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+      <label class="sr" for="qIn">إضافة سريعة</label>
+      <input id="qIn" autocomplete="off" enterkeyhint="done">
+      <button class="send" type="submit" aria-label="إضافة" data-ic="up"></button>
+    </form>
+    <p class="hint" id="quickHint">افصل بفاصلة لإضافة أكثر من غرض · اسحب البطاقة لإنهائها</p>
+
+    <div id="view"></div>
+  </main>
+</div>
+
+<div class="dock" id="dock">
+  <nav class="pill" id="pill" aria-label="التنقل الرئيسي">
+    <span class="thumb"></span>
+    <button class="tab" data-view="home"><span data-ic="home"></span>الرئيسية</button>
+    <button class="tab" data-view="done"><span data-ic="done"></span>منتهي</button>
+  </nav>
+  <button class="plus" id="plus" aria-label="غرض جديد" data-ic="plus"></button>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"><span id="toastMsg"></span><button id="toastUndo">تراجع</button></div>
+
+<dialog class="modal" id="itemDlg" aria-labelledby="itemDlgTitle">
+  <div class="scrim" data-close></div>
+  <form class="sheet" id="itemForm" novalidate>
+    <div class="sheet-h"><span class="grabber"></span><h2 id="itemDlgTitle">غرض جديد</h2><button type="button" class="x press" data-close aria-label="إغلاق" data-ic="x"></button></div>
+    <div class="field">
+      <label for="fTitle">وش تحتاجون؟</label>
+      <input id="fTitle" autocomplete="off" placeholder="خبز، عصير، حليب" aria-describedby="fTitleHelp fTitleErr">
+      <p class="help" id="fTitleHelp">افصل بفاصلة لإضافة أكثر من غرض مرة وحدة.</p>
+      <p class="err" id="fTitleErr" role="alert">اكتب اسم الغرض أولاً.</p>
+    </div>
+    <fieldset class="field"><legend>التاق</legend><div class="pick" id="fTags"></div></fieldset>
+    <fieldset class="field"><legend>مستوى الأهمية</legend><div class="seg" id="fPrio"></div></fieldset>
+    <div class="field"><label for="fDue">تذكير (اختياري)</label><input id="fDue" type="datetime-local"></div>
+    <div class="actions">
+      <button type="button" class="del press" id="fDelete" aria-label="حذف الغرض" data-ic="trash" hidden></button>
+      <button type="submit" class="btn primary" id="fSubmit">إضافة</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="modal" id="tagDlg" aria-labelledby="tagDlgTitle">
+  <div class="scrim" data-close></div>
+  <form class="sheet" id="tagForm" novalidate>
+    <div class="sheet-h"><span class="grabber"></span><h2 id="tagDlgTitle">تاق جديد</h2><button type="button" class="x press" data-close aria-label="إغلاق" data-ic="x"></button></div>
+    <div class="field">
+      <label for="tName">اسم التاق</label>
+      <input id="tName" autocomplete="off" placeholder="الصيدلية" aria-describedby="tErr">
+      <p class="err" id="tErr" role="alert">اكتب اسم التاق.</p>
+    </div>
+    <fieldset class="field"><legend>اللون</legend><div class="pick" id="tColors"></div></fieldset>
+    <button type="submit" class="btn primary block">إنشاء التاق</button>
+  </form>
+</dialog>
+
+<dialog class="modal" id="inviteDlg" aria-labelledby="invTitle">
+  <div class="scrim" data-close></div>
+  <form class="sheet" id="inviteForm" novalidate>
+    <div class="sheet-h"><span class="grabber"></span><h2 id="invTitle">الحساب والأشخاص</h2><button type="button" class="x press" data-close aria-label="إغلاق" data-ic="x"></button></div>
+    <div class="field"><label>يشوفون أغراضك وتذكيراتك</label><div class="plist" id="people"></div></div>
+    <div class="field">
+      <label id="invCodeL">رمز دعوتك — أعطه لمن تبغى يشاركك</label>
+      <div class="code" aria-labelledby="invCodeL"><b id="invCode"></b><button type="button" class="btn soft" id="invCopy" style="min-height:44px;padding:0 16px"></button></div>
+      <p class="help">اللي يدخل رمزك تطلع له كل أغراضك في الرئيسية، وتطلع لك أغراضه.</p>
+    </div>
+    <div class="sep">أو</div>
+    <div class="field">
+      <label for="invJoin">عندك رمز من شخص ثاني؟</label>
+      <input id="invJoin" autocomplete="off" autocapitalize="characters" placeholder="BYT-XXXXXX" dir="ltr" aria-describedby="invErr">
+      <p class="help">أغراضك الحالية تنتقل معك وتنضاف لأغراضه.</p>
+      <p class="err" id="invErr" role="alert">اكتب الرمز كاملاً بهذا الشكل: BYT-XXXXXX</p>
+    </div>
+    <button type="submit" class="btn primary block">انضمام بالرمز</button>
+    <button type="button" class="btn soft block" data-logout style="color:var(--danger)">تسجيل الخروج</button>
+  </form>
+</dialog>
+
+<div class="auth" id="auth">
+  <form class="auth-card" id="authForm" novalidate>
+    <span class="logo" data-ic="home"></span>
+    <h1>بيتنا</h1>
+    <p>مستلزمات البيت وتذكيراته، تتشاركها مع أهلك.</p>
+    <div class="seg two" id="authSeg" role="tablist" data-i="0">
+      <span class="thumb"></span>
+      <button type="button" role="tab" aria-selected="true" data-mode="in">تسجيل الدخول</button>
+      <button type="button" role="tab" aria-selected="false" data-mode="up">حساب جديد</button>
+    </div>
+    <div class="field" id="aNameWrap" hidden><label for="aName">الاسم</label><input id="aName" autocomplete="name"></div>
+    <div class="field"><label for="aEmail">البريد الإلكتروني</label><input id="aEmail" type="email" inputmode="email" autocomplete="email" dir="ltr"></div>
+    <div class="field"><label for="aPass">كلمة المرور</label><input id="aPass" type="password" autocomplete="current-password" dir="ltr" aria-describedby="aErr"></div>
+    <div class="field" id="aCodeWrap" hidden>
+      <label for="aCode">رمز دعوة (اختياري)</label>
+      <input id="aCode" autocomplete="off" dir="ltr" placeholder="BYT-XXXXXX" aria-describedby="aCodeHelp">
+      <p class="help" id="aCodeHelp">عندك رمز من أحد أهلك؟ تطلع لك أغراضه مباشرة. وتقدر تضيفه بعدين.</p>
+    </div>
+    <p class="err" id="aErr" role="alert" style="margin:0;text-align:center"></p>
+    <button type="submit" class="btn primary block" id="aSubmit">دخول</button>
+  </form>
+</div>
+
+<script src="vendor/supabase.js"></script>
+<script>
+const I = {
+  home:'<path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1z"/>',
+  done:'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
+  users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>',
+  userPlus:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M19 8v6M22 11h-6"/>',
+  plus:'<path d="M12 5v14M5 12h14"/>', check:'<path d="M20 6 9 17l-5-5"/>', x:'<path d="M18 6 6 18M6 6l12 12"/>', up:'<path d="M12 19V5M5 12l7-7 7 7"/>',
+  grid:'<rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/>',
+  cart:'<circle cx="8" cy="21" r="1"/><circle cx="19" cy="21" r="1"/><path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"/>',
+  wrench:'<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+  car:'<path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M9 17h6"/>',
+  tag:'<path d="M12.586 2.586A2 2 0 0 0 11.172 2H4a2 2 0 0 0-2 2v7.172a2 2 0 0 0 .586 1.414l8.704 8.704a2.426 2.426 0 0 0 3.42 0l6.58-6.58a2.426 2.426 0 0 0 0-3.42z"/><circle cx="7.5" cy="7.5" r=".5"/>',
+  urgent:'<path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><path d="M12 9v4M12 17h.01"/>',
+  soon:'<circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>',
+  later:'<circle cx="12" cy="12" r="10"/><path d="M8 12h8"/>',
+  bell:'<path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/>',
+  copy:'<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  trash:'<path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>',
+  undo:'<path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/>',
+  logout:'<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="m16 17 5-5-5-5"/><path d="M21 12H9"/>'
+};
+const ic = n => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${I[n]}</svg>`;
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const $ = s => document.querySelector(s), $$ = s => document.querySelectorAll(s);
+const uid = () => crypto.randomUUID ? crypto.randomUUID() : '10000000-1000-4000-8000-100000000000'.replace(/[018]/g, c => (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16));
+const reduced = () => matchMedia('(prefers-reduced-motion:reduce)').matches;
+const EASE = 'cubic-bezier(.2,.8,.2,1)';
+const buzz = n => { try { navigator.vibrate && navigator.vibrate(n); } catch {} };
+$$('[data-ic]').forEach(e => e.innerHTML = ic(e.dataset.ic));
+
+/* ---------- Physics ---------- */
+// Spring with Apple-style parameters: damping ratio + response (seconds). Starts from the live value and carries velocity.
+function spring({from, to, velocity = 0, damping = 1, response = .36, onUpdate, onDone}){
+  let x = from, v = velocity, last = performance.now(), raf, ended = false;
+  const k = (2 * Math.PI / response) ** 2, c = 4 * Math.PI * damping / response;
+  const finish = () => { if (ended) return; ended = true; cancelAnimationFrame(raf); clearTimeout(guard); onUpdate(to); onDone && onDone(); };
+  const guard = setTimeout(finish, 1000);            // also covers a hidden tab where rAF never fires
+  if (reduced()) { finish(); return {stop(){}}; }
+  const step = now => {
+    if (ended) return;
+    const dt = Math.min((now - last) / 1000, .034) / 4; last = now;
+    for (let i = 0; i < 4; i++){ v += (-k * (x - to) - c * v) * dt; x += v * dt; }
+    if (Math.abs(x - to) < .4 && Math.abs(v) < 6) return finish();
+    onUpdate(x); raf = requestAnimationFrame(step);
+  };
+  raf = requestAnimationFrame(step);
+  return {stop(){ ended = true; cancelAnimationFrame(raf); clearTimeout(guard); }};
+}
+const project = (v, d = .99) => (v / 1000) * d / (1 - d);                       // where a flick would come to rest
+const rubber = (o, dim, k = .55) => (o * dim * k) / (dim + k * Math.abs(o));     // soft boundary
+const tracker = () => { const h = []; return {
+  add(x){ const t = performance.now(); h.push([t, x]); while (h.length > 2 && t - h[0][0] > 100) h.shift(); },
+  v(){ if (h.length < 2) return 0; const a = h[0], b = h[h.length - 1], dt = (b[0] - a[0]) / 1000; return dt > 0 ? (b[1] - a[1]) / dt : 0; } }; };
+
+/* ---------- State ---------- */
+const PRIO = [{id:'urgent', name:'مستعجل', icon:'urgent'}, {id:'soon', name:'متى ما أمكن', icon:'soon'}, {id:'later', name:'مو ضروري', icon:'later'}];
+const COLORS = [['green','أخضر'],['blue','أزرق'],['amber','برتقالي'],['violet','بنفسجي'],['rose','وردي'],['slate','رمادي']];
+const MCOL = ['blue','rose','green','violet','amber','slate'];           // avatar colour per person, by join order
+const CODE_RE = /^BYT-?[A-Z0-9]{6}$/i;
+
+// Supabase: the publishable key is meant to ship inside the app; row-level security does the protecting.
+const SB_URL = 'https://xejnfjagypsjpucgccpq.supabase.co';
+const SB_KEY = 'sb_publishable_68Jic6MZaKlgMsVfnzK-3w_5pNMte8G';
+const sb = window.supabase.createClient(SB_URL, SB_KEY);
+
+const KEY = 'baytna-cache-v1';
+const blank = () => ({view:'home', filter:'all', me:null, hid:null, space:{name:'بيتنا', code:'', members:[]}, tags:[], items:[]});
+let S = blank();
+try { const c = JSON.parse(localStorage.getItem(KEY)); if (c && c.me) S = Object.assign(blank(), c, {view:'home', filter:'all'}); } catch {}
+const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} };
+
+const pad = n => String(n).padStart(2, '0');
+const toLocal = iso => { if (!iso) return undefined; const d = new Date(iso); return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const fromRow = r => ({id:r.id, title:r.title, tag:r.tag_id, prio:r.prio, by:r.created_by, due:toLocal(r.due), done:r.done, doneAt:r.done_at ? Date.parse(r.done_at) : undefined, doneBy:r.done_by || undefined});
+const toRow = it => ({id:it.id, household_id:S.hid, title:it.title, tag_id:it.tag || null, prio:it.prio, created_by:it.by || null, due:it.due ? new Date(it.due).toISOString() : null,
+  done:!!it.done, done_at:it.doneAt ? new Date(it.doneAt).toISOString() : null, done_by:it.doneBy || null});
+
+// The UI updates first; the write follows. A failed write says so and reloads the truth.
+const run = async q => { const {error} = await q; if (error){ console.error(error); toast('تعذّر الحفظ، تحقق من الاتصال'); load(); } };
+const db = {
+  saveItems: its => run(sb.from('items').upsert(its.map(toRow))),
+  delItems: ids => run(sb.from('items').delete().in('id', ids)),
+  addTag: t => run(sb.from('tags').insert({id:t.id, household_id:S.hid, name:t.name, color:t.color, icon:t.icon}))
+};
+
+async function load(){
+  const [pr, hh, tg, it] = await Promise.all([
+    sb.from('profiles').select('id,name,email,created_at').order('created_at'),
+    sb.from('households').select('id,code').maybeSingle(),
+    sb.from('tags').select('id,name,color,icon').order('created_at'),
+    sb.from('items').select('*').order('created_at', {ascending:false})]);
+  if (pr.error || hh.error || tg.error || it.error || !hh.data){ console.error(pr.error || hh.error || tg.error || it.error || 'no household'); toast('تعذّر تحميل البيانات، تحقق من الاتصال'); return false; }
+  S.hid = hh.data.id; S.space.code = hh.data.code;
+  S.space.members = pr.data.map((m, i) => ({id:m.id, name:m.name, email:m.email || '', color:MCOL[i % MCOL.length]}));
+  S.tags = tg.data; S.items = it.data.map(fromRow);
+  if (S.filter !== 'all' && !S.tags.some(t => t.id === S.filter)) S.filter = 'all';
+  render(); subscribe(); return true;
+}
+// Realtime: any change by anyone in the household refreshes the list. Row-level security limits what arrives.
+let chan = null, relT;
+const ping = () => { clearTimeout(relT); relT = setTimeout(() => (sw || !S.me) ? (S.me && ping()) : load(), 300); };
+function subscribe(){
+  if (chan) return;
+  chan = sb.channel('household');
+  for (const table of ['items', 'tags', 'profiles']) chan.on('postgres_changes', {event:'*', schema:'public', table}, ping);
+  chan.subscribe();
+}
+function unsubscribe(){ if (chan){ sb.removeChannel(chan); chan = null; } }
+document.addEventListener('visibilitychange', () => { if (!document.hidden && S.me) ping(); });
+
+const tagOf = id => S.tags.find(t => t.id === id) || {name:'بدون تاق', color:'slate', icon:'tag'};
+const memOf = id => S.space.members.find(m => m.id === id) || {name:'؟', color:'slate'};
+const active = () => S.items.filter(i => !i.done);
+const fmtDue = d => new Intl.DateTimeFormat('ar-SA-u-nu-latn-ca-gregory', {weekday:'short', day:'numeric', month:'short', hour:'numeric', minute:'2-digit'}).format(new Date(d));
+const avatar = (m, cls = '') => `<span class="av ${cls} c-${m.color}" title="${esc(m.name)}" aria-label="${esc(m.name)}">${esc(m.name[0])}</span>`;
+const tileIc = (t, cls = '') => `<span class="tile-ic ${cls} c-${t.color}">${ic(t.icon)}</span>`;
+
+/* ---------- Views ---------- */
+function row(it){
+  const t = tagOf(it.tag), p = PRIO.find(p => p.id === it.prio);
+  return `<div class="row ${it.done ? 'is-done' : ''}" data-id="${it.id}" data-flip="${it.id}">
+    <div class="row-bg" aria-hidden="true">${ic(it.done ? 'undo' : 'check')}</div>
+    <article class="card">
+      <button class="check" data-toggle="${it.id}" aria-label="${it.done ? 'إرجاع' : 'إنهاء'} «${esc(it.title)}»"><span>${ic('check')}</span></button>
+      <button class="body" data-edit="${it.id}" aria-label="تعديل «${esc(it.title)}»">
+        <div class="title">${esc(it.title)}</div>
+        <div class="meta">
+          <span class="tg c-${t.color}"><i class="dot"></i>${esc(t.name)}</span>
+          <span class="p-${p.id}" style="color:var(--pc)">${ic(p.icon)}${p.name}</span>
+          ${it.due && !it.done ? `<span>${ic('bell')}${fmtDue(it.due)}</span>` : ''}
+        </div>
+      </button>
+      ${avatar(memOf(it.done ? it.doneBy || it.by : it.by), 'sm')}
+    </article>
+  </div>`;
+}
+const emptyBox = (icon, b, p) => `<div class="empty" data-flip="empty"><span class="tile-ic c-gold">${ic(icon)}</span><b>${b}</b>${p}</div>`;
+
+const ORD = {urgent:0, soon:1, later:2};
+function viewHome(list, cur){
+  if (!list.length) return emptyBox('done', 'كل شيء منتهي', cur ? 'ما فيه أغراض معلّقة في هذا التاق.' : 'أضف أول غرض من الحقل فوق.');
+  return `<div class="grid">${[...list].sort((a, b) => ORD[a.prio] - ORD[b.prio]).map(row).join('')}</div>`;
+}
+function viewDone(){
+  const list = S.items.filter(i => i.done).sort((a, b) => (b.doneAt || 0) - (a.doneAt || 0));
+  return list.length ? `<div class="row-h" data-flip="rh"><span class="hint" style="margin:0">اضغط الدائرة أو اسحب البطاقة لإرجاع الغرض.</span><button class="link" data-clear>مسح الكل</button></div><div class="grid">${list.map(row).join('')}</div>`
+    : emptyBox('done', 'ما فيه شيء هنا', 'الأغراض اللي تنهونها تنتقل لهذي القائمة.');
+}
+const NAV = [['home','الرئيسية','home'],['done','منتهي','done']];
+let lastView = null;
+function render(){
+  const view = $('#view'), prev = new Map();
+  $$('#view [data-flip]').forEach(e => prev.set(e.dataset.flip, e.getBoundingClientRect()));
+  const all = active(), doneN = S.items.length - all.length, home = S.view === 'home';
+  const cur = home && S.filter !== 'all' ? tagOf(S.filter) : null;
+  const list = cur ? all.filter(i => i.tag === S.filter) : all;
+
+  const title = S.view === 'done' ? 'منتهي' : cur ? cur.name : S.space.name;
+  $('#ltitle').textContent = $('#barTitle').textContent = title;
+  $('#eyebrow').textContent = S.view === 'done' ? `${doneN} غرض مكتمل` : cur ? `${list.length} بانتظاركم` : `${new Date().getHours() < 12 ? 'صباح الخير' : 'مساء الخير'}، ${memOf(S.me).name}`;
+  $('#barAv').innerHTML = S.space.members.map(m => avatar(m)).join('');
+
+  $('#hero').hidden = !home || !!cur;
+  const pct = S.items.length ? doneN / S.items.length : 0, urgent = all.filter(i => i.prio === 'urgent').length;
+  $('#ringPr').style.strokeDashoffset = 163.4 * (1 - pct);
+  $('#ringPct').textContent = Math.round(pct * 100) + '%';
+  $('#heroN').innerHTML = `${all.length}<small>غرض بانتظاركم</small>`;
+  $('#heroS').innerHTML = `<span class="p-urgent"><i class="pip"></i>${urgent} مستعجلة</span><span style="--pc:var(--ok)"><i class="pip"></i>أُنجز ${doneN}</span>`;
+
+  $('#tiles').hidden = $('#quick').hidden = $('#quickHint').hidden = !home;
+  $('#tiles').innerHTML = `<button class="tile c-gold" data-filter="all" aria-pressed="${S.filter === 'all'}"><span class="tile-top"><span class="tile-ic c-gold">${ic('grid')}</span><b class="num">${all.length}</b></span><span class="tile-name">الكل</span></button>`
+    + S.tags.map(t => `<button class="tile c-${t.color}" data-filter="${t.id}" aria-pressed="${S.filter === t.id}"><span class="tile-top">${tileIc(t)}<b class="num">${all.filter(i => i.tag === t.id).length}</b></span><span class="tile-name">${esc(t.name)}</span></button>`).join('')
+    + `<button class="tile new" data-newtag>${ic('plus')}تاق جديد</button>`;
+  $('#qIn').placeholder = cur ? `أضف إلى ${cur.name}…` : 'خبز، عصير، حليب…';
+
+  view.innerHTML = S.view === 'done' ? viewDone() : viewHome(list, cur);
+
+  // FLIP: survivors glide from their old spot, newcomers materialize
+  if (!reduced()){
+    const fresh = lastView !== S.view + S.filter; let n = 0;
+    $$('#view [data-flip]').forEach(e => {
+      const p = prev.get(e.dataset.flip), r = e.getBoundingClientRect();
+      if (p && !fresh){ const dx = p.left - r.left, dy = p.top - r.top;
+        if (dx || dy) e.animate([{transform:`translate(${dx}px,${dy}px)`}, {transform:'none'}], {duration:480, easing:EASE});
+      } else e.animate([{opacity:0, transform:'translateY(14px) scale(.97)'}, {opacity:1, transform:'none'}], {duration:420, easing:EASE, delay:Math.min(n++ * 28, 280), fill:'backwards'});
+    });
+  }
+  lastView = S.view + S.filter;
+
+  const idx = NAV.findIndex(n => n[0] === S.view);
+  $('#pill').style.setProperty('--i', idx);
+  $$('#pill .tab').forEach(t => t.setAttribute('aria-current', t.dataset.view === S.view));
+  $('#plus').hidden = false;
+  const cnt = v => v === 'home' ? all.length : doneN;
+  $('#sideNav').innerHTML = NAV.map(([v, n, i]) => `<li><button class="nav-btn" data-view="${v}" aria-current="${S.view === v && (v !== 'home' || S.filter === 'all')}">${ic(i)}${n}<span class="count num">${cnt(v)}</span></button></li>`).join('');
+  $('#sideTags').innerHTML = S.tags.map(t => `<li><button class="nav-btn" data-filter="${t.id}" aria-current="${home && S.filter === t.id}">${tileIc(t, 'sm')}${esc(t.name)}<span class="count num">${all.filter(i => i.tag === t.id).length}</span></button></li>`).join('')
+    + `<li><button class="nav-btn" data-newtag style="color:var(--fg2)"><span class="tile-ic sm c-slate">${ic('plus')}</span>تاق جديد</button></li>`;
+  syncReminders(); syncWidget();
+  $('#sideFoot').innerHTML = `${avatar(memOf(S.me), 'lg')}<div><b>${esc(memOf(S.me).name)}</b><small>${S.space.members.length > 1 ? 'مع ' + S.space.members.filter(m => m.id !== S.me).map(m => esc(m.name)).join(' و') : 'ما فيه أحد معك بعد'}</small></div>`;
+  save();
+}
+new IntersectionObserver(([e]) => $('#bar').classList.toggle('scrolled', !e.isIntersecting), {rootMargin:'-56px 0px 0px 0px'}).observe($('#ltitle'));
+
+/* ---------- Toast ---------- */
+let undoFn = null, toastT;
+function toast(msg, undo){
+  $('#toastMsg').textContent = msg; undoFn = undo || null; $('#toastUndo').hidden = !undo;
+  $('#toast').classList.add('show'); clearTimeout(toastT);
+  toastT = setTimeout(() => $('#toast').classList.remove('show'), 5000);
+}
+$('#toastUndo').onclick = () => { if (undoFn) undoFn(); $('#toast').classList.remove('show'); render(); };
+
+/* ---------- Item actions ---------- */
+function addItems(text, tag, prio, due){
+  const titles = text.split(/[،,\n]+/).map(s => s.trim()).filter(Boolean);
+  const fresh = titles.map(title => ({id:uid(), title, tag, prio, by:S.me, due:due || undefined}));
+  const ids = fresh.map(i => i.id); S.items.unshift(...fresh);
+  if (ids.length){ buzz(8); db.saveItems(fresh); toast(ids.length > 1 ? `تمت إضافة ${ids.length} أغراض` : `تمت إضافة «${titles[0]}»`, () => { S.items = S.items.filter(i => !ids.includes(i.id)); db.delItems(ids); }); }
+  return ids.length;
+}
+function toggle(id, instant){
+  const it = S.items.find(i => i.id === id); if (!it) return;
+  const el = document.querySelector(`.row[data-id="${id}"]`);
+  let applied = false;
+  const apply = () => { if (applied) return; applied = true;
+    const flip = () => { it.done = !it.done; it.doneAt = it.done ? Date.now() : undefined; it.doneBy = it.done ? S.me : undefined; db.saveItems([it]); };
+    flip(); toast(it.done ? `انتقل «${it.title}» إلى منتهي` : `رجع «${it.title}» للقائمة`, flip);
+    render(); };
+  buzz(12);
+  if (instant || !el || reduced()) return apply();
+  el.classList.add('checking');                       // the check fills first, then the card leaves
+  setTimeout(() => { el.animate([{opacity:1, transform:'none'}, {opacity:0, transform:'scale(.94)'}], {duration:200, easing:'ease-in', fill:'forwards'}).onfinish = apply; setTimeout(apply, 320); }, 240);
+}
+
+document.addEventListener('click', e => {
+  const b = e.target.closest('button,[data-close]'); if (!b) return;
+  const d = b.dataset;
+  if (d.view){ S.view = d.view; if (d.view === 'home') S.filter = 'all'; render(); scrollTo({top:0}); }
+  else if (d.filter){ S.view = 'home'; S.filter = d.filter; render(); }
+  else if (d.toggle) toggle(d.toggle);
+  else if (d.edit) openItem(d.edit);
+  else if ('newtag' in d) openTag();
+  else if ('invite' in d) openInvite();
+  else if ('close' in d) closeSheet(b.closest('dialog'));
+  else if ('logout' in d){ closeSheet($('#inviteDlg')); sb.auth.signOut(); }
+  else if ('clear' in d){
+    const gone = S.items.filter(i => i.done); S.items = S.items.filter(i => !i.done); db.delItems(gone.map(i => i.id));
+    toast(`تم مسح ${gone.length} غرض منتهي`, () => { S.items.push(...gone); db.saveItems(gone); }); render();
+  }
+});
+$('#qIn').addEventListener('input', e => $('#quick').classList.toggle('has', !!e.target.value.trim()));
+$('#quick').onsubmit = e => {
+  e.preventDefault();
+  const tag = S.filter === 'all' ? S.tags[0]?.id : S.filter;
+  if (addItems($('#qIn').value, tag, 'soon')){ $('#qIn').value = ''; $('#quick').classList.remove('has'); render(); }
+};
+$('#plus').onclick = $('#sideNew').onclick = () => openItem();
+$('#view').addEventListener('pointermove', e => {
+  if (e.pointerType !== 'mouse') return;
+  const c = e.target.closest('.card'); if (!c) return;
+  const r = c.getBoundingClientRect(); c.style.setProperty('--mx', e.clientX - r.left + 'px'); c.style.setProperty('--my', e.clientY - r.top + 'px');
+});
+
+/* ---------- Swipe a card to finish it (1:1 tracking, velocity handoff) ---------- */
+const TH = 96; let sw = null;
+const setX = (s, x) => { s.x = x; s.card.style.transform = `translateX(${x}px)`; s.row.style.setProperty('--p', Math.min(Math.abs(x) / TH, 1)); s.row.dataset.side = x > 0 ? 'r' : 'l'; };
+$('#view').addEventListener('pointerdown', e => {
+  const r = e.target.closest('.row'); if (!r || e.button) return;
+  sw = {row:r, card:r.querySelector('.card'), id:e.pointerId, x0:e.clientX, y0:e.clientY, x:0, on:false, armed:false, tr:tracker()};
+});
+addEventListener('pointermove', e => {
+  if (!sw || e.pointerId !== sw.id) return;
+  const dx = e.clientX - sw.x0, dy = e.clientY - sw.y0;
+  if (!sw.on){
+    if (Math.abs(dy) > 10 && Math.abs(dy) > Math.abs(dx)) { sw = null; return; }
+    if (Math.abs(dx) < 10) return;                     // hysteresis before committing to a direction
+    sw.on = true; sw.x0 = e.clientX; sw.row.classList.add('dragging');
+    try { sw.card.setPointerCapture(sw.id); } catch {}
+    return;
+  }
+  const x = e.clientX - sw.x0; sw.tr.add(x); setX(sw, x);
+  const armed = Math.abs(x) > TH;
+  if (armed !== sw.armed){ sw.armed = armed; sw.row.classList.toggle('armed', armed); if (armed) buzz(6); }
+});
+const endSwipe = e => {
+  if (!sw || e.pointerId !== sw.id) return;
+  const s = sw; sw = null; if (!s.on) return;
+  const v = s.tr.v(), x = s.x, id = s.row.dataset.id;
+  const commit = e.type === 'pointerup' && (Math.abs(x) > TH || (Math.abs(v) > 700 && Math.sign(v) === Math.sign(x) && Math.abs(x) > 24));
+  s.row.classList.remove('dragging');
+  if (commit) spring({from:x, to:Math.sign(x) * (s.row.offsetWidth + 60), velocity:v, damping:1, response:.3, onUpdate:n => setX(s, n), onDone:() => toggle(id, true)});
+  else spring({from:x, to:0, velocity:v, damping:.8, response:.36, onUpdate:n => setX(s, n), onDone:() => { s.row.classList.remove('armed'); s.card.style.transform = ''; }});
+};
+addEventListener('pointerup', endSwipe); addEventListener('pointercancel', endSwipe);
+
+/* ---------- Sheets: spring in, drag to dismiss, interruptible ---------- */
+const isPhone = () => matchMedia('(max-width:639px)').matches;
+function setSheet(d, y){
+  d._y = y; const sh = d.querySelector('.sheet'), p = Math.max(0, Math.min(1, 1 - y / d._H));
+  sh.style.transform = `translateY(${y}px)`; d.querySelector('.scrim').style.opacity = p;
+  sh.style.opacity = isPhone() ? 1 : p;
+}
+function openSheet(d){
+  d.showModal(); d._a && d._a.stop();
+  d._H = isPhone() ? d.querySelector('.sheet').offsetHeight + 24 : 48;
+  setSheet(d, d._H);
+  d._a = spring({from:d._H, to:0, damping:1, response:.4, onUpdate:y => setSheet(d, y)});
+}
+function closeSheet(d, velocity = 0){
+  if (!d || !d.open || d._closing) return;
+  d._closing = true; d._a && d._a.stop();
+  d._a = spring({from:d._y || 0, to:d._H, velocity, damping:1, response:.32, onUpdate:y => setSheet(d, y), onDone:() => { d._closing = false; d.close(); }});
+}
+$$('dialog.modal').forEach(d => {
+  d.addEventListener('cancel', e => { e.preventDefault(); closeSheet(d); });
+  const head = d.querySelector('.sheet-h'); let g = null;
+  head.addEventListener('pointerdown', e => {
+    if (!isPhone() || e.target.closest('button') || d._closing) return;
+    d._a && d._a.stop();                                // grab it mid-flight
+    g = {id:e.pointerId, y0:e.clientY - (d._y || 0), tr:tracker()}; try { head.setPointerCapture(e.pointerId); } catch {}
+  });
+  head.addEventListener('pointermove', e => {
+    if (!g || e.pointerId !== g.id) return;
+    let y = e.clientY - g.y0; if (y < 0) y = -rubber(-y, 160);
+    g.tr.add(y); setSheet(d, y);
+  });
+  const up = e => {
+    if (!g || e.pointerId !== g.id) return;
+    const v = g.tr.v(), y = d._y; g = null;
+    if (y + project(v) > d._H * .45 && v >= 0) closeSheet(d, v);
+    else d._a = spring({from:y, to:0, velocity:v, damping:.82, response:.34, onUpdate:n => setSheet(d, n)});
+  };
+  head.addEventListener('pointerup', up); head.addEventListener('pointercancel', up);
+});
+
+/* ---------- Item sheet ---------- */
+let editing = null;
+function openItem(id){
+  editing = id ? S.items.find(i => i.id === id) : null;
+  const tag = editing ? editing.tag : (S.filter === 'all' ? S.tags[0]?.id : S.filter), prio = editing ? editing.prio : 'soon';
+  $('#itemDlgTitle').textContent = editing ? 'تعديل الغرض' : 'غرض جديد';
+  $('#fSubmit').textContent = editing ? 'حفظ' : 'إضافة';
+  $('#fDelete').hidden = !editing; $('#fTitleHelp').hidden = !!editing;
+  $('#fTitle').value = editing ? editing.title : ''; $('#fDue').value = editing?.due || '';
+  $('#fTitleErr').classList.remove('show');
+  $('#fTags').innerHTML = S.tags.map(t => `<label class="c-${t.color}"><input type="radio" name="tag" value="${t.id}" ${t.id === tag ? 'checked' : ''}>${tileIc(t, 'sm')}${esc(t.name)}</label>`).join('');
+  $('#fPrio').innerHTML = '<span class="thumb"></span>' + PRIO.map(p => `<label class="p-${p.id}"><input type="radio" name="prio" value="${p.id}" ${p.id === prio ? 'checked' : ''}>${ic(p.icon)}${p.name}</label>`).join('');
+  openSheet($('#itemDlg'));
+  if (!isPhone()) $('#fTitle').focus();
+}
+$('#itemForm').onsubmit = e => {
+  e.preventDefault();
+  const f = new FormData(e.target), title = $('#fTitle').value.trim();
+  if (!title){ $('#fTitleErr').classList.add('show'); $('#fTitle').focus(); return; }
+  if (editing){ Object.assign(editing, {title, tag:f.get('tag'), prio:f.get('prio'), due:$('#fDue').value || undefined}); db.saveItems([editing]); }
+  else addItems(title, f.get('tag'), f.get('prio'), $('#fDue').value);
+  closeSheet($('#itemDlg')); render();
+};
+$('#fDelete').onclick = () => {
+  const it = editing, idx = S.items.indexOf(it);
+  S.items.splice(idx, 1); closeSheet($('#itemDlg')); db.delItems([it.id]);
+  toast(`تم حذف «${it.title}»`, () => { S.items.splice(idx, 0, it); db.saveItems([it]); }); render();
+};
+
+/* ---------- Tag sheet ---------- */
+function openTag(){
+  $('#tName').value = ''; $('#tErr').classList.remove('show');
+  $('#tColors').innerHTML = COLORS.map(([c, n], i) => `<label class="c-${c}"><input type="radio" name="color" value="${c}" ${i === 3 ? 'checked' : ''}><span class="tile-ic sm">${ic('tag')}</span>${n}</label>`).join('');
+  openSheet($('#tagDlg')); if (!isPhone()) $('#tName').focus();
+}
+$('#tagForm').onsubmit = e => {
+  e.preventDefault();
+  const name = $('#tName').value.trim();
+  if (!name){ $('#tErr').classList.add('show'); $('#tName').focus(); return; }
+  const t = {id:uid(), name, color:new FormData(e.target).get('color'), icon:'tag'};
+  S.tags.push(t); db.addTag(t); S.view = 'home'; S.filter = t.id;
+  closeSheet($('#tagDlg')); toast(`تم إنشاء تاق «${name}»`); render();
+};
+
+/* ---------- Invite ---------- */
+function openInvite(){
+  $('#invCode').textContent = S.space.code; $('#invJoin').value = ''; $('#invErr').classList.remove('show');
+  $('#people').innerHTML = S.space.members.map(m => `<div class="member">${avatar(m, 'lg')}<div><b>${esc(m.name)}${m.id === S.me ? ' (أنت)' : ''}</b><small dir="ltr">${esc(m.email)}</small></div></div>`).join('');
+  openSheet($('#inviteDlg'));
+}
+$('#invCopy').innerHTML = ic('copy') + 'مشاركة';
+$('#invCopy').onclick = async () => {
+  const text = `انضم لي في تطبيق بيتنا برمز الدعوة: ${S.space.code}`;
+  try { if (navigator.share) await navigator.share({text}); else { await navigator.clipboard.writeText(S.space.code); toast('تم نسخ رمز الدعوة'); } }
+  catch (err) { if (err.name !== 'AbortError') toast('انسخ الرمز يدوياً: ' + S.space.code); }
+};
+const normCode = v => { v = v.trim().toUpperCase(); return v.includes('-') ? v : v.slice(0, 3) + '-' + v.slice(3); };
+$('#inviteForm').onsubmit = async e => {
+  e.preventDefault();
+  const err = $('#invErr'), raw = $('#invJoin').value.trim(), btn = e.target.querySelector('[type=submit]');
+  const bad = m => { err.textContent = m; err.classList.add('show'); $('#invJoin').focus(); };
+  err.classList.remove('show');
+  if (!CODE_RE.test(raw)) return bad('اكتب الرمز كاملاً بهذا الشكل: BYT-XXXXXX');
+  if (normCode(raw) === S.space.code) return bad('هذا رمزك أنت. اكتب رمز الشخص الثاني.');
+  btn.disabled = true;
+  const {error} = await sb.rpc('join_household', {p_code:normCode(raw)});
+  btn.disabled = false;
+  if (error) return bad(/invalid_code/.test(error.message) ? 'ما لقينا هذا الرمز. تأكد منه وحاول مرة ثانية.' : 'تعذّر الانضمام، تحقق من الاتصال.');
+  closeSheet($('#inviteDlg')); await load(); toast('تم الانضمام، صارت أغراضكم مشتركة');
+};
+
+/* ---------- Accounts ---------- */
+let authMode = 'in';
+$('#authSeg').addEventListener('click', e => {
+  const b = e.target.closest('[data-mode]'); if (!b) return;
+  authMode = b.dataset.mode; const up = authMode === 'up';
+  $('#authSeg').dataset.i = up ? 1 : 0;
+  $$('#authSeg [data-mode]').forEach(x => x.setAttribute('aria-selected', x === b));
+  $('#aNameWrap').hidden = $('#aCodeWrap').hidden = !up;
+  $('#aPass').autocomplete = up ? 'new-password' : 'current-password';
+  $('#aSubmit').textContent = up ? 'إنشاء الحساب' : 'دخول'; $('#aErr').classList.remove('show');
+});
+const authMsg = e => /invalid login/i.test(e.message) ? 'البريد أو كلمة المرور غير صحيحة.'
+  : /already registered/i.test(e.message) ? 'هذا البريد مسجّل من قبل. اختر «تسجيل الدخول».'
+  : /not confirmed/i.test(e.message) ? 'البريد لم يُؤكَّد بعد. افتح رابط التأكيد في بريدك.'
+  : /rate limit|too many/i.test(e.message) ? 'محاولات كثيرة. انتظر قليلاً ثم حاول.'
+  : /fetch|network/i.test(e.message) ? 'ما فيه اتصال بالإنترنت.' : 'تعذّر الدخول: ' + e.message;
+$('#authForm').onsubmit = async e => {
+  e.preventDefault();
+  const err = $('#aErr'), btn = $('#aSubmit'), up = authMode === 'up';
+  const email = $('#aEmail').value.trim(), password = $('#aPass').value, name = $('#aName').value.trim(), code = $('#aCode').value.trim();
+  const bad = (m, el) => { err.textContent = m; err.classList.add('show'); el && el.focus(); };
+  err.classList.remove('show');
+  if (up && !name) return bad('اكتب اسمك.', $('#aName'));
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return bad('اكتب بريداً صحيحاً مثل name@example.com', $('#aEmail'));
+  if (password.length < 6) return bad('كلمة المرور ٦ أحرف على الأقل.', $('#aPass'));
+  if (up && code && !CODE_RE.test(code)) return bad('رمز الدعوة بهذا الشكل: BYT-XXXXXX', $('#aCode'));
+  const label = btn.textContent; btn.disabled = true; btn.textContent = 'لحظة…';
+  try {
+    const {data, error} = up ? await sb.auth.signUp({email, password, options:{data:{name}}}) : await sb.auth.signInWithPassword({email, password});
+    if (error) return bad(authMsg(error));
+    if (!data.session) return bad('أرسلنا رابط تأكيد إلى بريدك. افتحه ثم ارجع وسجّل الدخول.');
+    let joinFailed = false;
+    if (up && code) joinFailed = !!(await sb.rpc('join_household', {p_code:normCode(code)})).error;
+    await enter(data.session.user.id);
+    if (joinFailed) toast('رمز الدعوة غير صحيح. تقدر تدخله لاحقاً من حسابك.');
+  } finally { btn.disabled = false; btn.textContent = label; }
+};
+async function enter(userId){
+  if (S.me !== userId){ S = blank(); S.me = userId; }
+  render(); const ok = await load();
+  $('#auth').classList.remove('show'); $('#aPass').value = '';
+  consumeAction();
+  return ok;
+}
+sb.auth.onAuthStateChange(ev => {
+  if (ev !== 'SIGNED_OUT') return;
+  unsubscribe(); S = blank(); save(); render(); $('#auth').classList.add('show');
+});
+
+/* ---------- Native shell: reminders, home-screen widget, widget taps ---------- */
+const isNative = () => !!(window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform());
+const native = (plugin, method, opts = {}) => {
+  const C = window.Capacitor, p = C.Plugins && C.Plugins[plugin];
+  return p && typeof p[method] === 'function' ? p[method](opts) : C.nativePromise(plugin, method, opts);
+};
+const LN = {getPending:() => native('LocalNotifications', 'getPending'), cancel:o => native('LocalNotifications', 'cancel', o), schedule:o => native('LocalNotifications', 'schedule', o),
+  checkPermissions:() => native('LocalNotifications', 'checkPermissions'), requestPermissions:() => native('LocalNotifications', 'requestPermissions')};
+const HEX = {green:'#34C759', blue:'#0A84FF', amber:'#FF9F0A', violet:'#BF5AF2', rose:'#FF375F', slate:'#8E8E93'};
+let wT;
+function syncWidget(){
+  if (!isNative()) return;
+  clearTimeout(wT);
+  wT = setTimeout(() => {
+    const list = active().sort((a, b) => ORD[a.prio] - ORD[b.prio]);
+    const items = list.slice(0, 12).map(i => { const t = tagOf(i.tag); return {t:i.title, g:t.name, c:HEX[t.color] || HEX.slate, p:i.prio}; });
+    native('WidgetBridge', 'setItems', {items:JSON.stringify(items), count:list.length, signedIn:!!S.me}).catch(e => console.warn('widget', e));
+  }, 400);
+}
+// The widget plus button opens the app with baytna://add; the shell keeps it until we ask.
+async function consumeAction(){
+  if (!isNative() || !S.me) return;
+  try { const r = await native('WidgetBridge', 'consumeAction'); if (r && r.action === 'add' && !$('#itemDlg').open){ S.view = 'home'; render(); openItem(); } } catch (e) { console.warn('action', e); }
+}
+addEventListener('baytnaAction', consumeAction);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) consumeAction(); });
+const nid = id => { let h = 0; for (const c of id) h = (h * 31 + c.charCodeAt(0)) | 0; return Math.abs(h) % 2147483647; };
+let lnT;
+function syncReminders(){
+  if (!isNative()) return;
+  clearTimeout(lnT);
+  lnT = setTimeout(async () => { try {
+    const now = Date.now(), due = active().filter(i => i.due && Date.parse(i.due) > now).slice(0, 60);
+    const pend = await LN.getPending();
+    if (pend.notifications.length) await LN.cancel({notifications:pend.notifications.map(n => ({id:n.id}))});
+    if (!due.length) return;
+    if ((await LN.checkPermissions()).display !== 'granted' && (await LN.requestPermissions()).display !== 'granted') return;
+    await LN.schedule({notifications:due.map(i => ({id:nid(i.id), title:i.title, body:`${tagOf(i.tag).name} · ${PRIO.find(p => p.id === i.prio).name}`, schedule:{at:new Date(i.due), allowWhileIdle:true}}))});
+  } catch (e) { console.warn('reminders', e); } }, 800);
+}
+
+(async function boot(){
+  render();
+  const {data:{session}} = await sb.auth.getSession();
+  if (session) enter(session.user.id);
+  else { S = blank(); render(); $('#auth').classList.add('show'); }
+})();
+</script>
+</body>
+</html>

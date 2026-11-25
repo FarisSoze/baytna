@@ -1,0 +1,53 @@
+name: Build apps
+
+# Builds an Android debug APK and an UNSIGNED iOS IPA (sign it yourself with your own certificate).
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+
+jobs:
+  android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 21 }
+      - run: npm ci
+      - run: npm run vendor
+      - run: npx cap sync android
+      - run: chmod +x gradlew && ./gradlew assembleDebug --console=plain
+        working-directory: android
+      - uses: actions/upload-artifact@v4
+        with:
+          name: baytna-android
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+
+  ios:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22, cache: npm }
+      - run: npm ci
+      - run: npm run vendor
+      - name: Add iOS platform if it is not committed
+        run: '[ -d ios ] || npx cap add ios'
+      - run: npx cap sync ios
+      - name: Archive without code signing
+        run: |
+          if [ -d ios/App/App.xcworkspace ]; then TARGET="-workspace ios/App/App.xcworkspace"; else TARGET="-project ios/App/App.xcodeproj"; fi
+          xcodebuild $TARGET -scheme App -configuration Release -sdk iphoneos \
+            -destination 'generic/platform=iOS' -archivePath build/App.xcarchive archive \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
+      - name: Package unsigned IPA
+        run: |
+          mkdir Payload
+          cp -R build/App.xcarchive/Products/Applications/App.app Payload/
+          zip -qry baytna-unsigned.ipa Payload
+      - uses: actions/upload-artifact@v4
+        with:
+          name: baytna-ios-unsigned
+          path: baytna-unsigned.ipa

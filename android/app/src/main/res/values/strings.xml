@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">بيتنا</string>
+    <string name="title_activity_main">بيتنا</string>
+    <string name="package_name">com.baytna.app</string>
+    <string name="custom_url_scheme">com.baytna.app</string>
+    <string name="widget_description">أغراض البيت وزر إضافة سريعة</string>
+    <string name="widget_add">غرض جديد</string>
+    <string name="widget_pending">بانتظاركم</string>
+    <string name="widget_none">كل شيء منتهي</string>
+    <string name="widget_empty">ما فيه أغراض معلّقة</string>
+    <string name="widget_signin">سجّل الدخول</string>
+    <string name="widget_signin_long">افتح التطبيق وسجّل الدخول</string>
+</resources>

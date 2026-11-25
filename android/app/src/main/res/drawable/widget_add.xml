@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <gradient android:angle="270" android:startColor="#FFEBD3A2" android:endColor="#FFC8A662" />
+        </shape>
+    </item>
+    <item android:drawable="@drawable/widget_plus" android:gravity="center" android:width="22dp" android:height="22dp" />
+</layer-list>

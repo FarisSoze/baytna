@@ -1,0 +1,7 @@
+{
+  "appId": "com.baytna.app",
+  "appName": "بيتنا",
+  "webDir": "www",
+  "android": { "backgroundColor": "#0B0B0C" },
+  "ios": { "backgroundColor": "#0B0B0C", "contentInset": "never" }
+}

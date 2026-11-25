@@ -1,0 +1,52 @@
+# Codemagic: builds an UNSIGNED iOS .ipa (sign it yourself with your own certificate) and an Android debug .apk.
+workflows:
+  ios-unsigned:
+    name: iOS unsigned IPA
+    instance_type: mac_mini_m2
+    max_build_duration: 30
+    environment:
+      node: 22
+      xcode: latest
+    scripts:
+      - name: Install dependencies
+        script: npm ci
+      - name: Copy bundled assets
+        script: npm run vendor
+      - name: Sync web app into the iOS project
+        script: npx cap sync ios
+      - name: Archive without code signing
+        script: |
+          xcodebuild -project ios/App/App.xcodeproj -scheme App -configuration Release \
+            -sdk iphoneos -destination 'generic/platform=iOS' \
+            -archivePath "$CM_BUILD_DIR/build/App.xcarchive" archive \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO CODE_SIGN_IDENTITY=""
+      - name: Package unsigned IPA
+        script: |
+          cd "$CM_BUILD_DIR/build"
+          mkdir Payload
+          cp -R App.xcarchive/Products/Applications/App.app Payload/
+          zip -qry baytna-unsigned.ipa Payload
+    artifacts:
+      - build/baytna-unsigned.ipa
+
+  android-debug:
+    name: Android debug APK
+    instance_type: linux_x2
+    max_build_duration: 30
+    environment:
+      node: 22
+      java: 21
+    scripts:
+      - name: Install dependencies
+        script: npm ci
+      - name: Copy bundled assets
+        script: npm run vendor
+      - name: Sync web app into the Android project
+        script: npx cap sync android
+      - name: Build APK
+        script: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug --console=plain
+    artifacts:
+      - android/app/build/outputs/apk/debug/app-debug.apk

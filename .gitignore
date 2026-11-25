@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.apk
+*.ipa
+.impeccable/
+.claude/
+www/vendor/
+supabase/.temp/
