@@ -472,6 +472,9 @@ body::before{inset:0;height:auto;background:var(--wash)}
 .setrow{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .setrow>span{font-size:.875rem}
 .setrow .seg{flex:none;width:170px}
+.setrow #fontSeg{width:236px}
+.seg[data-i="2"] .thumb{transform:translateX(-200%)}
+.setrow .seg button{font-size:.8125rem;min-height:40px}
 .auth{background:var(--bg)}
 .auth::before{background:var(--wash)}
 .auth-card .logo{background:var(--cta-bg);color:var(--cta-fg)}
@@ -621,6 +624,7 @@ body::before{inset:0;height:auto;background:var(--wash)}
       <p class="err" id="invErr" role="alert">اكتب الرمز كاملاً بهذا الشكل: BYT-XXXXXX</p>
     </div>
     <button type="submit" class="btn primary block">انضمام بالرمز</button>
+    <div class="setrow"><span>الخط</span><div class="seg" id="fontSeg" role="tablist" data-i="0"><span class="thumb"></span><button type="button" role="tab" data-font="thm">ثمانية</button><button type="button" role="tab" data-font="readex">ريدكس</button><button type="button" role="tab" data-font="sys">خط الجوال</button></div></div>
     <div class="setrow" id="iconRow"><span>أيقونة التطبيق</span><div class="seg two" id="iconSeg" role="tablist" data-i="0"><span class="thumb"></span><button type="button" role="tab" data-icon="night">ليلية</button><button type="button" role="tab" data-icon="day">نهارية</button></div></div>
     <button type="button" class="btn soft block" data-logout style="color:var(--danger)">تسجيل الخروج</button>
     <p class="help" id="appVer" style="margin:0;text-align:center" dir="ltr"></p>
@@ -1729,6 +1733,23 @@ addEventListener('scroll', motion, {passive:true});
 addEventListener('resize', remeasure);
 $('#qIn').addEventListener('focus', motion); $('#qIn').addEventListener('blur', motion);
 new MutationObserver(() => requestAnimationFrame(remeasure)).observe($('#xHero'), {childList:true});
+
+/* ---------- Typeface: Thmanyah by default on every phone; each person can switch on their own phone ---------- */
+const FONT_PREF = 'baytna-font';
+const FONT_SET = {thm:'', readex:'"Readex Pro",-apple-system,"SF Arabic","Segoe UI",Tahoma,sans-serif', sys:'-apple-system,"SF Arabic",system-ui,"Segoe UI",Roboto,Tahoma,sans-serif'};
+function applyFont(){
+  let v = 'thm'; try { v = localStorage.getItem(FONT_PREF) || 'thm'; } catch {}
+  if (!(v in FONT_SET)) v = 'thm';
+  document.documentElement.style.setProperty('--font', FONT_SET[v] || '"Thmanyah Sans","Readex Pro",-apple-system,"SF Arabic","Segoe UI",Tahoma,sans-serif');
+  $('#fontSeg').dataset.i = Object.keys(FONT_SET).indexOf(v);
+  $$('#fontSeg [data-font]').forEach(b => b.setAttribute('aria-selected', b.dataset.font === v));
+}
+$('#fontSeg').addEventListener('click', e => {
+  const b = e.target.closest('[data-font]'); if (!b) return;
+  try { localStorage.setItem(FONT_PREF, b.dataset.font); } catch {}
+  applyFont(); requestAnimationFrame(remeasure);
+});
+applyFont();
 
 /* ---------- App icon: night or day, chosen per phone ---------- */
 const ICON_KEY = 'baytna-icon';
