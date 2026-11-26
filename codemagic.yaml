@@ -7,7 +7,7 @@ workflows:
     max_build_duration: 40
     environment:
       groups:
-        - baytna            # holds FONT_KEY (set in Codemagic, never in this file)
+        - "خط"              # the variable group in Codemagic that holds FONT_KEY (never stored in this file)
       node: 22
       java: 21
       xcode: latest
