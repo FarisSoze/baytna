@@ -6,6 +6,8 @@ workflows:
     instance_type: mac_mini_m2
     max_build_duration: 40
     environment:
+      groups:
+        - baytna            # holds FONT_KEY (set in Codemagic, never in this file)
       node: 22
       java: 21
       xcode: latest

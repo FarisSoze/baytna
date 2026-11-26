@@ -517,6 +517,12 @@ body::before{inset:0;height:auto;background:var(--wash)}
 .prevtag .tile-ic svg{width:20px;height:20px}
 .prevtag b{font-weight:700}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opts label{display:flex;align-items:flex-start;gap:12px;padding:14px;border-radius:16px;background:var(--fill);cursor:pointer;margin:0}
+.opts label:has(input:checked){box-shadow:0 0 0 2px var(--accent)}
+.opts input{width:20px;height:20px;margin:2px 0 0;flex:none;accent-color:var(--accent)}
+.opts b{display:block;font-weight:700;color:var(--fg)}
+.opts small{display:block;font-size:.8125rem;color:var(--fg2);line-height:1.7;margin-top:2px}
 .setrow{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .setrow>span{font-size:.875rem}
 .setrow .seg{flex:none;width:170px}
@@ -678,6 +684,7 @@ body::before{inset:0;height:auto;background:var(--wash)}
     <div class="setrow"><span>المظهر</span><div class="seg" id="themeSeg" role="tablist" data-i="0"><span class="thumb"></span><button type="button" role="tab" data-theme-set="auto">تلقائي</button><button type="button" role="tab" data-theme-set="dark">ليلي</button><button type="button" role="tab" data-theme-set="light">نهاري</button></div></div>
     <div class="setrow"><span>الخط</span><div class="seg" id="fontSeg" role="tablist" data-i="0"><span class="thumb"></span><button type="button" role="tab" data-font="thm">ثمانية</button><button type="button" role="tab" data-font="readex">ريدكس</button><button type="button" role="tab" data-font="sys">خط الجوال</button></div></div>
     <div class="setrow" id="iconRow"><span>أيقونة التطبيق</span><div class="seg two" id="iconSeg" role="tablist" data-i="0"><span class="thumb"></span><button type="button" role="tab" data-icon="night">ليلية</button><button type="button" role="tab" data-icon="day">نهارية</button></div></div>
+    <button type="button" class="btn soft block" id="leaveOpen" hidden>الخروج من المشاركة</button>
     <button type="button" class="btn soft block" data-logout style="color:var(--danger)">تسجيل الخروج</button>
     <p class="help" id="appVer" style="margin:0;text-align:center" dir="ltr"></p>
   </form>
@@ -706,6 +713,23 @@ body::before{inset:0;height:auto;background:var(--wash)}
         <button class="send" type="submit" id="gptSendBtn" aria-label="إرسال" data-ic="up"></button>
       </div>
     </div>
+  </form>
+</dialog>
+
+<dialog class="modal" id="leaveDlg" aria-labelledby="leaveTitle">
+  <div class="scrim" data-close></div>
+  <form class="sheet" id="leaveForm" novalidate>
+    <div class="sheet-h"><span class="grabber"></span><h2 id="leaveTitle">الخروج من المشاركة</h2><button type="button" class="x press" data-close aria-label="إغلاق" data-ic="x"></button></div>
+    <p id="leaveText" style="margin:0;color:var(--fg2);line-height:1.8"></p>
+    <fieldset class="field"><legend>وش تاخذ معك؟</legend>
+      <div class="opts">
+        <label><input type="radio" name="keep" value="all" checked><span><b>كل المهام</b><small>نسخة من كل الأغراض والمواعيد والفواتير، اللي أضفتها أنت واللي أضافها غيرك.</small></span></label>
+        <label><input type="radio" name="keep" value="mine"><span><b>مهامي فقط</b><small>اللي أضفتها أنت فقط، ومعها الفواتير. مهام الباقين ما تطلع عندك.</small></span></label>
+      </div>
+    </fieldset>
+    <p class="help" style="margin:0">الباقون في المشاركة ما يتغيّر عندهم شيء. وتقدر ترجع لهم برمز الدعوة في أي وقت.</p>
+    <p class="err" id="leaveErr" role="alert" style="margin:0"></p>
+    <button type="submit" class="btn primary block" id="leaveGo">خروج من المشاركة</button>
   </form>
 </dialog>
 
@@ -1271,6 +1295,7 @@ $('#fDelete').onclick = () => { const id = editing.id; closeSheet($('#itemDlg'))
 
 /* ---------- Invite ---------- */
 function openInvite(){
+  $('#leaveOpen').hidden = S.space.members.length < 2;
   gLoad().then(() => { drawGpt(); if (gSigned() && (!(G.models && G.models.length) || !G.light)) gptModels().catch(e => console.warn('models', e)); });
   $('#invCode').textContent = S.space.code; $('#invJoin').value = ''; $('#invErr').classList.remove('show');
   $('#people').innerHTML = S.space.members.map(m => `<div class="member">${avatar(m, 'lg')}<div><b>${esc(m.name)}${m.id === S.me ? ' (أنت)' : ''}</b><small dir="ltr">${esc(m.email)}</small></div></div>`).join('');
@@ -1295,6 +1320,24 @@ $('#inviteForm').onsubmit = async e => {
   btn.disabled = false;
   if (error) return bad(/invalid_code/.test(error.message) ? 'ما لقينا هذا الرمز. تأكد منه وحاول مرة ثانية.' : 'تعذّر الانضمام، تحقق من الاتصال.');
   closeSheet($('#inviteDlg')); await load(); toast('تم الانضمام، صارت أغراضكم مشتركة');
+};
+
+/* ---------- Leaving a shared household: back to a list of your own, with a choice of what comes along ---------- */
+$('#leaveOpen').onclick = () => {
+  const others = S.space.members.filter(m => m.id !== S.me).map(m => m.name).join(' و');
+  $('#leaveText').textContent = `أغراضك الحين مشتركة مع ${others}. بعد الخروج يصير لك قائمة لحالك، وما عاد تشوف اللي يضيفونه ولا يشوفون اللي تضيفه.`;
+  $('#leaveErr').classList.remove('show'); $('#leaveForm').reset();
+  closeSheet($('#inviteDlg')); setTimeout(() => openSheet($('#leaveDlg')), 400);
+};
+$('#leaveForm').onsubmit = async e => {
+  e.preventDefault();
+  const btn = $('#leaveGo'), err = $('#leaveErr'), keep = new FormData(e.target).get('keep') === 'mine' ? 'mine' : 'all';
+  err.classList.remove('show'); btn.disabled = true;
+  const {error} = await sb.rpc('leave_household', {p_keep:keep});
+  btn.disabled = false;
+  if (error){ console.error(error); err.textContent = /alone/.test(error.message) ? 'أنت أصلاً لحالك، ما فيه مشاركة تخرج منها.' : 'تعذّر الخروج، تحقق من الاتصال وحاول مرة ثانية.'; err.classList.add('show'); return; }
+  closeSheet($('#leaveDlg')); unsubscribe(); await load();
+  toast(keep === 'mine' ? 'صار لك قائمة لحالك بمهامك فقط' : 'صار لك قائمة لحالك بكل المهام');
 };
 
 /* ---------- Accounts ---------- */

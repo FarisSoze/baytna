@@ -288,3 +288,46 @@ update public.tags set icon = 'flower', color = 'rose' where icon = 'tag' and na
 -- The remaining two categories get an icon too.
 update public.tags set icon = 'pill', color = 'red' where icon = 'tag' and name = 'الصحة';
 update public.tags set icon = 'drop', color = 'teal' where icon = 'tag' and name = 'منظفات وعناية';
+
+-- Leaving a shared household. You get a household of your own again; the people you leave keep everything as it was.
+-- p_keep = 'all'  : you take a copy of every item, appointment and bill.
+-- p_keep = 'mine' : you take a copy of only what you added yourself (and the bills, which belong to nobody in particular).
+create or replace function public.leave_household(p_keep text)
+returns uuid language plpgsql security definer set search_path = public as $$
+declare
+  me   uuid := auth.uid();
+  old  uuid;
+  h    uuid;
+  t    record;
+  nid  uuid;
+  everything boolean := coalesce(p_keep, 'all') <> 'mine';
+begin
+  if me is null then raise exception 'not_authenticated'; end if;
+  select household_id into old from public.profiles where id = me;
+  if (select count(*) from public.profiles where household_id = old) < 2 then raise exception 'alone'; end if;
+
+  insert into public.households (code) values (public.gen_invite_code()) returning id into h;
+
+  -- Categories come along, and each copied item points at its copied category.
+  for t in select * from public.tags where household_id = old order by created_at loop
+    insert into public.tags (household_id, name, color, icon, created_at) values (h, t.name, t.color, t.icon, t.created_at) returning id into nid;
+    insert into public.items (household_id, title, tag_id, prio, due, done, done_at, done_by, created_by, created_at, kind, location, remind_min)
+      select h, i.title, nid, i.prio, i.due, i.done, i.done_at,
+             case when i.done_by = me then me end, case when i.created_by = me then me end, i.created_at, i.kind, i.location, i.remind_min
+        from public.items i
+       where i.household_id = old and i.tag_id = t.id and (everything or i.created_by = me);
+  end loop;
+  insert into public.items (household_id, title, tag_id, prio, due, done, done_at, done_by, created_by, created_at, kind, location, remind_min)
+    select h, i.title, null, i.prio, i.due, i.done, i.done_at,
+           case when i.done_by = me then me end, case when i.created_by = me then me end, i.created_at, i.kind, i.location, i.remind_min
+      from public.items i
+     where i.household_id = old and i.tag_id is null and (everything or i.created_by = me);
+  insert into public.bills (household_id, title, amount, icon, color, paid, paid_by, paid_at, created_at)
+    select h, b.title, b.amount, b.icon, b.color, b.paid, case when b.paid_by = me then me end, b.paid_at, b.created_at
+      from public.bills b where b.household_id = old;
+
+  update public.profiles set household_id = h where id = me;
+  return h;
+end $$;
+revoke all on function public.leave_household(text) from public, anon;
+grant execute on function public.leave_household(text) to authenticated;
