@@ -46,6 +46,9 @@ public class WidgetBridgePlugin extends Plugin {
             .putString("items", call.getString("items", "[]"))
             .putInt("count", call.getInt("count", 0))
             .putBoolean("signedIn", call.getBoolean("signedIn", false))
+            .putString("cats", call.getString("cats", "[]"))
+            .putInt("billsPaid", call.getInt("billsPaid", 0))
+            .putInt("billsTotal", call.getInt("billsTotal", 0))
             .apply();
         BaytnaWidget.refreshAll(getContext());
         call.resolve();

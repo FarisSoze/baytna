@@ -377,6 +377,11 @@ body::before{inset:0;height:auto;background:var(--wash)}
 .x-cat .n{font-size:1.25rem;font-weight:700;line-height:1}
 .x-cat b{font-size:.9375rem;font-weight:700;display:block;line-height:1.4;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .x-cat small{font-size:.75rem;color:var(--fg2)}
+.x-cat .n,.x-cat .ic{transition:opacity .25s,color .25s}
+.x-cat.zero .n{opacity:.3}
+.x-cat.zero .ic{opacity:.55}
+.x-cat.hot .n{color:var(--urgent)}
+.x-cat.hot small{color:var(--urgent);font-weight:500}
 .x-listwrap{position:relative;padding-top:22px}
 
 /* The add field. Its body, hint, plus and assistant button are separate layers so it can fold into the plus. */
@@ -422,7 +427,7 @@ body::before{inset:0;height:auto;background:var(--wash)}
   .x-pin:not(.noq) #qIn,.x-pin:not(.noq) .send{animation:foldOut linear both;animation-timeline:scroll(root block);animation-range:var(--f0,0px) var(--fm,1px)}
   .x-pin:not(.noq) .qp{animation:foldP linear both;animation-timeline:scroll(root block);animation-range:var(--f0,0px) var(--f1,1px)}
   .x-pin:not(.noq) .qa{animation:foldA linear both;animation-timeline:scroll(root block);animation-range:var(--f0,0px) var(--f1,1px)}
-  .x-pin.ai #lhEnd{animation:foldOut linear both;animation-timeline:scroll(root block);animation-range:var(--f0,0px) var(--f1,1px)}
+  .x-pin.ai #lhEnd{animation:foldOut linear both;animation-timeline:scroll(root block);animation-range:var(--f0,0px) var(--fm,1px)}
   .x-pin::before{animation:pinBg linear both;animation-timeline:scroll(root block);animation-range:var(--fb,0px) var(--f1,1px)}
 }
 @supports not (animation-timeline:scroll()){
@@ -456,6 +461,8 @@ body::before{inset:0;height:auto;background:var(--wash)}
 .mi{flex:none;width:26px;height:26px;border-radius:9px;display:grid;place-items:center;color:#fff;background:var(--c)}
 .mi svg{width:14px;height:14px}
 .amt{flex:none;font-size:.875rem;font-weight:700;margin-inline-end:10px;font-variant-numeric:tabular-nums}
+.amt{display:inline-flex;align-items:center;gap:4px}
+.sar{width:.66em;height:.74em;fill:currentColor;stroke:currentColor;stroke-width:70;stroke-linejoin:round;overflow:visible;flex:none;display:inline-block;vertical-align:-.02em}
 .x-sec{margin:22px 4px 10px;font-size:.875rem;font-weight:700;color:var(--fg2)}
 .x-sec:first-child{margin-top:0}
 .empty{padding:44px 16px}
@@ -493,6 +500,8 @@ body::before{inset:0;height:auto;background:var(--wash)}
 .x-tab:active{transform:scale(.94)}
 .x-tab svg{width:20px;height:20px}
 .x-tab[aria-current="true"]{background:var(--fill);color:var(--accent)}
+.x-tab{position:relative}
+.x-tab.has::after{content:"";position:absolute;top:8px;inset-inline-start:calc(50% + 9px);width:7px;height:7px;border-radius:50%;background:var(--urgent);box-shadow:0 0 0 2px var(--solid)}
 .toast{bottom:calc(max(10px,calc(env(safe-area-inset-bottom) - 14px)) + 70px)}
 
 /* Sheets in the new material */
@@ -523,6 +532,43 @@ body::before{inset:0;height:auto;background:var(--wash)}
 .opts input{width:20px;height:20px;margin:2px 0 0;flex:none;accent-color:var(--accent)}
 .opts b{display:block;font-weight:700;color:var(--fg)}
 .opts small{display:block;font-size:.8125rem;color:var(--fg2);line-height:1.7;margin-top:2px}
+.qsug{position:absolute;top:calc(100% + 6px);inset-inline:0;z-index:7;border-radius:16px;padding:6px;display:flex;flex-direction:column;background:var(--solid);border:1px solid var(--cline);box-shadow:var(--shadow-lg)}
+.qsug[hidden]{display:none}
+.qsug button{display:flex;align-items:center;gap:10px;min-height:44px;padding:0 10px;border-radius:11px;text-align:start;color:var(--fg);width:100%}
+.qsug button:active{background:var(--fill)}
+.qsug .mi{width:26px;height:26px;border-radius:8px;display:grid;place-items:center;color:#fff;background:var(--c);flex:none}
+.qsug .mi svg{width:14px;height:14px}
+.qsug b{flex:1;min-width:0;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.qsug small{color:var(--fg3);font-size:.75rem;flex:none}
+.qsug .cap{font-size:.6875rem;color:var(--fg3);padding:4px 10px 2px}
+.often{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 18px}
+.often button{display:inline-flex;align-items:center;gap:6px;min-height:38px;padding:0 12px;border-radius:999px;font-size:.8125rem;font-weight:500;color:var(--fg)}
+.often button svg{width:14px;height:14px;color:var(--accent)}
+.lhb{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 10px;border-radius:999px;font-size:.75rem;font-weight:500;color:var(--fg2);background:var(--fill)}
+.lhb svg{width:15px;height:15px}
+.lhb.go{color:var(--accent)}
+#lhEnd{display:flex;align-items:center;gap:6px}
+dialog.shop{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;border:0;padding:0;background:var(--bg);color:var(--fg);overflow:auto;overscroll-behavior:contain}
+dialog.shop::before{content:"";position:fixed;inset:0;background:var(--wash);pointer-events:none}
+dialog.shop::backdrop{background:var(--bg)}
+.shop-in{position:relative;max-width:560px;margin:0 auto;padding:calc(env(safe-area-inset-top) + 14px) 18px calc(env(safe-area-inset-bottom) + 28px)}
+.shop-h{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.shop-h h2{flex:1;margin:0;font-size:1.625rem;font-weight:700;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.shop-p{display:flex;align-items:center;gap:12px;margin:0 2px 20px;color:var(--fg2);font-size:.9375rem}
+.shop-bar{flex:1;height:8px;border-radius:4px;background:var(--fill);overflow:hidden}
+.shop-bar i{display:block;height:100%;border-radius:4px;background:var(--accent);transition:width .35s var(--ease)}
+.shop-sec{margin:18px 4px 8px;font-size:.875rem;font-weight:700;color:var(--fg2)}
+.srow{display:flex;align-items:center;gap:16px;width:100%;min-height:68px;padding:10px 16px;margin-bottom:8px;border-radius:20px;text-align:start;color:var(--fg);transition:opacity .25s,transform .14s ease-out}
+.srow:active{transform:scale(.98)}
+.srow .ck{width:34px;height:34px;border-radius:50%;border:2.5px solid var(--fg3);display:grid;place-items:center;flex:none;color:transparent;transition:background .2s,border-color .2s}
+.srow .ck svg{width:18px;height:18px;stroke-width:3}
+.srow b{flex:1;min-width:0;font-size:1.3125rem;font-weight:600;line-height:1.45}
+.srow small{display:block;font-size:.8125rem;font-weight:400;color:var(--urgent)}
+.srow.got{opacity:.45}
+.srow.got b{text-decoration:line-through}
+.srow.got .ck{background:var(--accent);border-color:var(--accent);color:var(--cta-fg)}
+.shop-end{text-align:center;padding:26px 0 6px}
+.shop-end b{display:block;font-size:1.25rem;margin-bottom:14px}
 .spage{display:flex;flex-direction:column;gap:16px}
 .spage[hidden]{display:none}
 .menu{background:var(--fill);border-radius:18px;padding:0 14px}
@@ -581,6 +627,7 @@ body::before{inset:0;height:auto;background:var(--wash)}
       <input id="qIn" autocomplete="off" enterkeyhint="done">
       <button class="send" type="submit" aria-label="إضافة" data-ic="up"></button>
       <button type="button" class="qa" id="qAi" data-gpt aria-label="المساعد" data-ic="spark"></button>
+      <div class="qsug" id="qSug" hidden></div>
     </form>
     <div class="x-lh" id="xLh"><span class="lt2"><b id="lhTitle"></b><i class="hp"></i></span><span id="lhEnd"></span><i class="ha"></i></div>
     </div>
@@ -776,6 +823,14 @@ body::before{inset:0;height:auto;background:var(--wash)}
   </form>
 </dialog>
 
+<dialog class="shop" id="shopDlg" aria-labelledby="shopTitle">
+  <div class="shop-in">
+    <div class="shop-h"><h2 id="shopTitle"></h2><button type="button" class="x press" id="shopX" aria-label="إغلاق وضع التسوق" data-ic="x"></button></div>
+    <div class="shop-p"><span id="shopCount" class="num"></span><span class="shop-bar"><i id="shopBar"></i></span></div>
+    <div id="shopList"></div>
+  </div>
+</dialog>
+
 <dialog class="modal" id="leaveDlg" aria-labelledby="leaveTitle">
   <div class="scrim" data-close></div>
   <form class="sheet" id="leaveForm" novalidate>
@@ -898,11 +953,13 @@ const I_NEW = {
   spark:'<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>',
   refresh:'<path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/>',
   gear:'<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
+  chat:'<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>', again:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',
   goback:'<path d="m9 18 6-6-6-6"/>', go:'<path d="m15 18-6-6 6-6"/>', getit:'<path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"/>',
   grid4:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>'
 };
 const I = {...I_OLD, ...I_NEW};
 
+const SAR = '<svg class="sar" viewBox="0 0 1124.14 1256.39" role="img" aria-label="ريال"><path d="M699.62,1113.02h0c-20.06,44.48-33.32,92.75-38.4,143.37l424.51-90.24c20.06-44.47,33.31-92.75,38.4-143.37l-424.51,90.24Z"/><path d="M1085.73,895.8c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.33v-135.2l292.27-62.11c20.06-44.47,33.32-92.75,38.4-143.37l-330.68,70.27V66.13c-50.67,28.45-95.67,66.32-132.25,110.99v403.35l-132.25,28.11V0c-50.67,28.44-95.67,66.32-132.25,110.99v525.69l-295.91,62.88c-20.06,44.47-33.33,92.75-38.42,143.37l334.33-71.05v170.26l-358.3,76.14c-20.06,44.47-33.32,92.75-38.4,143.37l375.04-79.7c30.53-6.35,56.77-24.4,73.83-49.24l68.78-101.97v-.02c7.14-10.55,11.3-23.27,11.3-36.97v-149.98l132.25-28.11v270.4l424.53-90.28Z"/></svg>';
 const ic = n => `<svg class="i" viewBox="0 0 24 24" aria-hidden="true">${I[n]}</svg>`;
 const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const $ = s => document.querySelector(s), $$ = s => document.querySelectorAll(s);
@@ -994,11 +1051,13 @@ async function load(){
   if (pr.error || hh.error || tg.error || it.error || !hh.data){ console.error(pr.error || hh.error || tg.error || it.error || 'no household'); toast('تعذّر تحميل البيانات، تحقق من الاتصال'); return false; }
   if (writes || epoch !== started){ ping(); return true; }          // something changed here while this was loading: its answer is already stale
   if (bl.error) console.warn('bills', bl.error);                  // an older database without the bills table still opens
+  const knew = S.hid === hh.data.id && S.items.length ? new Set(S.items.map(i => i.id)) : null;
   S.hid = hh.data.id; S.space.code = hh.data.code;
   S.space.members = pr.data.map((m, i) => ({id:m.id, name:m.name, email:m.email || '', color:MCOL[i % MCOL.length]}));
-  S.tags = tg.data; S.items = it.data.map(fromRow); S.bills = bl.error ? S.bills : bl.data.map(billFrom);
+  S.tags = tg.data; S.items = it.data.map(fromRow);
+  const freshUrgent = knew ? S.items.filter(i => !knew.has(i.id) && i.prio === 'urgent' && !i.done && !isAppt(i) && i.by && i.by !== S.me) : []; S.bills = bl.error ? S.bills : bl.data.map(billFrom);
   if (S.filter !== 'all' && !S.tags.some(t => t.id === S.filter)) S.filter = 'all';
-  render(); subscribe(); return true;
+  render(); subscribe(); urgentAlert(freshUrgent); return true;
 }
 // Realtime: any change by anyone in the household refreshes the list. Row-level security limits what arrives.
 let chan = null, relT;
@@ -1023,6 +1082,9 @@ const active = () => S.items.filter(i => !i.done && !isAppt(i));          // hou
 const appts = () => S.items.filter(i => !i.done && isAppt(i)).sort((a, b) => (a.due || '').localeCompare(b.due || ''));
 const REMIND = [[0, 'وقت الموعد'], [15, 'قبل ١٥ دقيقة'], [60, 'قبل ساعة'], [1440, 'قبل يوم'], [null, 'بدون تذكير']];
 const AR = 'ar-SA-u-nu-latn-ca-gregory';
+const RTF = new Intl.RelativeTimeFormat(AR, {numeric:'auto'});
+const ago = t => { const m = Math.round((Date.now() - t) / 6e4); return m < 1 ? 'الحين' : m < 60 ? RTF.format(-m, 'minute') : m < 1440 ? RTF.format(-Math.round(m / 60), 'hour') : m < 43200 ? RTF.format(-Math.round(m / 1440), 'day') : RTF.format(-Math.round(m / 43200), 'month'); };
+const late = d => !!d && new Date(d) < Date.now();
 const fmtDue = d => new Intl.DateTimeFormat(AR, {weekday:'short', day:'numeric', month:'short', hour:'numeric', minute:'2-digit'}).format(new Date(d));
 const fmtTime = d => new Intl.DateTimeFormat(AR, {weekday:'long', hour:'numeric', minute:'2-digit'}).format(new Date(d));
 const fmtMoney = n => new Intl.NumberFormat('ar-SA-u-nu-latn', {maximumFractionDigits:2}).format(n);
@@ -1040,8 +1102,11 @@ const daysToReset = () => { const now = new Date(), r = new Date(now.getFullYear
 const swipeBg = done => `<div class="row-bg" aria-hidden="true"><span class="bg-ok">${ic(done ? 'undo' : 'check')}</span><span class="bg-del">${ic('trash')}</span></div>`;
 function row(it){
   const t = tagOf(it.tag), ap = isAppt(it);
-  const meta = ap ? `<span>${it.due ? fmtDue(it.due) : 'بدون تاريخ'}</span>${it.loc ? `<span>${esc(it.loc)}</span>` : ''}`
-    : `${it.prio === 'urgent' ? '<span class="hot">مستعجل</span>' : ''}<span>${esc(t.name)}</span>${it.prio === 'later' ? '<span>مو ضروري</span>' : ''}${it.due && !it.done ? `<span>${ic('bell')}${fmtDue(it.due)}</span>` : ''}`;
+  const shared = S.space.members.length > 1, inCat = S.view === 'home' && S.filter !== 'all';
+  const who = inCat ? (shared && it.by ? `<span>من ${esc(memOf(it.by).name)}</span>` : '') : `<span>${esc(t.name)}</span>`;
+  const meta = ap ? `<span${late(it.due) && !it.done ? ' class="hot"' : ''}>${it.due ? fmtDue(it.due) : 'بدون تاريخ'}</span>${it.loc ? `<span>${esc(it.loc)}</span>` : ''}`
+    : it.done ? `<span>${esc(t.name)}</span>${it.doneAt ? `<span>${shared && it.doneBy ? 'بواسطة ' + esc(memOf(it.doneBy).name) + '، ' : ''}${ago(it.doneAt)}</span>` : ''}`
+    : `${it.prio === 'urgent' ? '<span class="hot">مستعجل</span>' : ''}${who}${it.prio === 'later' ? '<span>مو ضروري</span>' : ''}${it.due ? `<span${late(it.due) ? ' class="hot"' : ''}>${ic('bell')}${late(it.due) ? 'فات وقته، ' : ''}${fmtDue(it.due)}</span>` : ''}`;
   return `<div class="row ${it.done ? 'is-done' : ''}" data-id="${it.id}" data-flip="${it.id}">${swipeBg(it.done)}
     <article class="card">
       <button class="check" data-toggle="${it.id}" aria-label="${it.done ? 'إرجاع' : 'إنهاء'} «${esc(it.title)}»"><span>${ic('check')}</span></button>
@@ -1054,7 +1119,7 @@ function billRowHtml(b){
     <article class="card">
       <button class="check" data-pay="${b.id}" aria-label="${b.paid ? 'إلغاء سداد' : 'سداد'} «${esc(b.title)}»"><span>${ic('check')}</span></button>
       <button class="body" data-bill="${b.id}" aria-label="تعديل «${esc(b.title)}»"><div class="title">${esc(b.title)}</div><div class="meta"><span>${b.paid ? 'سدّدها ' + esc(memOf(b.paidBy).name) : 'ما تسدّدت'}</span></div></button>
-      ${b.amount != null ? `<span class="amt">${fmtMoney(b.amount)}</span>` : ''}<span class="mi c-${b.color}">${ic(icOf(b.icon))}</span>
+      ${b.amount != null ? `<span class="amt">${fmtMoney(b.amount)}${SAR}</span>` : ''}<span class="mi c-${b.color}">${ic(icOf(b.icon))}</span>
     </article></div>`;
 }
 const emptyBox = (icon, b, p) => `<div class="empty" data-flip="empty"><span class="tile-ic">${ic(icon)}</span><b>${b}</b>${p}</div>`;
@@ -1090,12 +1155,12 @@ function render(){
   const big = bigTags();
   if (V === 'home' && !cur && big.length){
     heroKey = 'home|' + big.map(t => [t.id, t.name, t.color, t.icon].join(':')).join('|');
-    heroHtml = `<div class="x-cats">${big.map(t0 => { const t = tagOf(t0.id), n = all.filter(i => i.tag === t.id).length;
-      return `<button class="x-cat gl press c-${t.color}" data-filter="${t.id}" data-fade><span class="r"><span class="ic">${ic(t.icon)}</span><span class="n num">${n}</span></span><span><b>${esc(t.name)}</b><small>${n ? plural(n, 'غرض واحد', 'غرضين', 'أغراض ناقصة', 'غرض ناقص') : 'ما فيه شيء ناقص'}</small></span></button>`; }).join('')}</div>`;
+    heroHtml = `<div class="x-cats">${big.map(t0 => { const t = tagOf(t0.id), mine = all.filter(i => i.tag === t.id), n = mine.length, hot = mine.filter(i => i.prio === 'urgent').length;
+      return `<button class="x-cat gl press c-${t.color}${n ? '' : ' zero'}${hot ? ' hot' : ''}" data-filter="${t.id}" data-fade><span class="r"><span class="ic">${ic(t.icon)}</span><span class="n num">${n}</span></span><span><b>${esc(t.name)}</b><small>${!n ? 'ما فيه شيء ناقص' : hot ? plural(hot, 'واحد مستعجل', 'اثنين مستعجلة', 'مستعجلة', 'مستعجل') + (n > hot ? ' من ' + n : '') : plural(n, 'غرض واحد', 'غرضين', 'أغراض ناقصة', 'غرض ناقص')}</small></span></button>`; }).join('')}</div>`;
   } else if (V === 'bills' && S.bills.length){
     const left = unpaid.filter(b => b.amount != null).reduce((s, b) => s + b.amount, 0), d = daysToReset();
     heroHtml = `<div class="x-sum gl" data-fade><div class="x-ring num"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27" stroke="var(--fill)"/><circle cx="32" cy="32" r="27" stroke="var(--accent)" stroke-dasharray="170" stroke-dashoffset="${170 - 170 * paid.length / S.bills.length}"/></svg><span>${paid.length}/${S.bills.length}</span></div>
-      <div><b>${unpaid.length ? `سدّدتوا ${paid.length} من ${S.bills.length}` : 'كل الفواتير مسدّدة'}</b><small>${unpaid.length ? `الباقي ${plural(unpaid.length, 'فاتورة وحدة', 'فاتورتين', 'فواتير', 'فاتورة')}${left ? `، مجموعها ${fmtMoney(left)} ريال` : ''}` : 'ما بقي شيء لهذا الشهر'}</small></div></div>
+      <div><b>${unpaid.length ? `سدّدتوا ${paid.length} من ${S.bills.length}` : 'كل الفواتير مسدّدة'}</b><small>${unpaid.length ? `الباقي ${plural(unpaid.length, 'فاتورة وحدة', 'فاتورتين', 'فواتير', 'فاتورة')}${left ? `، مجموعها ${fmtMoney(left)} ${SAR}` : ''}` : 'ما بقي شيء لهذا الشهر'}</small></div></div>
       <p class="x-note" data-fade>${ic('refresh')}<span>تنمسح علامات السداد تلقائياً يوم ٢٠، ${d ? 'باقي ' + plural(d, 'يوم واحد', 'يومين', 'أيام', 'يوم') : 'اليوم'}</span></p>`;
   } else if (V === 'appts' && ap.length && ap[0].due){
     const a = ap[0]; heroKey = 'appts|' + a.id;
@@ -1105,7 +1170,9 @@ function render(){
     if (hero._key === heroKey && V !== 'appts' && heroHtml && hero.firstElementChild){
       const next = document.createElement('div'); next.innerHTML = heroHtml;
       const was = hero.querySelectorAll('.n, small, b, .x-ring span, .x-ring circle:last-child, .x-note span'), now = next.querySelectorAll('.n, small, b, .x-ring span, .x-ring circle:last-child, .x-note span');
-      if (was.length === now.length) was.forEach((el, k) => { if (el.tagName.toLowerCase() === 'circle') el.setAttribute('stroke-dashoffset', now[k].getAttribute('stroke-dashoffset')); else if (el.textContent !== now[k].textContent) el.textContent = now[k].textContent; });
+      const wc = hero.querySelectorAll('.x-cat'), nc = next.querySelectorAll('.x-cat');
+      if (wc.length === nc.length) wc.forEach((el, k) => { if (el.className !== nc[k].className) el.className = nc[k].className; });
+      if (was.length === now.length) was.forEach((el, k) => { if (el.tagName.toLowerCase() === 'circle') el.setAttribute('stroke-dashoffset', now[k].getAttribute('stroke-dashoffset')); else if (el.innerHTML !== now[k].innerHTML) el.innerHTML = now[k].innerHTML; });
       else hero.innerHTML = heroHtml;
     } else hero.innerHTML = heroHtml;
     hero._html = heroHtml; hero._key = heroKey;
@@ -1117,14 +1184,14 @@ function render(){
   $('#qAi').hidden = V !== 'home';
 
   $('#lhTitle').textContent = V === 'home' ? (cur ? cur.name : 'كل المهام') : V === 'bills' ? 'الفواتير' : V === 'appts' ? 'كل المواعيد' : 'منتهي';
-  $('#lhEnd').innerHTML = V === 'home' && list.length ? '<span class="sort">الأهم أولاً</span>' : V === 'done' && doneList.length ? '<button class="sort link" data-clear>مسح الكل</button>' : '<span class="sort"></span>';
+  $('#lhEnd').innerHTML = V === 'home' && list.length ? `<button class="lhb press" data-share aria-label="مشاركة القائمة بالواتساب">${ic('chat')}مشاركة</button><button class="lhb go press" data-shop aria-label="وضع التسوق">${ic('cart')}تسوّق</button>` : V === 'done' && doneList.length ? '<button class="sort link" data-clear>مسح الكل</button>' : '<span class="sort"></span>';
 
   if (V === 'home') view.innerHTML = list.length ? grid([...list].sort((a, b) => ORD[a.prio] - ORD[b.prio]).map(row)) : emptyBox('done', 'كل شيء منتهي', cur ? 'ما فيه أغراض ناقصة في هذي الفئة.' : 'أضف أول غرض من الخانة فوق.');
   else if (V === 'bills') view.innerHTML = S.bills.length ? grid([...unpaid, ...paid].map(billRowHtml)) : emptyBox('receipt', 'ما فيه فواتير بعد', 'أضف فواتيرك الشهرية الثابتة من الخانة فوق، وعلّمها لما تسدد.');
   else if (V === 'appts'){
     const rest = ap.slice(ap.length && ap[0].due ? 1 : 0), groups = [['هذا الأسبوع', a => a.due && dayDiff(a.due) <= 7], ['لاحقاً', a => !a.due || dayDiff(a.due) > 7]];
     view.innerHTML = ap.length ? groups.map(([name, f]) => { const g = rest.filter(f); return g.length ? `<p class="x-sec">${name}</p>${grid(g.map(row))}` : ''; }).join('') : emptyBox('cal', 'ما فيه مواعيد قادمة', 'أضف موعداً من الخانة فوق، ويذكّرك التطبيق قبله.');
-  } else view.innerHTML = doneList.length ? grid(doneList.map(row)) : emptyBox('done', 'ما فيه شيء هنا', 'الأغراض اللي تنهونها تنتقل لهذي القائمة.');
+  } else view.innerHTML = (often().length ? `<p class="x-sec">تتكرر عندكم، اضغط للإضافة</p><div class="often">${often().map(o => `<button class="gl press" data-again="${esc(o.t)}">${ic('again')}${esc(o.t)}</button>`).join('')}</div>` : '') + (doneList.length ? grid(doneList.map(row)) : emptyBox('done', 'ما فيه شيء هنا', 'الأغراض اللي تنهونها تنتقل لهذي القائمة.'));
 
   // FLIP: survivors glide from their old spot, newcomers materialize
   if (!reduced()){
@@ -1138,6 +1205,9 @@ function render(){
   }
   lastView = V + S.filter;
   $$('#xTabs .x-tab').forEach(t => t.setAttribute('aria-current', t.dataset.view === V));
+  if ($('#shopDlg').open) drawShop();
+  $('#xTabs [data-view="appts"]').classList.toggle('has', ap.some(a => a.due && dayDiff(a.due) >= 0 && dayDiff(a.due) <= 1));
+  $('#xTabs [data-view="bills"]').classList.toggle('has', unpaid.length > 0 && daysToReset() <= 5);
   syncReminders(); syncWidget(); save();
   remeasure();
 }
@@ -1156,7 +1226,7 @@ $('#toastUndo').onclick = () => { if (undoFn) undoFn(); $('#toast').classList.re
 function addItems(text, tag, prio, due){
   const titles = splitTitles(text);
   const fresh = titles.map(title => ({id:uid(), title, tag, prio, by:S.me, due:due || undefined}));
-  const ids = fresh.map(i => i.id); S.items.unshift(...fresh);
+  const ids = fresh.map(i => i.id); S.items.unshift(...fresh); titles.forEach(t => bump(t, tag));
   if (ids.length){ buzz(8); db.saveItems(fresh); toast(ids.length > 1 ? `تمت إضافة ${ids.length} أغراض` : `تمت إضافة «${titles[0]}»`, () => { S.items = S.items.filter(i => !ids.includes(i.id)); db.delItems(ids); }); }
   return ids.length;
 }
@@ -1182,6 +1252,101 @@ function toggle(id, instant){
 
 
 $('#qIn').addEventListener('input', e => $('#quick').classList.toggle('has', !!e.target.value.trim()));
+
+/* ---------- What you buy again and again: remembered on this phone, plus everything in the finished list ---------- */
+const OFTEN_KEY = 'baytna-often';
+const oftenStore = () => { try { return JSON.parse(localStorage.getItem(OFTEN_KEY)) || {}; } catch (e) { return {}; } };
+function bump(title, tag){
+  const k = norm(title).trim(); if (!k) return;
+  const m = oftenStore(); m[k] = {t:title, g:tag || null, n:((m[k] && m[k].n) || 0) + 1};
+  const keys = Object.keys(m); if (keys.length > 300) keys.sort((a, b) => m[a].n - m[b].n).slice(0, keys.length - 300).forEach(x => delete m[x]);
+  try { localStorage.setItem(OFTEN_KEY, JSON.stringify(m)); } catch (e) {}
+}
+// Every known title with how often it came up; the ones on the list right now are left out.
+function known(){
+  const m = {}, st = oftenStore();
+  for (const k in st) m[k] = {...st[k]};
+  for (const i of S.items) if (!isAppt(i) && i.done){ const k = norm(i.title).trim(); if (!k) continue; if (m[k]) m[k].n += st[k] ? 0 : 1; else m[k] = {t:i.title, g:i.tag, n:1}; }
+  for (const i of active()) delete m[norm(i.title).trim()];
+  return m;
+}
+const often = () => Object.values(known()).filter(o => o.n >= 2).sort((a, b) => b.n - a.n).slice(0, 8);
+const tagFor = o => (o.g && S.tags.some(t => t.id === o.g) ? o.g : guessTag(o.t)) || (S.filter !== 'all' ? S.filter : (S.tags[0] || {}).id) || null;
+function addAgain(title){
+  const o = known()[norm(title).trim()] || {t:title};
+  addItems(o.t, S.view === 'home' && S.filter !== 'all' ? S.filter : tagFor(o), 'soon'); render();
+}
+function drawSug(){
+  const box = $('#qSug'), q = norm($('#qIn').value).trim();
+  if (S.view !== 'home' || q.length < 2 || /[،,]/.test($('#qIn').value)){ box.hidden = true; return; }
+  const m = known(), hits = Object.keys(m).filter(k => k.includes(q) && k !== q).sort((a, b) => (b.startsWith(q) - a.startsWith(q)) || m[b].n - m[a].n).slice(0, 4).map(k => m[k]);
+  box.hidden = !hits.length;
+  box.innerHTML = hits.length ? '<span class="cap">من اللي تشترونه</span>' + hits.map(o => { const t = tagOf(tagFor(o)); return `<button type="button" data-sug="${esc(o.t)}" class="c-${t.color}"><span class="mi">${ic(t.icon)}</span><b>${esc(o.t)}</b><small>${esc(t.name)}</small></button>`; }).join('') : '';
+}
+$('#qIn').addEventListener('input', drawSug);
+$('#qIn').addEventListener('blur', () => setTimeout(() => $('#qSug').hidden = true, 180));
+$('#qSug').addEventListener('pointerdown', e => e.preventDefault());            // keep the keyboard up while choosing
+$('#qSug').addEventListener('click', e => {
+  const b = e.target.closest('[data-sug]'); if (!b) return;
+  e.stopPropagation(); clearQuick(); $('#qSug').hidden = true; addAgain(b.dataset.sug);
+});
+
+/* ---------- Shopping mode: the list in large type, nothing else, and the screen stays on ---------- */
+let shopIds = [], shopLock = null;
+function openShop(){
+  const cur = S.filter !== 'all' ? tagOf(S.filter) : null;
+  shopIds = active().filter(i => !cur || i.tag === S.filter).sort((a, b) => ORD[a.prio] - ORD[b.prio]).map(i => i.id);
+  if (!shopIds.length) return;
+  $('#shopTitle').textContent = cur ? cur.name : 'كل المهام';
+  drawShop(); $('#shopDlg').showModal(); $('#shopDlg').scrollTop = 0;
+  try { navigator.wakeLock && navigator.wakeLock.request('screen').then(l => shopLock = l).catch(() => {}); } catch (e) {}
+}
+function drawShop(){
+  const its = shopIds.map(id => S.items.find(i => i.id === id)).filter(Boolean), left = its.filter(i => !i.done), got = its.filter(i => i.done);
+  const one = i => `<button type="button" class="srow gl${i.done ? ' got' : ''}" data-shopt="${i.id}" aria-pressed="${!!i.done}"><span class="ck">${ic('ok')}</span><b>${esc(i.title)}${i.prio === 'urgent' && !i.done ? '<small>مستعجل</small>' : ''}</b></button>`;
+  const groups = S.filter === 'all' ? [...new Set(left.map(i => i.tag || ''))].map(g => [tagOf(g).name, left.filter(i => (i.tag || '') === g)]) : [['', left]];
+  $('#shopCount').textContent = `${got.length} من ${its.length}`;
+  $('#shopBar').style.width = (its.length ? 100 * got.length / its.length : 0) + '%';
+  $('#shopList').innerHTML = groups.map(([name, g]) => (name && groups.length > 1 ? `<p class="shop-sec">${esc(name)}</p>` : '') + g.map(one).join('')).join('')
+    + (!left.length && its.length ? `<div class="shop-end"><b>خلصت القائمة كلها</b><button type="button" class="btn primary" id="shopDone" style="padding:0 28px">تم</button></div>` : '')
+    + (got.length ? `<p class="shop-sec">في السلة</p>` + got.map(one).join('') : '');
+}
+$('#shopList').addEventListener('click', e => {
+  if (e.target.closest('#shopDone')) return $('#shopDlg').close();
+  const b = e.target.closest('[data-shopt]'); if (!b) return;
+  const it = S.items.find(i => i.id === b.dataset.shopt); if (!it) return;
+  it.done = !it.done; it.doneAt = it.done ? Date.now() : undefined; it.doneBy = it.done ? S.me : undefined;
+  db.saveItems([it]); buzz(12); render();
+});
+$('#shopX').onclick = () => $('#shopDlg').close();
+$('#shopDlg').addEventListener('close', () => { try { shopLock && shopLock.release(); } catch (e) {} shopLock = null; });
+
+/* ---------- Sharing a list as plain text, straight into WhatsApp ---------- */
+function listText(){
+  const cur = S.filter !== 'all' ? tagOf(S.filter) : null, all = active().filter(i => !cur || i.tag === S.filter).sort((a, b) => ORD[a.prio] - ORD[b.prio]);
+  const line = i => `▫️ ${i.title}${i.prio === 'urgent' ? ' (مستعجل)' : ''}`;
+  if (cur) return `*${cur.name}* (${all.length})\n${all.map(line).join('\n')}`;
+  const tags = [...new Set(all.map(i => i.tag || ''))];
+  return `*قائمة ${S.space.name}* (${all.length})\n\n` + tags.map(g => `*${tagOf(g).name}*\n${all.filter(i => (i.tag || '') === g).map(line).join('\n')}`).join('\n\n');
+}
+async function shareList(){
+  const text = listText(), url = 'https://wa.me/?text=' + encodeURIComponent(text);
+  if (isNative()){ try { await native('WidgetBridge', 'openUrl', {url, external:true}); return; } catch (e) { console.warn('share', e); } }
+  try { if (navigator.share) return await navigator.share({text}); } catch (e) { if (e.name === 'AbortError') return; }
+  window.open(url, '_blank');
+}
+
+/* ---------- Someone else added something urgent: say so, here and as a notification if the app is in the background ---------- */
+function urgentAlert(fresh){
+  if (!fresh.length) return;
+  const who = [...new Set(fresh.map(i => memOf(i.by).name))].join(' و');
+  const body = fresh.length === 1 ? `مستعجل من ${who}: «${fresh[0].title}»` : `${plural(fresh.length, 'غرض واحد', 'غرضين', 'أغراض', 'غرض')} مستعجلة من ${who}: ${fresh.slice(0, 3).map(i => i.title).join('، ')}`;
+  buzz([30, 60, 30]); toast(body);
+  if (isNative() && document.hidden) (async () => { try {
+    if ((await LN.checkPermissions()).display !== 'granted') return;
+    await LN.schedule({notifications:[{id:nid('urgent' + fresh[0].id), title:'مستعجل في ' + S.space.name, body, schedule:{at:new Date(Date.now() + 800), allowWhileIdle:true}}]});
+  } catch (e) { console.warn('urgent alert', e); } })();
+}
 
 /* ---------- Smart tagging: guess the tag from the words, otherwise ask ---------- */
 const norm = t => t.toLowerCase().replace(/[ً-ْـ]/g, '').replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/ى/g, 'ي').replace(/[^ء-يa-z0-9 ]/g, ' ');
@@ -1876,6 +2041,9 @@ document.addEventListener('click', e => {
   else if (d.bill) openBill(d.bill);
   else if (d.edit) (isAppt(S.items.find(i => i.id === d.edit) || {}) ? openAppt : openItem)(d.edit);
   else if ('newtag' in d) openTag();
+  else if ('shop' in d) openShop();
+  else if ('share' in d) shareList();
+  else if (d.again) addAgain(d.again);
   else if ('invite' in d) openInvite();
   else if ('gpt' in d) openGpt();
   else if ('close' in d) closeSheet(b.closest('dialog'));

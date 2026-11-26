@@ -44,7 +44,7 @@ public class WidgetListService extends RemoteViewsService {
             int color;
             try { color = Color.parseColor(it.optString("c", "#8E8E93")); } catch (Exception e) { color = Color.GRAY; }
             row.setTextColor(R.id.row_dot, color);
-            row.setTextColor(R.id.row_meta, color);
+            row.setTextColor(R.id.row_meta, BaytnaWidget.lighten(color));      // the raw colour is too dim for small text on the dark glass
             row.setOnClickFillInIntent(R.id.row_root, new Intent());
             return row;
         }

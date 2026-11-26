@@ -9,3 +9,6 @@ supabase/.temp/
 
 # Licensed font files: the Thmanyah licence forbids redistributing them, so they never go into this public repository.
 designs/fonts/
+
+# Local before/after previews (they hold a copy of the licensed typeface).
+designs/polish/
