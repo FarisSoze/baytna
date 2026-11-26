@@ -35,6 +35,8 @@ workflows:
           gem install xcodeproj --no-document --user-install
           ruby scripts/add_ios_widget.rb
           sh scripts/ios_ipa.sh baytna-unsigned.ipa
+      - name: Publish to the public download links on GitHub (needs GITHUB_TOKEN in the same variable group)
+        script: sh scripts/publish_release.sh
     artifacts:
       - out/*.apk
       - out/*.ipa
