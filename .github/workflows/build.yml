@@ -23,14 +23,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build number from the commit time (same on every CI, always increasing)
-        run: echo "BUILD_NUMBER=$(( ($(git log -1 --format=%ct) - 1793491200) / 60 ))" >> "$GITHUB_ENV"
+        run: echo "BUILD_NUMBER=$(( ($(git log -1 --format=%ct) - 1793491200) / 60 ))" >> "$GITHUB_ENV" && echo "APP_VERSION=$(tr -d ' \r\n' < VERSION)" >> "$GITHUB_ENV"
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - uses: actions/setup-java@v4
         with: { distribution: temurin, java-version: 21 }
       - run: npm ci
       - name: Stamp the version shown inside the app
-        run: sed -i.bak "s/APP_VER = 'dev'/APP_VER = '1.1.$BUILD_NUMBER'/" www/index.html && rm www/index.html.bak
+        run: sed -i.bak -e "s/APP_VER = 'dev'/APP_VER = '$APP_VERSION'/" -e "s/APP_BUILD = 0;/APP_BUILD = $BUILD_NUMBER;/" www/index.html && rm www/index.html.bak
       - name: Unpack the typeface
         run: sh scripts/unpack_font.sh
       - run: npm run vendor
@@ -48,12 +48,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Build number from the commit time (same on every CI, always increasing)
-        run: echo "BUILD_NUMBER=$(( ($(git log -1 --format=%ct) - 1793491200) / 60 ))" >> "$GITHUB_ENV"
+        run: echo "BUILD_NUMBER=$(( ($(git log -1 --format=%ct) - 1793491200) / 60 ))" >> "$GITHUB_ENV" && echo "APP_VERSION=$(tr -d ' \r\n' < VERSION)" >> "$GITHUB_ENV"
       - uses: actions/setup-node@v4
         with: { node-version: 22, cache: npm }
       - run: npm ci
       - name: Stamp the version shown inside the app
-        run: sed -i.bak "s/APP_VER = 'dev'/APP_VER = '1.1.$BUILD_NUMBER'/" www/index.html && rm www/index.html.bak
+        run: sed -i.bak -e "s/APP_VER = 'dev'/APP_VER = '$APP_VERSION'/" -e "s/APP_BUILD = 0;/APP_BUILD = $BUILD_NUMBER;/" www/index.html && rm www/index.html.bak
       - name: Unpack the typeface
         run: sh scripts/unpack_font.sh
       - run: npm run vendor
@@ -99,4 +99,4 @@ jobs:
           if [ -f out/baytna-unsigned.ipa ]; then gh release delete-asset latest baytna-widgets-unsigned.ipa --yes || true; fi
           # The app reads this title to tell whether a newer build exists. Only when both files are the new ones.
           N=$(( ($(date -d "$(gh api "repos/$GH_REPO/commits/$GITHUB_SHA" --jq .commit.committer.date)" +%s) - 1793491200) / 60 ))
-          if [ -f out/baytna.apk ] && [ -f out/baytna-unsigned.ipa ]; then gh release edit latest --title "Baytna 1.1.$N (1.0.$N)"; fi
+          if [ -f out/baytna.apk ] && [ -f out/baytna-unsigned.ipa ]; then gh release edit latest --title "1.1.$N (1.0.$N) — Baytna $(gh api "repos/$GH_REPO/contents/VERSION?ref=$GITHUB_SHA" --jq .content | base64 -d | tr -d ' \r\n')"; fi

@@ -16,10 +16,11 @@ workflows:
         script: |
           # From the commit time, so numbers keep increasing whichever CI builds.
           echo "BUILD_NUMBER=$(( ($(git log -1 --format=%ct) - 1793491200) / 60 ))" >> $CM_ENV
+          echo "APP_VERSION=$(tr -d ' \r\n' < VERSION)" >> $CM_ENV
       - name: Install dependencies
         script: npm ci
       - name: Stamp the version shown inside the app
-        script: sed -i.bak "s/APP_VER = 'dev'/APP_VER = '1.1.$BUILD_NUMBER'/" www/index.html && rm www/index.html.bak
+        script: sed -i.bak -e "s/APP_VER = 'dev'/APP_VER = '$APP_VERSION'/" -e "s/APP_BUILD = 0;/APP_BUILD = $BUILD_NUMBER;/" www/index.html && rm www/index.html.bak
       - name: Unpack the typeface (needs the FONT_KEY variable set in Codemagic)
         script: sh scripts/unpack_font.sh
       - name: Copy bundled assets
