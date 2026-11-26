@@ -1517,7 +1517,6 @@ async function gptFinish(raw){
   const q = new URLSearchParams(String(raw).trim().replace(/^[^?]*\?/, ''));
   if (!p) throw gErr('ما فيه محاولة دخول جارية. اضغط الزر من جديد.');
   if (q.get('state') !== p.state) throw gErr('هذا الرابط ما يخص محاولة الدخول الحالية. اضغط الزر من جديد.');
-  localStorage.removeItem(PKEY);
   if (q.get('error')) throw gErr(q.get('error') === 'access_denied' ? 'ما تمت الموافقة. اضغط الزر ووافق على استخدام اشتراكك.' : 'رفض ChatGPT الطلب (' + q.get('error') + ').');
   const fresh = p.client === 'dynamic_agent_client', client = q.get('client_id') || (fresh ? '' : p.client);
   if (!client || client === 'dynamic_agent_client' || !q.get('code')) throw gErr('ما اكتمل تسجيل التطبيق عند ChatGPT. جرّب من جديد.');
@@ -1530,6 +1529,7 @@ async function gptFinish(raw){
   if (!String(t.scope || q.get('scope') || '').split(/[ +]/).includes(OA.plan)) throw gErr('دخلت، لكن بدون السماح باستخدام اشتراكك. اضغط الزر ووافق على «استخدام خطة ChatGPT».');
   takeTokens(t); Object.assign(G, {client, sub:id.sub, email:id.email || '', model:'', models:[]});
   await gSave();
+  localStorage.removeItem(PKEY);
 }
 let gRefreshing = null;                                  // one refresh at a time: the refresh token rotates
 async function gptToken(){
@@ -1654,14 +1654,25 @@ async function openGpt(){
   if (gSigned() && (!(G.models && G.models.length) || !G.light)) gptModels().catch(e => console.warn('models', e));
 }
 // Back from the browser: the native shell kept the callback for us.
-async function gptReturn(q){
-  if (!localStorage.getItem(PKEY)) return;
+// Android cuts the network for an app that is not on screen, and the callback arrives while the browser is still in front.
+// So the answer is kept, and the exchange only runs once the app is visible again; a dropped connection is retried.
+let gQuery = '', gFinishing = false;
+async function gptReturn(q, tries = 0){
+  if (!localStorage.getItem(PKEY) || gFinishing) return;
   try {
     if (!q && isNative()) q = (await native('WidgetBridge', 'authResult')).query;
-    if (!q) return;
-    await gptFinish(q); gptFail(); toast('تم ربط ChatGPT'); buzz(8);
+    q = q || gQuery; if (!q) return;
+    gQuery = q;
+    if (document.hidden) return;
+    gFinishing = true;
+    await gptFinish(q); gQuery = ''; gptFail(); toast('تم ربط ChatGPT'); buzz(8);
     if (!$('#gptDlg').open) openGpt(); else { drawGpt(); gptModels().catch(e => console.warn('models', e)); }
-  } catch (e) { console.warn('gpt sign-in', e); if (!$('#gptDlg').open) await openGpt(); gptFail(e); drawGpt(); }
+  } catch (e) {
+    console.warn('gpt sign-in', e);
+    if (e.code === 'network' && tries < 4){ gFinishing = false; setTimeout(() => gptReturn(gQuery, tries + 1), 1200 + tries * 800); return; }
+    gQuery = ''; localStorage.removeItem(PKEY);
+    if (!$('#gptDlg').open) await openGpt(); gptFail(e); drawGpt();
+  } finally { gFinishing = false; }
 }
 addEventListener('baytnaAuth', () => gptReturn());
 document.addEventListener('visibilitychange', () => { if (!document.hidden) gptReturn(); });
