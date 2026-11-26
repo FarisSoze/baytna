@@ -436,7 +436,6 @@ body::before{inset:0;height:auto;background:var(--wash)}
   .x-pin.folded.ai #lhEnd{opacity:0}
   .x-pin.pinned::before{opacity:1}
 }
-.measuring .fx,.measuring .x-pin *{animation:none!important;transition:none!important;transform:none!important}
 
 /* Rows: one glass sheet with hairlines, instead of a card each */
 #view .grid{gap:0;border-radius:22px;overflow:hidden;background:var(--cellg);border:1px solid var(--cline);-webkit-backdrop-filter:blur(26px) saturate(1.7);backdrop-filter:blur(26px) saturate(1.7)}
@@ -465,6 +464,7 @@ body::before{inset:0;height:auto;background:var(--wash)}
 /* Bills summary and next appointment */
 .x-sum{border-radius:22px;padding:16px;display:flex;align-items:center;gap:16px;margin-top:18px;box-shadow:var(--shadow)}
 .x-ring{width:64px;height:64px;flex:none;position:relative;display:grid;place-items:center;font-weight:700;font-size:1rem}
+.x-ring span{position:relative}
 .x-ring svg{position:absolute;inset:0;transform:rotate(-90deg)}
 .x-ring circle{fill:none;stroke-width:7;stroke-linecap:round;transition:stroke-dashoffset .7s var(--ease)}
 .x-sum b{font-size:1rem;font-weight:700;display:block}
@@ -487,6 +487,8 @@ body::before{inset:0;height:auto;background:var(--wash)}
 /* Floating tab bar */
 .x-tabs{position:fixed;z-index:30;bottom:max(10px,calc(env(safe-area-inset-bottom) - 14px));left:50%;transform:translateX(-50%);width:min(calc(100% - 32px),528px);height:58px;border-radius:999px;display:flex;align-items:center;padding:4px;
   background:var(--glass);border:1px solid var(--cline);-webkit-backdrop-filter:blur(24px) saturate(1.8);backdrop-filter:blur(24px) saturate(1.8);box-shadow:var(--shadow-lg)}
+.x-tabs{transition:transform .34s var(--ease),opacity .2s}
+.x-tabs.away{transform:translateX(-50%) translateY(calc(100% + 60px));opacity:0;pointer-events:none}
 .x-tab{flex:1;height:50px;border-radius:999px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font-size:.6875rem;font-weight:500;color:var(--fg2);transition:color .2s,background-color .25s,transform .14s ease-out}
 .x-tab:active{transform:scale(.94)}
 .x-tab svg{width:20px;height:20px}
@@ -991,18 +993,31 @@ function render(){
     + `<button class="x-chip gl" data-newtag>+ فئة</button>`;
 
   // Hero: category cards on the home screen, the month's summary on bills, the next appointment on appointments
+  // Rebuilding these would restart their scroll animation and show them for a frame, so when only numbers changed they are patched in place.
   const hero = $('#xHero');
-  if (V === 'home' && !cur) hero.innerHTML = S.tags.length ? `<div class="x-cats">${S.tags.map(t0 => { const t = tagOf(t0.id), n = all.filter(i => i.tag === t.id).length;
-      return `<button class="x-cat gl press c-${t.color}" data-filter="${t.id}" data-fade><span class="r"><span class="ic">${ic(t.icon)}</span><span class="n num">${n}</span></span><span><b>${esc(t.name)}</b><small>${n ? plural(n, 'غرض واحد', 'غرضين', 'أغراض ناقصة', 'غرض ناقص') : 'ما فيه شيء ناقص'}</small></span></button>`; }).join('')}</div>` : '';
-  else if (V === 'bills' && S.bills.length){
+  let heroHtml = '', heroKey = V;
+  if (V === 'home' && !cur && S.tags.length){
+    heroKey = 'home|' + S.tags.map(t => [t.id, t.name, t.color, t.icon].join(':')).join('|');
+    heroHtml = `<div class="x-cats">${S.tags.map(t0 => { const t = tagOf(t0.id), n = all.filter(i => i.tag === t.id).length;
+      return `<button class="x-cat gl press c-${t.color}" data-filter="${t.id}" data-fade><span class="r"><span class="ic">${ic(t.icon)}</span><span class="n num">${n}</span></span><span><b>${esc(t.name)}</b><small>${n ? plural(n, 'غرض واحد', 'غرضين', 'أغراض ناقصة', 'غرض ناقص') : 'ما فيه شيء ناقص'}</small></span></button>`; }).join('')}</div>`;
+  } else if (V === 'bills' && S.bills.length){
     const left = unpaid.filter(b => b.amount != null).reduce((s, b) => s + b.amount, 0), d = daysToReset();
-    hero.innerHTML = `<div class="x-sum gl" data-fade><div class="x-ring num"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27" stroke="var(--fill)"/><circle cx="32" cy="32" r="27" stroke="var(--accent)" stroke-dasharray="170" stroke-dashoffset="${170 - 170 * paid.length / S.bills.length}"/></svg>${paid.length}/${S.bills.length}</div>
+    heroHtml = `<div class="x-sum gl" data-fade><div class="x-ring num"><svg viewBox="0 0 64 64" aria-hidden="true"><circle cx="32" cy="32" r="27" stroke="var(--fill)"/><circle cx="32" cy="32" r="27" stroke="var(--accent)" stroke-dasharray="170" stroke-dashoffset="${170 - 170 * paid.length / S.bills.length}"/></svg><span>${paid.length}/${S.bills.length}</span></div>
       <div><b>${unpaid.length ? `سدّدتوا ${paid.length} من ${S.bills.length}` : 'كل الفواتير مسدّدة'}</b><small>${unpaid.length ? `الباقي ${plural(unpaid.length, 'فاتورة وحدة', 'فاتورتين', 'فواتير', 'فاتورة')}${left ? `، مجموعها ${fmtMoney(left)} ريال` : ''}` : 'ما بقي شيء لهذا الشهر'}</small></div></div>
-      <p class="x-note" data-fade>${ic('refresh')}تنمسح علامات السداد تلقائياً يوم ٢٠، ${d ? 'باقي ' + plural(d, 'يوم واحد', 'يومين', 'أيام', 'يوم') : 'اليوم'}</p>`;
+      <p class="x-note" data-fade>${ic('refresh')}<span>تنمسح علامات السداد تلقائياً يوم ٢٠، ${d ? 'باقي ' + plural(d, 'يوم واحد', 'يومين', 'أيام', 'يوم') : 'اليوم'}</span></p>`;
   } else if (V === 'appts' && ap.length && ap[0].due){
-    const a = ap[0];
-    hero.innerHTML = `<button class="x-next gl press" data-edit="${a.id}" data-fade>${dateTile(a.due)}<span class="in"><span class="tagline">القادم، ${inDays(dayDiff(a.due))}</span><h2>${esc(a.title)}</h2><p>${ic('soon')}${fmtTime(a.due)}</p>${a.loc ? `<p>${ic('pin')}${esc(a.loc)}</p>` : ''}${a.remind != null ? `<p>${ic('bell')}يذكّرك ${remindText(a.remind)}</p>` : ''}</span></button>`;
-  } else hero.innerHTML = '';
+    const a = ap[0]; heroKey = 'appts|' + a.id;
+    heroHtml = `<button class="x-next gl press" data-edit="${a.id}" data-fade>${dateTile(a.due)}<span class="in"><span class="tagline">القادم، ${inDays(dayDiff(a.due))}</span><h2>${esc(a.title)}</h2><p>${ic('soon')}${fmtTime(a.due)}</p>${a.loc ? `<p>${ic('pin')}${esc(a.loc)}</p>` : ''}${a.remind != null ? `<p>${ic('bell')}يذكّرك ${remindText(a.remind)}</p>` : ''}</span></button>`;
+  }
+  if (hero._html !== heroHtml){
+    if (hero._key === heroKey && V !== 'appts' && heroHtml && hero.firstElementChild){
+      const next = document.createElement('div'); next.innerHTML = heroHtml;
+      const was = hero.querySelectorAll('.n, small, b, .x-ring span, .x-ring circle:last-child, .x-note span'), now = next.querySelectorAll('.n, small, b, .x-ring span, .x-ring circle:last-child, .x-note span');
+      if (was.length === now.length) was.forEach((el, k) => { if (el.tagName.toLowerCase() === 'circle') el.setAttribute('stroke-dashoffset', now[k].getAttribute('stroke-dashoffset')); else if (el.textContent !== now[k].textContent) el.textContent = now[k].textContent; });
+      else hero.innerHTML = heroHtml;
+    } else hero.innerHTML = heroHtml;
+    hero._html = heroHtml; hero._key = heroKey;
+  }
 
   // The add field speaks for the screen it is on
   $('#quick').hidden = V === 'done';
@@ -1174,6 +1189,8 @@ addEventListener('pointermove', e => {
   const armed = Math.abs(x) > TH;
   if (armed !== sw.armed){ sw.armed = armed; sw.row.classList.toggle('armed', armed); if (armed) buzz(6); }
 });
+// iPhone lets the page pan vertically while the row slides, then cancels the pointer. Once a swipe is on, hold the page still.
+$('#view').addEventListener('touchmove', e => { if (sw && sw.on && e.cancelable) e.preventDefault(); }, {passive:false});
 const endSwipe = e => {
   if (!sw || e.pointerId !== sw.id) return;
   const s = sw; sw = null; if (!s.on) return;
@@ -1766,35 +1783,47 @@ $('#tagForm').onsubmit = e => {
    list title pins, and how far the plus and the assistant button travel to their spots beside it. */
 const SDA = !!(window.CSS && CSS.supports && CSS.supports('animation-timeline: scroll()'));
 let parts = [], pinY = 1e9;
+const offTo = (el, root) => { let x = 0, y = 0; while (el && el !== root){ x += el.offsetLeft; y += el.offsetTop; el = el.offsetParent; } return {x, y}; };
 function measure(){
-  const app = $('#app'), pin = $('#xPin'), quick = $('#quick'), y0 = scrollY;
+  const pin = $('#xPin'), quick = $('#quick');
   const safe = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sat')) || 0;
-  app.classList.add('measuring');
+  const put = (el, k, v) => { if (el.style.getPropertyValue(k) !== v) el.style.setProperty(k, v); };
   parts = [[$('#xTools'), 0], [$('#xTitle'), 1], [$('#xChips'), 1], ...[...$$('#xHero [data-fade]')].map(e => [e, 1])].filter(([e]) => e && !e.hidden);
   for (const [el, travels] of parts){
     el.classList.add('fx');
-    const a0 = travels ? Math.max(0, el.getBoundingClientRect().top + y0 - safe - 130) : 0, a1 = a0 + (travels ? 120 : 60);
+    const a0 = travels ? Math.max(0, offTo(el, null).y - safe - 130) : 0, a1 = a0 + (travels ? 120 : 60);
     el._mid = (a0 + a1) / 2;
-    el.style.setProperty('--a0', a0 + 'px'); el.style.setProperty('--a1', a1 + 'px'); el.style.setProperty('--dy', travels ? '46px' : '0px');
+    put(el, '--a0', a0 + 'px'); put(el, '--a1', a1 + 'px'); put(el, '--dy', travels ? '46px' : '0px');
   }
   pin.classList.toggle('noq', quick.hidden); pin.classList.toggle('ai', !quick.hidden && !$('#qAi').hidden);
-  // Where the block rests is read from its (non-sticky) parent, so this stays right even while it is pinned.
-  const wrap = pin.parentElement, rest = wrap.getBoundingClientRect().top + y0 + parseFloat(getComputedStyle(wrap).paddingTop);
+  const wrap = pin.parentElement, rest = offTo(wrap, null).y + parseFloat(getComputedStyle(wrap).paddingTop);
   pinY = Math.max(0, rest - (parseFloat(getComputedStyle(pin).top) || 0));
-  pin.style.setProperty('--f0', Math.max(0, pinY - 110) + 'px'); pin.style.setProperty('--fm', Math.max(.5, pinY - 50) + 'px');
-  pin.style.setProperty('--fb', Math.max(.5, pinY - 16) + 'px'); pin.style.setProperty('--f1', Math.max(1, pinY) + 'px');
+  put(pin, '--f0', Math.max(0, pinY - 110) + 'px'); put(pin, '--fm', Math.max(.5, pinY - 50) + 'px');
+  put(pin, '--fb', Math.max(.5, pinY - 16) + 'px'); put(pin, '--f1', Math.max(1, pinY) + 'px');
   if (!quick.hidden) for (const [el, slot, k] of [[$('#qPlus'), pin.querySelector('.hp'), 'p'], [$('#qAi'), pin.querySelector('.ha'), 'a']]){
     if (el.hidden) continue;
-    const a = el.getBoundingClientRect(), b = slot.getBoundingClientRect();
-    pin.style.setProperty(`--${k}dx`, (b.left + b.width / 2 - a.left - a.width / 2) + 'px');
-    pin.style.setProperty(`--${k}dy`, (b.top + b.height / 2 - a.top - a.height / 2) + 'px');
-    pin.style.setProperty(`--${k}ds`, b.width / a.width);
+    const a = offTo(el, pin), b = offTo(slot, pin);
+    put(pin, `--${k}dx`, (b.x + slot.offsetWidth / 2 - a.x - el.offsetWidth / 2) + 'px');
+    put(pin, `--${k}dy`, (b.y + slot.offsetHeight / 2 - a.y - el.offsetHeight / 2) + 'px');
+    put(pin, `--${k}ds`, String(slot.offsetWidth / el.offsetWidth));
   }
-  app.classList.remove('measuring');
 }
 // On scroll: only flags. Whether the field counts as folded (for taps), and the eased fallback where scroll-tied animation is missing.
+let lastY = 0, runY = 0, goingDown = false, tabsAway = false;
+function tabsOnScroll(y){
+  if (y === lastY) return;
+  const max = document.documentElement.scrollHeight - innerHeight, down = y > lastY;
+  if (down !== goingDown){ runY = lastY; goingDown = down; }      // where the current run in one direction began
+  let away = tabsAway;
+  if (y < 60 || y >= max - 4) away = false;                         // always there at the very top and at the very end
+  else if (down && y - runY > 24) away = true;                      // a real scroll down, not a nudge
+  else if (!down && runY - y > 12) away = false;                    // the first bit of scrolling back up brings it home
+  if (away !== tabsAway){ tabsAway = away; $('#xTabs').classList.toggle('away', away); }
+  lastY = y;
+}
 function motion(){
   const y = Math.max(scrollY, 0), pin = $('#xPin');
+  tabsOnScroll(y);
   folded = !$('#quick').hidden && y >= pinY - 50;
   $('#qIn').style.pointerEvents = folded ? 'none' : '';
   if (SDA) return;
