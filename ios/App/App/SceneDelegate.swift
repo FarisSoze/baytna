@@ -143,6 +143,7 @@ public class WidgetBridgePlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "secureGet", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "secureSet", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "openUrl", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "shareImage", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "authListen", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "authResult", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "setIcon", returnType: CAPPluginReturnPromise),
@@ -174,6 +175,18 @@ public class WidgetBridgePlugin: CAPPlugin, CAPBridgedPlugin {
             self.browser = safari
             (host.presentedViewController ?? host).present(safari, animated: true)
             call.resolve()
+        }
+    }
+
+    /// Shares a picture of the list through the system share sheet (WhatsApp, Messages, Save Image, ...).
+    @objc func shareImage(_ call: CAPPluginCall) {
+        guard let data = Data(base64Encoded: call.getString("data") ?? ""), let image = UIImage(data: data) else { call.reject("bad image"); return }
+        DispatchQueue.main.async {
+            guard let host = self.bridge?.viewController else { call.reject("no view"); return }
+            let sheet = UIActivityViewController(activityItems: [image], applicationActivities: nil)
+            sheet.popoverPresentationController?.sourceView = host.view
+            sheet.completionWithItemsHandler = { _, done, _, _ in call.resolve(["shared": done]) }
+            (host.presentedViewController ?? host).present(sheet, animated: true)
         }
     }
 

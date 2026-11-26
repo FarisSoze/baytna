@@ -104,6 +104,26 @@ public class WidgetBridgePlugin extends Plugin {
         }
     }
 
+    /** Shares a picture of the list through the system share sheet (WhatsApp, Messages, ...). */
+    @PluginMethod
+    public void shareImage(PluginCall call) {
+        try {
+            byte[] png = android.util.Base64.decode(call.getString("data", ""), android.util.Base64.DEFAULT);
+            java.io.File dir = new java.io.File(getContext().getCacheDir(), "share");
+            dir.mkdirs();
+            java.io.File file = new java.io.File(dir, "baytna-list.png");
+            try (java.io.FileOutputStream out = new java.io.FileOutputStream(file)) { out.write(png); }
+            Uri uri = androidx.core.content.FileProvider.getUriForFile(getContext(), getContext().getPackageName() + ".fileprovider", file);
+            Intent send = new Intent(Intent.ACTION_SEND).setType("image/png").putExtra(Intent.EXTRA_STREAM, uri)
+                .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            send.setClipData(android.content.ClipData.newRawUri("", uri));
+            getActivity().startActivity(Intent.createChooser(send, "مشاركة القائمة"));
+            call.resolve();
+        } catch (Exception e) {
+            call.reject("share failed", e);
+        }
+    }
+
     /** Voice input: the system speech dialog listens and hands back the text, so the app itself needs no microphone permission. */
     @PluginMethod
     public void listen(PluginCall call) {

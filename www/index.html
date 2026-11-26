@@ -350,7 +350,9 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 :root{color-scheme:light dark}:root[data-theme="dark"]{color-scheme:dark}:root[data-theme="light"]{color-scheme:light}
 body{background:var(--bg)}
 body::before{inset:0;height:auto;background:var(--wash)}
-.gl{background:var(--cellg);border:1px solid var(--cline);-webkit-backdrop-filter:blur(26px) saturate(1.7);backdrop-filter:blur(26px) saturate(1.7)}
+/* Cards, chips and rows sit straight on the soft colour wash, and blurring a smooth gradient looks the same as not blurring it.
+   So they get a tint only. Real frosted glass stays on what floats over moving content (tab bar, sheets, toast). */
+.gl{background:var(--cellg);border:1px solid var(--cline)}
 .tile-ic{background:var(--c);box-shadow:none}
 .av{background:var(--c);color:#fff;box-shadow:0 0 0 2px var(--cline)}
 .btn.primary{box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 12px 24px -14px rgba(0,0,0,.5);border-radius:999px}
@@ -415,7 +417,7 @@ body::before{inset:0;height:auto;background:var(--wash)}
 /* Scroll motion. Where the browser can tie an animation to the scroll position it does all of it itself, in step with the finger.
    Elsewhere each part simply eases out once the scroll passes it. Script only measures where things are; it never moves them. */
 .fx{transform-origin:50% 30%}
-@keyframes recede{60%{opacity:.25}to{opacity:0;transform:translateY(var(--dy,0px)) scale(.86);filter:blur(7px);visibility:hidden}}
+@keyframes recede{60%{opacity:.25}to{opacity:0;transform:translateY(var(--dy,0px)) scale(.86);visibility:hidden}}   /* no blur here: re-blurring glass cards on every scroll frame heated the iPhone */
 @keyframes foldBg{to{opacity:0;transform:scale(.14,.7)}}
 @keyframes foldOut{to{opacity:0}}
 @keyframes foldP{to{transform:translate(var(--pdx,0px),var(--pdy,0px)) scale(var(--pds,1))}}
@@ -431,8 +433,8 @@ body::before{inset:0;height:auto;background:var(--wash)}
   .x-pin::before{animation:pinBg linear both;animation-timeline:scroll(root block);animation-range:var(--fb,0px) var(--f1,1px)}
 }
 @supports not (animation-timeline:scroll()){
-  .fx{transition:opacity .26s ease,transform .34s var(--ease),filter .26s ease}
-  .fx.gone{opacity:0;transform:translateY(18px) scale(.92);filter:blur(6px);pointer-events:none}
+  .fx{transition:opacity .26s ease,transform .34s var(--ease)}
+  .fx.gone{opacity:0;transform:translateY(18px) scale(.92);pointer-events:none}
   .x-pin .qbg,.x-pin #qIn,.x-pin .send,.x-pin .qp,.x-pin .qa,.x-pin #lhEnd,.x-pin::before{transition:opacity .22s ease,transform .36s var(--ease)}
   .x-pin.folded .qbg{opacity:0;transform:scale(.14,.7)}
   .x-pin.folded #qIn,.x-pin.folded .send{opacity:0}
@@ -443,7 +445,7 @@ body::before{inset:0;height:auto;background:var(--wash)}
 }
 
 /* Rows: one glass sheet with hairlines, instead of a card each */
-#view .grid{gap:0;border-radius:22px;overflow:hidden;background:var(--cellg);border:1px solid var(--cline);-webkit-backdrop-filter:blur(26px) saturate(1.7);backdrop-filter:blur(26px) saturate(1.7)}
+#view .grid{gap:0;border-radius:22px;overflow:hidden;background:var(--cellg);border:1px solid var(--cline)}
 #view .row{border-radius:0}
 #view .row+.row{border-top:1px solid var(--line)}
 #view .row-bg{border-radius:0}
@@ -1184,8 +1186,9 @@ function render(){
   $('#qIn').placeholder = V === 'bills' ? 'أضف فاتورة…' : V === 'appts' ? 'أضف موعداً…' : cur ? `أضف إلى ${cur.name}…` : 'أضف غرضاً…';
   $('#qAi').hidden = V !== 'home';
 
+  if (render._v !== V){ render._v = V; requestAnimationFrame(() => typeof remeasure === 'function' && remeasure()); }   // each screen decides its own scroll motion
   $('#lhTitle').textContent = V === 'home' ? (cur ? cur.name : 'كل المهام') : V === 'bills' ? 'الفواتير' : V === 'appts' ? 'كل المواعيد' : 'منتهي';
-  $('#lhEnd').innerHTML = V === 'home' && list.length ? `<button class="lhb press" data-share aria-label="مشاركة القائمة بالواتساب">${ic('chat')}مشاركة</button><button class="lhb go press" data-shop aria-label="وضع التسوق">${ic('cart')}تسوّق</button>` : V === 'done' && doneList.length ? '<button class="sort link" data-clear>مسح الكل</button>' : '<span class="sort"></span>';
+  $('#lhEnd').innerHTML = V === 'home' && list.length ? `<button class="lhb press" data-share aria-label="مشاركة القائمة كصورة">${ic('chat')}مشاركة</button><button class="lhb go press" data-shop aria-label="وضع التسوق">${ic('cart')}تسوّق</button>` : V === 'done' && doneList.length ? '<button class="sort link" data-clear>مسح الكل</button>' : '<span class="sort"></span>';
 
   if (V === 'home') view.innerHTML = list.length ? grid([...list].sort((a, b) => ORD[a.prio] - ORD[b.prio]).map(row)) : emptyBox('done', 'كل شيء منتهي', cur ? 'ما فيه أغراض ناقصة في هذي الفئة.' : 'أضف أول غرض من الخانة فوق.');
   else if (V === 'bills') view.innerHTML = S.bills.length ? grid([...unpaid, ...paid].map(billRowHtml)) : emptyBox('receipt', 'ما فيه فواتير بعد', 'أضف فواتيرك الشهرية الثابتة من الخانة فوق، وعلّمها لما تسدد.');
@@ -1330,7 +1333,73 @@ function listText(){
   const tags = [...new Set(all.map(i => i.tag || ''))];
   return `*قائمة ${S.space.name}* (${all.length})\n\n` + tags.map(g => `*${tagOf(g).name}*\n${all.filter(i => (i.tag || '') === g).map(line).join('\n')}`).join('\n\n');
 }
+/* The list as a picture: the chosen list (all, or one category), drawn in the app's night look whatever theme the phone is on. */
+const NIGHT = {green:['#1FA862','#6FE0A4'], blue:['#3D83F2','#8DB8FF'], amber:['#D9801F','#FFB866'], orange:['#D9801F','#FFB866'], violet:['#8E63F0','#BDA3FF'],
+  rose:['#E0488E','#FF93C1'], pink:['#E0488E','#FF93C1'], slate:['#7C8594','#B9BAC4'], gold:['#C99A1E','#F0C95A'], teal:['#14A3A8','#6FDDE0'], red:['#E0524F','#FF9A97']};
+const svgImg = (n, color) => new Promise(r => { const im = new Image(); im.onload = () => r(im); im.onerror = () => r(null);
+  im.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${I[icOf(n)]}</svg>`); });
+async function listImage(){
+  const cur = S.filter !== 'all' ? tagOf(S.filter) : null, all = active().filter(i => !cur || i.tag === S.filter).sort((a, b) => ORD[a.prio] - ORD[b.prio]);
+  const groups = [...new Set(all.map(i => i.tag || ''))].map(g => ({t:tagOf(g || null), items:all.filter(i => (i.tag || '') === g)}));
+  const fam = getComputedStyle(document.body).fontFamily;
+  try { await Promise.all(['400', '500', '700'].map(w => document.fonts.load(`${w} 20px ${fam}`, 'بيتنا'))); } catch (e) {}
+  const icons = await Promise.all(groups.map(g => svgImg(g.t.icon, '#fff')));
+  const W = 540, P = 24, ROW = 52, HEAD = 64, GAP = 14, X = 2;                 // drawn at twice the size, so it stays sharp in chats
+  const H = 150 + groups.reduce((s, g) => s + HEAD + g.items.length * ROW + GAP, 0) + 40;
+  const cv = document.createElement('canvas'); cv.width = W * X; cv.height = H * X;
+  const c = cv.getContext('2d'); c.scale(X, X); c.direction = 'rtl'; c.textBaseline = 'middle';
+  // The night wash: deep blue, violet, ember and teal glows on near-black
+  c.fillStyle = '#07090F'; c.fillRect(0, 0, W, H);
+  for (const [x, y, r, col] of [[W, 0, W * .9, '#143A66'], [0, H * .22, W * .8, '#3A2470'], [W * .8, H * .62, W * .9, '#5A2A22'], [W * .1, H, W * .9, '#0F4A40']]){
+    const g = c.createRadialGradient(x, y, 0, x, y, r); g.addColorStop(0, col); g.addColorStop(1, 'rgba(7,9,15,0)'); c.fillStyle = g; c.fillRect(0, 0, W, H);
+  }
+  const font = (w, s) => c.font = `${w} ${s}px ${fam}`;
+  const text = (s, x, y, w, size, col, max) => { font(w, size); c.fillStyle = col; c.textAlign = 'right';
+    if (max && c.measureText(s).width > max){ while (s.length > 1 && c.measureText(s + '…').width > max) s = s.slice(0, -1); s += '…'; }
+    c.fillText(s, x, y); return c.measureText(s).width; };
+  const rr = (x, y, w, h, r) => { c.beginPath(); c.roundRect ? c.roundRect(x, y, w, h, r) : c.rect(x, y, w, h); };
+  // Heading
+  text('بيتنا', W - P, 44, 700, 15, '#3DD6BF');
+  text(cur ? cur.name : 'قائمة ' + S.space.name, W - P, 78, 700, 30, '#F5F5F7', W - P * 2);
+  text(plural(all.length, 'غرض واحد ناقص', 'غرضين ناقصة', 'أغراض ناقصة', 'غرض ناقص') + '، ' + new Intl.DateTimeFormat(AR, {weekday:'long', day:'numeric', month:'long'}).format(new Date()), W - P, 112, 400, 14, '#B9BAC4');
+  let y = 150;
+  groups.forEach((g, k) => {
+    const h = HEAD + g.items.length * ROW, [col, tint] = NIGHT[g.t.color] || NIGHT.slate;
+    rr(P, y, W - P * 2, h, 22); c.fillStyle = 'rgba(255,255,255,.08)'; c.fill(); c.strokeStyle = 'rgba(255,255,255,.14)'; c.lineWidth = 1; c.stroke();
+    // Category header: coloured icon tile, name, count
+    rr(W - P - 16 - 36, y + 14, 36, 36, 11); c.fillStyle = col; c.fill();
+    if (icons[k]) c.drawImage(icons[k], W - P - 16 - 36 + 8, y + 22, 20, 20);
+    text(g.t.name, W - P - 16 - 36 - 12, y + 32, 700, 17, '#F5F5F7', W - P * 2 - 130);
+    font(700, 17); c.textAlign = 'left'; c.fillStyle = tint; c.fillText(String(g.items.length), P + 18, y + 32);
+    g.items.forEach((it, j) => {
+      const ry = y + HEAD + j * ROW;
+      c.fillStyle = 'rgba(255,255,255,.12)'; c.fillRect(P + 16, ry, W - P * 2 - 32, 1);
+      c.beginPath(); c.arc(W - P - 16 - 11, ry + ROW / 2, 10, 0, Math.PI * 2); c.strokeStyle = it.prio === 'urgent' ? '#FF8D9B' : 'rgba(255,255,255,.4)'; c.lineWidth = 2; c.stroke();
+      let room = W - P * 2 - 32 - 34;
+      if (it.prio === 'urgent'){
+        font(500, 12); const pw = c.measureText('مستعجل').width + 18;
+        rr(P + 16, ry + ROW / 2 - 12, pw, 24, 12); c.fillStyle = 'rgba(255,141,155,.16)'; c.fill();
+        c.fillStyle = '#FF8D9B'; c.textAlign = 'center'; c.fillText('مستعجل', P + 16 + pw / 2, ry + ROW / 2 + 1); room -= pw + 10;
+      }
+      text(it.title, W - P - 16 - 34, ry + ROW / 2 + 1, 500, 16, '#F5F5F7', room);
+    });
+    y += h + GAP;
+  });
+  text('من تطبيق بيتنا', W - P, y + 14, 400, 12, '#7E808C');
+  return cv;
+}
 async function shareList(){
+  let cv; try { cv = await listImage(); } catch (e) { console.warn('image', e); }
+  if (cv){
+    const data = cv.toDataURL('image/png');
+    if (isNative()){ try { await native('WidgetBridge', 'shareImage', {data:data.split(',')[1]}); return; } catch (e) { console.warn('share image', e); } }
+    else { try {
+      const file = new File([await (await fetch(data)).blob()], 'baytna-list.png', {type:'image/png'});
+      if (navigator.canShare && navigator.canShare({files:[file]})) return await navigator.share({files:[file]});
+      const a = document.createElement('a'); a.href = data; a.download = 'baytna-list.png'; a.click(); return;
+    } catch (e) { if (e.name === 'AbortError') return; } }
+  }
+  // An older app without image sharing, or the picture failed: send the list as text instead
   const text = listText(), url = 'https://wa.me/?text=' + encodeURIComponent(text);
   if (isNative()){ try { await native('WidgetBridge', 'openUrl', {url, external:true}); return; } catch (e) { console.warn('share', e); } }
   try { if (navigator.share) return await navigator.share({text}); } catch (e) { if (e.name === 'AbortError') return; }
@@ -2161,7 +2230,9 @@ function measure(){
   const pin = $('#xPin'), quick = $('#quick');
   const safe = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--sat')) || 0;
   const put = (el, k, v) => { if (el.style.getPropertyValue(k) !== v) el.style.setProperty(k, v); };
-  parts = [[$('#xTools'), 0], [$('#xTitle'), 1], [$('#xChips'), 1], ...[...$$('#xHero [data-fade]')].map(e => [e, 1])].filter(([e]) => e && !e.hidden);
+  $$('.fx').forEach(e => e.classList.remove('fx', 'gone'));
+  // The bills screen scrolls plainly: nothing on it fades back as you scroll
+  parts = S.view === 'bills' ? [] : [[$('#xTools'), 0], [$('#xTitle'), 1], [$('#xChips'), 1], ...[...$$('#xHero [data-fade]')].map(e => [e, 1])].filter(([e]) => e && !e.hidden);
   for (const [el, travels] of parts){
     el.classList.add('fx');
     const a0 = travels ? Math.max(0, offTo(el, null).y - safe - 130) : 0, a1 = a0 + (travels ? 120 : 60);
