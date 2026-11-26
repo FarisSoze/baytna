@@ -305,7 +305,7 @@ fieldset{border:0;margin:0;padding:0;min-width:0}
 @media (prefers-reduced-motion:reduce){.mic.on{animation:none}}
 .chat-foot{display:flex;align-items:center;gap:10px;font-size:.75rem;color:var(--fg3);min-height:32px}
 .chat-foot span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;direction:ltr;text-align:start}
-.chat-foot select{max-width:42%;height:32px;border:0;border-radius:10px;background:var(--fill);color:var(--fg2);font:inherit;padding-inline:12px}
+.chat-foot select{max-width:52%;height:32px;border:0;border-radius:10px;background:var(--fill);color:var(--fg2);font:inherit;padding-inline:12px}
 .chat-foot button{color:var(--fg2);text-decoration:underline;min-height:32px}
 @media (prefers-contrast:more){:root{--line:currentColor}.card,.tile,.panel,.quick{box-shadow:inset 0 0 0 1px var(--fg)}}
 :root{--sat:env(safe-area-inset-top,0px)}
@@ -410,7 +410,7 @@ body::before{inset:0;height:auto;background:var(--wash)}
 /* Scroll motion. Where the browser can tie an animation to the scroll position it does all of it itself, in step with the finger.
    Elsewhere each part simply eases out once the scroll passes it. Script only measures where things are; it never moves them. */
 .fx{transform-origin:50% 30%}
-@keyframes recede{to{opacity:0;transform:translateY(var(--dy,0px)) scale(.88);visibility:hidden}}
+@keyframes recede{60%{opacity:.25}to{opacity:0;transform:translateY(var(--dy,0px)) scale(.86);filter:blur(7px);visibility:hidden}}
 @keyframes foldBg{to{opacity:0;transform:scale(.14,.7)}}
 @keyframes foldOut{to{opacity:0}}
 @keyframes foldP{to{transform:translate(var(--pdx,0px),var(--pdy,0px)) scale(var(--pds,1))}}
@@ -426,8 +426,8 @@ body::before{inset:0;height:auto;background:var(--wash)}
   .x-pin::before{animation:pinBg linear both;animation-timeline:scroll(root block);animation-range:var(--fb,0px) var(--f1,1px)}
 }
 @supports not (animation-timeline:scroll()){
-  .fx{transition:opacity .26s ease,transform .34s var(--ease)}
-  .fx.gone{opacity:0;transform:translateY(18px) scale(.94);pointer-events:none}
+  .fx{transition:opacity .26s ease,transform .34s var(--ease),filter .26s ease}
+  .fx.gone{opacity:0;transform:translateY(18px) scale(.92);filter:blur(6px);pointer-events:none}
   .x-pin .qbg,.x-pin #qIn,.x-pin .send,.x-pin .qp,.x-pin .qa,.x-pin #lhEnd,.x-pin::before{transition:opacity .22s ease,transform .36s var(--ease)}
   .x-pin.folded .qbg{opacity:0;transform:scale(.14,.7)}
   .x-pin.folded #qIn,.x-pin.folded .send{opacity:0}
@@ -672,7 +672,7 @@ body::before{inset:0;height:auto;background:var(--wash)}
       <p class="err" id="invErr" role="alert">اكتب الرمز كاملاً بهذا الشكل: BYT-XXXXXX</p>
     </div>
     <button type="submit" class="btn primary block">انضمام بالرمز</button>
-    <div class="field" id="aiRow" hidden><label for="gptModel">المساعد، مربوط بحساب ChatGPT</label><div class="chat-foot"><span id="gptWho"></span><select id="gptModel" aria-label="النموذج"></select><button type="button" id="gptOutBtn">فصل الحساب</button></div></div>
+    <div class="field" id="aiRow" hidden><label for="gptModel">المساعد، مربوط بحساب ChatGPT</label><div class="chat-foot"><span id="gptWho"></span><select id="gptModel" aria-label="النموذج"></select><button type="button" id="gptOutBtn">فصل الحساب</button></div><p class="help">النموذج الافتراضي هو Luna لأنه الأخف استهلاكاً من اشتراكك، ويكفي لإضافة الأغراض. تقدر تغيّره من القائمة.</p></div>
     <div class="setrow"><span>المظهر</span><div class="seg" id="themeSeg" role="tablist" data-i="0"><span class="thumb"></span><button type="button" role="tab" data-theme-set="auto">تلقائي</button><button type="button" role="tab" data-theme-set="dark">ليلي</button><button type="button" role="tab" data-theme-set="light">نهاري</button></div></div>
     <div class="setrow"><span>الخط</span><div class="seg" id="fontSeg" role="tablist" data-i="0"><span class="thumb"></span><button type="button" role="tab" data-font="thm">ثمانية</button><button type="button" role="tab" data-font="readex">ريدكس</button><button type="button" role="tab" data-font="sys">خط الجوال</button></div></div>
     <div class="setrow" id="iconRow"><span>أيقونة التطبيق</span><div class="seg two" id="iconSeg" role="tablist" data-i="0"><span class="thumb"></span><button type="button" role="tab" data-icon="night">ليلية</button><button type="button" role="tab" data-icon="day">نهارية</button></div></div>
@@ -879,7 +879,12 @@ const billFrom = r => ({id:r.id, title:r.title, amount:r.amount == null ? null :
 const billRow = b => ({id:b.id, household_id:S.hid, title:b.title, amount:b.amount == null ? null : b.amount, icon:b.icon, color:b.color, paid:!!b.paid, paid_by:b.paid ? b.paidBy || null : null, paid_at:b.paid ? new Date().toISOString() : null});
 
 // The UI updates first; the write follows. A failed write says so and reloads the truth.
-const run = async q => { const {error} = await q; if (error){ console.error(error); toast('تعذّر الحفظ، تحقق من الاتصال'); load(); } };
+let writes = 0, epoch = 0;                              // writes in flight, and a counter that moves with every write
+const run = async q => {
+  writes++; epoch++;
+  try { const {error} = await q; if (error){ console.error(error); toast('تعذّر الحفظ، تحقق من الاتصال'); } }
+  finally { writes--; if (!writes) ping(); }             // once the last write has landed, fetch the settled truth
+};
 const db = {
   saveItems: its => Promise.all([its.filter(i => i.kind !== 'appt'), its.filter(i => i.kind === 'appt')].filter(g => g.length).map(g => run(sb.from('items').upsert(g.map(toRow))))),
   delItems: ids => run(sb.from('items').delete().in('id', ids)),
@@ -889,6 +894,7 @@ const db = {
 };
 
 async function load(){
+  const started = epoch;
   const [pr, hh, tg, it, bl] = await Promise.all([
     sb.from('profiles').select('id,name,email,created_at').order('created_at'),
     sb.from('households').select('id,code').maybeSingle(),
@@ -896,6 +902,7 @@ async function load(){
     sb.from('items').select('*').order('created_at', {ascending:false}),
     sb.from('bills').select('*').order('created_at')]);
   if (pr.error || hh.error || tg.error || it.error || !hh.data){ console.error(pr.error || hh.error || tg.error || it.error || 'no household'); toast('تعذّر تحميل البيانات، تحقق من الاتصال'); return false; }
+  if (writes || epoch !== started){ ping(); return true; }          // something changed here while this was loading: its answer is already stale
   if (bl.error) console.warn('bills', bl.error);                  // an older database without the bills table still opens
   S.hid = hh.data.id; S.space.code = hh.data.code;
   S.space.members = pr.data.map((m, i) => ({id:m.id, name:m.name, email:m.email || '', color:MCOL[i % MCOL.length]}));
@@ -905,7 +912,7 @@ async function load(){
 }
 // Realtime: any change by anyone in the household refreshes the list. Row-level security limits what arrives.
 let chan = null, relT;
-const ping = () => { clearTimeout(relT); relT = setTimeout(() => (sw || !S.me) ? (S.me && ping()) : load(), 300); };
+const ping = () => { clearTimeout(relT); relT = setTimeout(() => (sw || writes || !S.me) ? (S.me && ping()) : load(), 350); };
 function subscribe(){
   if (chan) return;
   chan = sb.channel('household');
@@ -1025,7 +1032,7 @@ function render(){
   lastView = V + S.filter;
   $$('#xTabs .x-tab').forEach(t => t.setAttribute('aria-current', t.dataset.view === V));
   syncReminders(); syncWidget(); save();
-  requestAnimationFrame(remeasure);
+  remeasure();
 }
 
 /* ---------- Toast ---------- */
@@ -1247,7 +1254,7 @@ $('#fDelete').onclick = () => { const id = editing.id; closeSheet($('#itemDlg'))
 
 /* ---------- Invite ---------- */
 function openInvite(){
-  gLoad().then(drawGpt);
+  gLoad().then(() => { drawGpt(); if (gSigned() && (!(G.models && G.models.length) || !G.light)) gptModels().catch(e => console.warn('models', e)); });
   $('#invCode').textContent = S.space.code; $('#invJoin').value = ''; $('#invErr').classList.remove('show');
   $('#people').innerHTML = S.space.members.map(m => `<div class="member">${avatar(m, 'lg')}<div><b>${esc(m.name)}${m.id === S.me ? ' (أنت)' : ''}</b><small dir="ltr">${esc(m.email)}</small></div></div>`).join('');
   openSheet($('#inviteDlg'));
@@ -1412,9 +1419,18 @@ const gErr = (msg, code) => Object.assign(new Error(msg), {code});
 const gSigned = () => !!(G.refresh && G.client);
 
 async function oaToken(params){
-  let r; try { r = await fetch(OA.token, {method:'POST', headers:{'Content-Type':'application/x-www-form-urlencoded'}, body:new URLSearchParams(params)}); } catch { throw gErr('', 'network'); }
-  const j = await r.json().catch(() => ({}));
-  if (!r.ok) throw gErr(j.error_description || '', (typeof j.error === 'string' ? j.error : j.error && j.error.code) || 'http_' + r.status);
+  const headers = {'Content-Type':'application/x-www-form-urlencoded', Accept:'application/json'};
+  let status, j = {};
+  try {
+    if (isNative()){
+      const r = await native('CapacitorHttp', 'request', {url:OA.token, method:'POST', headers, data:params, responseType:'text', connectTimeout:20000, readTimeout:30000});
+      status = r.status; j = typeof r.data === 'string' ? JSON.parse(r.data || '{}') : r.data || {};
+    } else {
+      const r = await fetch(OA.token, {method:'POST', headers, body:new URLSearchParams(params)});
+      status = r.status; j = await r.json().catch(() => ({}));
+    }
+  } catch (e) { throw gErr(String((e && e.message) || e), 'network'); }
+  if (status < 200 || status > 299) throw gErr(j.error_description || '', (typeof j.error === 'string' ? j.error : j.error && j.error.code) || 'http_' + status);
   return j;
 }
 const takeTokens = t => { G.access = t.access_token; if (t.refresh_token) G.refresh = t.refresh_token; if (t.id_token) G.idt = t.id_token; G.exp = Date.now() + (t.expires_in || 3600) * 1000; };
@@ -1490,7 +1506,10 @@ async function gptModels(){
   const list = (all.some(m => m.visibility === 'list') ? all.filter(m => m.visibility === 'list') : all).map(m => ({slug:m.slug || m.id, name:m.display_name || m.slug || m.id})).filter(m => m.slug);
   if (!list.length) throw gErr('', 'no_models');
   G.models = list;
-  if (!list.some(m => m.slug === G.model)) G.model = (list.find(m => /mini|nano|lite|small|fast/i.test(m.slug)) || list[0]).slug;   // a light model is plenty for a shopping list
+  const txt = m => (m.slug + ' ' + m.name).toLowerCase();
+  const light = list.find(m => /luna/.test(txt(m)) && /6/.test(txt(m))) || list.find(m => /luna/.test(txt(m))) || list.find(m => /mini|nano|lite|small|fast/.test(txt(m))) || list[0];
+  G.light = light.slug;                                  // the default: the lightest on the plan's allowance
+  if (!G.picked || !list.some(m => m.slug === G.model)) G.model = light.slug;
   await gSave(); drawGpt();
 }
 function gptPrompt(){
@@ -1564,7 +1583,7 @@ function drawGpt(){
   if (on){
     $('#gptWho').textContent = G.email || '';
     const sel = $('#gptModel'); sel.hidden = !(G.models && G.models.length > 1);
-    sel.innerHTML = (G.models || []).map(m => `<option value="${esc(m.slug)}"${m.slug === G.model ? ' selected' : ''}>${esc(m.name)}</option>`).join('');
+    sel.innerHTML = (G.models || []).map(m => `<option value="${esc(m.slug)}"${m.slug === G.model ? ' selected' : ''}>${esc(m.name)}${m.slug === G.light ? ' (الأخف)' : ''}</option>`).join('');
     drawChat();
   }
   if (d.open && !d._closing && isPhone()) d._H = d.querySelector('.sheet').offsetHeight + 24;
@@ -1572,7 +1591,7 @@ function drawGpt(){
 const gptFail = e => { const el = $('#gptErr'); el.textContent = e ? gMsg(e) : ''; el.classList.toggle('show', !!e); };
 async function openGpt(){
   await gLoad(); gptFail(); drawGpt(); openSheet($('#gptDlg'));
-  if (gSigned() && !(G.models && G.models.length)) gptModels().catch(e => console.warn('models', e));
+  if (gSigned() && (!(G.models && G.models.length) || !G.light)) gptModels().catch(e => console.warn('models', e));
 }
 // Back from the browser: the native shell kept the callback for us.
 async function gptReturn(q){
@@ -1588,7 +1607,7 @@ addEventListener('baytnaAuth', () => gptReturn());
 document.addEventListener('visibilitychange', () => { if (!document.hidden) gptReturn(); });
 $('#gptLogin').onclick = async () => { gptFail(); try { await gptStart(); } catch (e) { gptFail(e); } drawGpt(); };
 $('#gptPaste').addEventListener('input', e => { const v = e.target.value.trim(); if (/[?&]state=/.test(v) && /[?&](code|error)=/.test(v)){ e.target.value = ''; gptReturn(v); } });
-$('#gptModel').onchange = e => { G.model = e.target.value; gSave(); };
+$('#gptModel').onchange = e => { G.model = e.target.value; G.picked = true; gSave(); };
 $('#gptOutBtn').onclick = async () => {
   const {refresh, client} = G; chat = []; G = {host:G.host, client:G.client, sub:G.sub, email:G.email, idt:G.idt}; await gSave(); drawGpt();
   try {                                                    // best effort: end the renewable session at OpenAI too
