@@ -30,7 +30,7 @@ jobs:
         with: { distribution: temurin, java-version: 21 }
       - run: npm ci
       - name: Stamp the version shown inside the app
-        run: sed -i.bak "s/APP_VER = 'dev'/APP_VER = '1.0.$BUILD_NUMBER'/" www/index.html && rm www/index.html.bak
+        run: sed -i.bak "s/APP_VER = 'dev'/APP_VER = '1.1.$BUILD_NUMBER'/" www/index.html && rm www/index.html.bak
       - name: Unpack the typeface
         run: sh scripts/unpack_font.sh
       - run: npm run vendor
@@ -53,7 +53,7 @@ jobs:
         with: { node-version: 22, cache: npm }
       - run: npm ci
       - name: Stamp the version shown inside the app
-        run: sed -i.bak "s/APP_VER = 'dev'/APP_VER = '1.0.$BUILD_NUMBER'/" www/index.html && rm www/index.html.bak
+        run: sed -i.bak "s/APP_VER = 'dev'/APP_VER = '1.1.$BUILD_NUMBER'/" www/index.html && rm www/index.html.bak
       - name: Unpack the typeface
         run: sh scripts/unpack_font.sh
       - run: npm run vendor
@@ -99,4 +99,4 @@ jobs:
           if [ -f out/baytna-unsigned.ipa ]; then gh release delete-asset latest baytna-widgets-unsigned.ipa --yes || true; fi
           # The app reads this title to tell whether a newer build exists. Only when both files are the new ones.
           N=$(( ($(date -d "$(gh api "repos/$GH_REPO/commits/$GITHUB_SHA" --jq .commit.committer.date)" +%s) - 1793491200) / 60 ))
-          if [ -f out/baytna.apk ] && [ -f out/baytna-unsigned.ipa ]; then gh release edit latest --title "Baytna 1.0.$N"; fi
+          if [ -f out/baytna.apk ] && [ -f out/baytna-unsigned.ipa ]; then gh release edit latest --title "Baytna 1.1.$N (1.0.$N)"; fi

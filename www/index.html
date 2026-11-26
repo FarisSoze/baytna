@@ -1591,7 +1591,8 @@ $('#catList').addEventListener('click', e => {
 /* ---------- Updates: the newest build's number is the public release's title; the button fetches the file for this kind of phone ---------- */
 const REL_FILES = 'https://github.com/FarisSoze/baytna/releases/download/latest/';
 const IS_ANDROID = /Android/i.test(navigator.userAgent), IS_IOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-const verNum = v => { const m = /1\.0\.(\d+)/.exec(v || ''); return m ? +m[1] : 0; };
+const verNum = v => { const m = /\d+\.\d+\.(\d+)/.exec(v || ''); return m ? +m[1] : 0; };      // the last part always counts up, whatever the first two say
+const verName = v => { const m = /\d+\.\d+\.\d+/.exec(v || ''); return m ? m[0] : ''; };
 $('#updAndroid').innerHTML = ic('getit') + (IS_ANDROID ? 'تنزيل آخر تحديث' : 'تنزيل نسخة الأندرويد');
 $('#updIos').innerHTML = ic('getit') + (IS_IOS ? 'تنزيل آخر تحديث' : 'تنزيل نسخة الآيفون');
 $('#updAndroid').hidden = IS_IOS; $('#updIos').hidden = IS_ANDROID; $('#updNote').hidden = IS_ANDROID;
@@ -1601,8 +1602,8 @@ async function checkUpdate(){
   const st = $('#updState'); st.textContent = 'يتحقق من آخر إصدار…';
   try {
     const r = await fetch('https://api.github.com/repos/FarisSoze/baytna/releases/tags/latest', {headers:{Accept:'application/vnd.github+json'}});
-    const latest = verNum((await r.json()).name), mine = verNum(APP_VER); updAt = Date.now();
-    st.textContent = !latest ? '' : !mine ? 'آخر إصدار منشور 1.0.' + latest : latest > mine ? 'فيه إصدار أحدث: 1.0.' + latest : 'عندك آخر إصدار';
+    const title = (await r.json()).name, latest = verNum(title), mine = verNum(APP_VER); updAt = Date.now();
+    st.textContent = !latest ? '' : !mine ? 'آخر إصدار منشور ' + verName(title) : latest > mine ? 'فيه إصدار أحدث: ' + verName(title) : 'عندك آخر إصدار';
     [$('#updAndroid'), $('#updIos')].forEach(b => { b.classList.toggle('primary', !!mine && latest > mine); b.classList.toggle('soft', !(mine && latest > mine)); });
   } catch (e) { console.warn('update check', e); st.textContent = ''; }
 }

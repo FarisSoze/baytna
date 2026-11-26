@@ -19,7 +19,7 @@ workflows:
       - name: Install dependencies
         script: npm ci
       - name: Stamp the version shown inside the app
-        script: sed -i.bak "s/APP_VER = 'dev'/APP_VER = '1.0.$BUILD_NUMBER'/" www/index.html && rm www/index.html.bak
+        script: sed -i.bak "s/APP_VER = 'dev'/APP_VER = '1.1.$BUILD_NUMBER'/" www/index.html && rm www/index.html.bak
       - name: Unpack the typeface (needs the FONT_KEY variable set in Codemagic)
         script: sh scripts/unpack_font.sh
       - name: Copy bundled assets
