@@ -523,6 +523,34 @@ body::before{inset:0;height:auto;background:var(--wash)}
 .opts input{width:20px;height:20px;margin:2px 0 0;flex:none;accent-color:var(--accent)}
 .opts b{display:block;font-weight:700;color:var(--fg)}
 .opts small{display:block;font-size:.8125rem;color:var(--fg2);line-height:1.7;margin-top:2px}
+.spage{display:flex;flex-direction:column;gap:16px}
+.spage[hidden]{display:none}
+.menu{background:var(--fill);border-radius:18px;padding:0 14px}
+.menu button{display:flex;align-items:center;gap:12px;width:100%;min-height:64px;text-align:start;border-top:1px solid var(--line);color:var(--fg)}
+.menu button:first-child{border-top:0}
+.menu .tile-ic{width:36px;height:36px;border-radius:11px}
+.menu .tile-ic svg{width:18px;height:18px}
+.menu .t{flex:1;min-width:0}
+.menu b{display:block;font-weight:600;line-height:1.4}
+.menu small{display:block;color:var(--fg3);font-size:.8125rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.menu .go{color:var(--fg3);flex:none}
+.menu .go svg{width:18px;height:18px}
+.verbox{display:flex;flex-direction:column;gap:10px;align-items:stretch;text-align:center}
+.verbox p{margin:0}
+.catrow{display:flex;align-items:center;gap:10px;min-height:60px;border-top:1px solid var(--line)}
+.catrow:first-child{border-top:0}
+.catrow .t{flex:1;min-width:0}
+.catrow b{display:block;font-weight:600;line-height:1.4;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.catrow small{display:block;color:var(--fg3);font-size:.75rem}
+.catrow .del{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:var(--danger);flex:none}
+.catrow .del svg{width:18px;height:18px}
+.sw{position:relative;display:flex;align-items:center;gap:8px;font-size:.75rem;color:var(--fg2);cursor:pointer;flex:none;margin:0;min-height:44px}
+.sw input{position:absolute;inset:0;opacity:0;margin:0;width:100%;height:100%;cursor:pointer}
+.sw i{width:44px;height:26px;border-radius:13px;background:var(--line);position:relative;transition:background .2s}
+.sw i::after{content:"";position:absolute;top:3px;inset-inline-start:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .2s;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.sw input:checked+i{background:var(--accent)}
+.sw input:checked+i::after{transform:translateX(-18px)}
+.sw input:focus-visible+i{outline:2px solid var(--accent);outline-offset:2px}
 .setrow{display:flex;align-items:center;justify-content:space-between;gap:12px}
 .setrow>span{font-size:.875rem}
 .setrow .seg{flex:none;width:170px}
@@ -538,7 +566,7 @@ body::before{inset:0;height:auto;background:var(--wash)}
 <body>
 
 <div class="x-app" id="app">
-  <div class="x-tools" id="xTools"><button class="x-tool press" data-invite aria-label="الحساب والأشخاص" data-ic="users"></button></div>
+  <div class="x-tools" id="xTools"><button class="x-tool press" data-invite aria-label="الإعدادات" data-ic="gear"></button></div>
 
   <header class="x-title" id="xTitle"><h1 id="ltitle"></h1><p id="eyebrow"></p></header>
   <div class="x-chips" id="xChips" role="group" aria-label="تصفية حسب الفئة"></div>
@@ -665,28 +693,60 @@ body::before{inset:0;height:auto;background:var(--wash)}
 <dialog class="modal" id="inviteDlg" aria-labelledby="invTitle">
   <div class="scrim" data-close></div>
   <form class="sheet" id="inviteForm" novalidate>
-    <div class="sheet-h"><span class="grabber"></span><h2 id="invTitle">الحساب والأشخاص</h2><button type="button" class="x press" data-close aria-label="إغلاق" data-ic="x"></button></div>
-    <div class="field"><label>يشوفون أغراضك وتذكيراتك</label><div class="plist" id="people"></div></div>
-    <div class="field">
-      <label id="invCodeL">رمز دعوتك — أعطه لمن تبغى يشاركك</label>
-      <div class="code" aria-labelledby="invCodeL"><b id="invCode"></b><button type="button" class="btn soft" id="invCopy" style="min-height:44px;padding:0 16px"></button></div>
-      <p class="help">اللي يدخل رمزك تطلع له كل أغراضك في الرئيسية، وتطلع لك أغراضه.</p>
+    <div class="sheet-h"><span class="grabber"></span><button type="button" class="x press" id="setBack" aria-label="رجوع" data-ic="goback" hidden></button><h2 id="invTitle">الإعدادات</h2><button type="button" class="x press" data-close aria-label="إغلاق" data-ic="x"></button></div>
+
+    <div class="spage" data-p="menu">
+      <div class="menu">
+        <button type="button" class="press" data-page="account"><span class="tile-ic c-blue" data-ic="users"></span><span class="t"><b>الحساب</b><small id="mAccount"></small></span><span class="go" data-ic="go"></span></button>
+        <button type="button" class="press" data-page="cats"><span class="tile-ic c-amber" data-ic="grid4"></span><span class="t"><b>الفئات</b><small id="mCats"></small></span><span class="go" data-ic="go"></span></button>
+        <button type="button" class="press" data-page="ai"><span class="tile-ic c-violet" data-ic="spark"></span><span class="t"><b>مزوّد الذكاء الاصطناعي</b><small id="mAi"></small></span><span class="go" data-ic="go"></span></button>
+        <button type="button" class="press" data-page="look"><span class="tile-ic c-rose" data-ic="sun"></span><span class="t"><b>المظهر</b><small id="mLook"></small></span><span class="go" data-ic="go"></span></button>
+      </div>
+      <div class="verbox">
+        <p class="help" id="appVer" dir="ltr"></p>
+        <p class="help" id="updState" role="status"></p>
+        <button type="button" class="btn soft block" id="updAndroid" data-get="baytna.apk"></button>
+        <button type="button" class="btn soft block" id="updIos" data-get="baytna-unsigned.ipa"></button>
+        <p class="help" id="updNote">ملف الآيفون غير موقّع، وقّعه بشهادتك قبل التثبيت مثل كل مرة.</p>
+      </div>
     </div>
-    <div class="sep">أو</div>
-    <div class="field">
-      <label for="invJoin">عندك رمز من شخص ثاني؟</label>
-      <input id="invJoin" autocomplete="off" autocapitalize="characters" placeholder="BYT-XXXXXX" dir="ltr" aria-describedby="invErr">
-      <p class="help">أغراضك الحالية تنتقل معك وتنضاف لأغراضه.</p>
-      <p class="err" id="invErr" role="alert">اكتب الرمز كاملاً بهذا الشكل: BYT-XXXXXX</p>
+
+    <div class="spage" data-p="account" hidden>
+      <div class="field"><label id="peopleL"></label><div class="plist" id="people"></div></div>
+      <div class="field">
+        <label id="invCodeL">رمز دعوتك — أعطه لمن تبغى يشاركك</label>
+        <div class="code" aria-labelledby="invCodeL"><b id="invCode"></b><button type="button" class="btn soft" id="invCopy" style="min-height:44px;padding:0 16px"></button></div>
+        <p class="help">اللي يدخل رمزك تطلع له كل أغراضك في الرئيسية، وتطلع لك أغراضه.</p>
+      </div>
+      <div class="sep">أو</div>
+      <div class="field">
+        <label for="invJoin">عندك رمز من شخص ثاني؟</label>
+        <input id="invJoin" autocomplete="off" autocapitalize="characters" placeholder="BYT-XXXXXX" dir="ltr" aria-describedby="invErr">
+        <p class="help">أغراضك الحالية تنتقل معك وتنضاف لأغراضه.</p>
+        <p class="err" id="invErr" role="alert">اكتب الرمز كاملاً بهذا الشكل: BYT-XXXXXX</p>
+      </div>
+      <button type="submit" class="btn primary block">انضمام بالرمز</button>
+      <div class="field"><button type="button" class="btn soft block" id="leaveOpen">الخروج من المساحة المشتركة</button><p class="help" id="leaveHint"></p></div>
+      <button type="button" class="btn soft block" data-logout style="color:var(--danger)">تسجيل الخروج</button>
     </div>
-    <button type="submit" class="btn primary block">انضمام بالرمز</button>
-    <div class="field" id="aiRow" hidden><label for="gptModel">المساعد، مربوط بحساب ChatGPT</label><div class="chat-foot"><span id="gptWho"></span><select id="gptModel" aria-label="النموذج"></select><button type="button" id="gptOutBtn">فصل الحساب</button></div><p class="help">النموذج الافتراضي هو Luna لأنه الأخف استهلاكاً من اشتراكك، ويكفي لإضافة الأغراض. تقدر تغيّره من القائمة.</p></div>
-    <div class="setrow"><span>المظهر</span><div class="seg" id="themeSeg" role="tablist" data-i="0"><span class="thumb"></span><button type="button" role="tab" data-theme-set="auto">تلقائي</button><button type="button" role="tab" data-theme-set="dark">ليلي</button><button type="button" role="tab" data-theme-set="light">نهاري</button></div></div>
-    <div class="setrow"><span>الخط</span><div class="seg" id="fontSeg" role="tablist" data-i="0"><span class="thumb"></span><button type="button" role="tab" data-font="thm">ثمانية</button><button type="button" role="tab" data-font="readex">ريدكس</button><button type="button" role="tab" data-font="sys">خط الجوال</button></div></div>
-    <div class="setrow" id="iconRow"><span>أيقونة التطبيق</span><div class="seg two" id="iconSeg" role="tablist" data-i="0"><span class="thumb"></span><button type="button" role="tab" data-icon="night">ليلية</button><button type="button" role="tab" data-icon="day">نهارية</button></div></div>
-    <button type="button" class="btn soft block" id="leaveOpen" hidden>الخروج من المشاركة</button>
-    <button type="button" class="btn soft block" data-logout style="color:var(--danger)">تسجيل الخروج</button>
-    <p class="help" id="appVer" style="margin:0;text-align:center" dir="ltr"></p>
+
+    <div class="spage" data-p="cats" hidden>
+      <p class="help" style="margin:0 4px">فعّل «كبيرة» للفئات اللي تبغاها بطاقات كبيرة فوق في الرئيسية. تقدر تطفيها كلها أو تختار العدد اللي يناسبك، وهذا الاختيار خاص بجوالك.</p>
+      <div class="plist" id="catList"></div>
+      <button type="button" class="btn soft block" data-newtag>+ فئة جديدة</button>
+      <p class="help" style="margin:0 4px">حذف الفئة يحذفها عند كل المشاركين، وأغراضها ما تنحذف، تبقى في «كل المهام» بدون فئة.</p>
+    </div>
+
+    <div class="spage" data-p="ai" hidden>
+      <div class="field" id="aiRow" hidden><label for="gptModel">المساعد، مربوط بحساب ChatGPT</label><div class="chat-foot"><span id="gptWho"></span><select id="gptModel" aria-label="النموذج"></select><button type="button" id="gptOutBtn">فصل الحساب</button></div><p class="help">النموذج الافتراضي هو Luna لأنه الأخف استهلاكاً من اشتراكك، ويكفي لإضافة الأغراض. تقدر تغيّره من القائمة.</p></div>
+      <div class="field" id="aiOff"><p style="margin:0 4px 12px;color:var(--fg2);line-height:1.8">المساعد يشتغل باشتراكك في ChatGPT بدون رسوم إضافية. اربط حسابك وبعدها تختار النموذج من هنا.</p><button type="button" class="btn primary block" data-gpt>ربط حساب ChatGPT</button></div>
+    </div>
+
+    <div class="spage" data-p="look" hidden>
+      <div class="setrow"><span>المظهر</span><div class="seg" id="themeSeg" role="tablist" data-i="0"><span class="thumb"></span><button type="button" role="tab" data-theme-set="auto">تلقائي</button><button type="button" role="tab" data-theme-set="dark">ليلي</button><button type="button" role="tab" data-theme-set="light">نهاري</button></div></div>
+      <div class="setrow"><span>الخط</span><div class="seg" id="fontSeg" role="tablist" data-i="0"><span class="thumb"></span><button type="button" role="tab" data-font="thm">ثمانية</button><button type="button" role="tab" data-font="readex">ريدكس</button><button type="button" role="tab" data-font="sys">خط الجوال</button></div></div>
+      <div class="setrow" id="iconRow"><span>أيقونة التطبيق</span><div class="seg two" id="iconSeg" role="tablist" data-i="0"><span class="thumb"></span><button type="button" role="tab" data-icon="night">ليلية</button><button type="button" role="tab" data-icon="day">نهارية</button></div></div>
+    </div>
   </form>
 </dialog>
 
@@ -836,7 +896,10 @@ const I_NEW = {
   done:'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
   plus:'<path d="M12 5v14M5 12h14"/>', ok:'<path d="M20 6 9 17l-5-5"/>', x:'<path d="M18 6 6 18M6 6l12 12"/>',
   spark:'<path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/><path d="M19 15l.8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8z"/>',
-  refresh:'<path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/>'
+  refresh:'<path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/>',
+  gear:'<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
+  goback:'<path d="m9 18 6-6-6-6"/>', go:'<path d="m15 18-6-6 6-6"/>', getit:'<path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"/>',
+  grid4:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>'
 };
 const I = {...I_OLD, ...I_NEW};
 
@@ -915,6 +978,7 @@ const db = {
   saveItems: its => Promise.all([its.filter(i => i.kind !== 'appt'), its.filter(i => i.kind === 'appt')].filter(g => g.length).map(g => run(sb.from('items').upsert(g.map(toRow))))),
   delItems: ids => run(sb.from('items').delete().in('id', ids)),
   addTag: t => run(sb.from('tags').insert({id:t.id, household_id:S.hid, name:t.name, color:t.color, icon:t.icon})),
+  delTag: id => run(sb.from('tags').delete().eq('id', id)),
   saveBills: bs => run(sb.from('bills').upsert(bs.map(billRow))),
   delBills: ids => run(sb.from('bills').delete().in('id', ids))
 };
@@ -949,6 +1013,9 @@ function unsubscribe(){ if (chan){ sb.removeChannel(chan); chan = null; } }
 document.addEventListener('visibilitychange', () => { if (!document.hidden && S.me) ping(); });
 
 const icOf = n => I[n] ? n : 'tag';
+const BIG_KEY = 'baytna-big';
+const bigIds = () => { try { const v = JSON.parse(localStorage.getItem(BIG_KEY)); return Array.isArray(v) ? v : null; } catch (e) { return null; } };
+const bigTags = () => { const v = bigIds(); return v ? S.tags.filter(t => v.includes(t.id)) : S.tags; };
 const tagOf = id => { const t = S.tags.find(t => t.id === id); return t ? {...t, icon:icOf(t.icon)} : {name:'بدون فئة', color:'slate', icon:'tag'}; };
 const memOf = id => S.space.members.find(m => m.id === id) || {name:'؟', color:'slate'};
 const isAppt = i => i.kind === 'appt';
@@ -1020,9 +1087,10 @@ function render(){
   // Rebuilding these would restart their scroll animation and show them for a frame, so when only numbers changed they are patched in place.
   const hero = $('#xHero');
   let heroHtml = '', heroKey = V;
-  if (V === 'home' && !cur && S.tags.length){
-    heroKey = 'home|' + S.tags.map(t => [t.id, t.name, t.color, t.icon].join(':')).join('|');
-    heroHtml = `<div class="x-cats">${S.tags.map(t0 => { const t = tagOf(t0.id), n = all.filter(i => i.tag === t.id).length;
+  const big = bigTags();
+  if (V === 'home' && !cur && big.length){
+    heroKey = 'home|' + big.map(t => [t.id, t.name, t.color, t.icon].join(':')).join('|');
+    heroHtml = `<div class="x-cats">${big.map(t0 => { const t = tagOf(t0.id), n = all.filter(i => i.tag === t.id).length;
       return `<button class="x-cat gl press c-${t.color}" data-filter="${t.id}" data-fade><span class="r"><span class="ic">${ic(t.icon)}</span><span class="n num">${n}</span></span><span><b>${esc(t.name)}</b><small>${n ? plural(n, 'غرض واحد', 'غرضين', 'أغراض ناقصة', 'غرض ناقص') : 'ما فيه شيء ناقص'}</small></span></button>`; }).join('')}</div>`;
   } else if (V === 'bills' && S.bills.length){
     const left = unpaid.filter(b => b.amount != null).reduce((s, b) => s + b.amount, 0), d = daysToReset();
@@ -1294,13 +1362,90 @@ $('#fDelete').onclick = () => { const id = editing.id; closeSheet($('#itemDlg'))
 
 
 /* ---------- Invite ---------- */
-function openInvite(){
-  $('#leaveOpen').hidden = S.space.members.length < 2;
-  gLoad().then(() => { drawGpt(); if (gSigned() && (!(G.models && G.models.length) || !G.light)) gptModels().catch(e => console.warn('models', e)); });
+const PAGES = {menu:'الإعدادات', account:'الحساب', cats:'الفئات', ai:'مزوّد الذكاء الاصطناعي', look:'المظهر'};
+function setPage(p){
+  $$('#inviteForm .spage').forEach(e => e.hidden = e.dataset.p !== p);
+  $('#invTitle').textContent = PAGES[p]; $('#setBack').hidden = p === 'menu';
+  $('#inviteForm').scrollTop = 0;
+  if (p === 'cats') drawCats();
+  drawMenu();
+}
+function drawMenu(){
+  const others = S.space.members.filter(m => m.id !== S.me), me = S.space.members.find(m => m.id === S.me);
+  $('#mAccount').textContent = others.length ? 'مشترك مع ' + others.map(m => m.name).join(' و') : (me && me.email) || 'لحالك';
+  const nb = bigTags().length;
+  $('#mCats').textContent = plural(S.tags.length, 'فئة وحدة', 'فئتين', 'فئات', 'فئة') + '، ' + (nb ? nb + ' كبيرة فوق' : 'بدون بطاقات كبيرة');
+  $('#mAi').textContent = gSigned() ? 'ChatGPT' + (G.email ? '، ' + G.email : '') : 'غير مربوط';
+  const th = localStorage.getItem('baytna-theme') || 'auto';
+  $('#mLook').textContent = ($('#themeSeg [aria-selected="true"]') || {textContent:th}).textContent + '، ' + (($('#fontSeg [aria-selected="true"]') || {textContent:''}).textContent);
+}
+function openInvite(page = 'menu'){
+  const alone = S.space.members.length < 2, others = S.space.members.filter(m => m.id !== S.me);
+  $('#leaveOpen').style.opacity = alone ? .5 : 1;
+  $('#leaveHint').textContent = alone ? 'أنت لحالك الحين، ما فيه مساحة مشتركة تخرج منها.' : 'ترجع لقائمة لحالك، وتختار تاخذ كل المهام أو مهامك فقط.';
+  $('#peopleL').textContent = alone ? 'حسابك' : 'حسابك، ومشترك مع ' + others.map(m => m.name).join(' و');
+  gLoad().then(() => { drawGpt(); drawMenu(); if (gSigned() && (!(G.models && G.models.length) || !G.light)) gptModels().catch(e => console.warn('models', e)); });
   $('#invCode').textContent = S.space.code; $('#invJoin').value = ''; $('#invErr').classList.remove('show');
   $('#people').innerHTML = S.space.members.map(m => `<div class="member">${avatar(m, 'lg')}<div><b>${esc(m.name)}${m.id === S.me ? ' (أنت)' : ''}</b><small dir="ltr">${esc(m.email)}</small></div></div>`).join('');
-  openSheet($('#inviteDlg'));
+  setPage(page);
+  if (!$('#inviteDlg').open) openSheet($('#inviteDlg'));
+  checkUpdate();
 }
+$('#setBack').onclick = () => setPage('menu');
+$('#inviteForm').addEventListener('click', e => { const b = e.target.closest('[data-page]'); if (b) setPage(b.dataset.page); });
+
+/* ---------- Categories: which ones show as large cards (this phone only), and deleting the ones not needed ---------- */
+function drawCats(){
+  const all = active(), v = bigIds();
+  $('#catList').innerHTML = S.tags.length ? S.tags.map(t0 => { const t = tagOf(t0.id), n = all.filter(i => i.tag === t.id).length;
+    return `<div class="catrow c-${t.color}"><span class="tile-ic">${ic(t.icon)}</span><span class="t"><b>${esc(t.name)}</b><small>${n ? plural(n, 'غرض واحد', 'غرضين', 'أغراض', 'غرض') : 'فاضية'}</small></span>
+      <label class="sw"><input type="checkbox" data-big="${t.id}" ${!v || v.includes(t.id) ? 'checked' : ''} aria-label="بطاقة كبيرة: ${esc(t.name)}"><i></i>كبيرة</label>
+      <button type="button" class="del press" data-deltag="${t.id}" aria-label="حذف فئة ${esc(t.name)}">${ic('trash')}</button></div>`; }).join('')
+    : '<p class="help" style="margin:14px 0;text-align:center">ما فيه فئات.</p>';
+}
+$('#catList').addEventListener('change', e => {
+  if (!e.target.dataset.big) return;
+  localStorage.setItem(BIG_KEY, JSON.stringify([...$$('#catList [data-big]')].filter(c => c.checked).map(c => c.dataset.big)));
+  buzz(6); drawMenu(); render();
+});
+$('#catList').addEventListener('click', e => {
+  const b = e.target.closest('[data-deltag]'); if (!b) return;
+  const idx = S.tags.findIndex(t => t.id === b.dataset.deltag); if (idx < 0) return;
+  const [t] = S.tags.splice(idx, 1), its = S.items.filter(i => i.tag === t.id), big = bigIds();
+  its.forEach(i => i.tag = null);
+  if (S.filter === t.id) S.filter = 'all';
+  db.delTag(t.id); buzz(12);
+  toast(`تم حذف فئة «${t.name}»`, () => {
+    S.tags.splice(Math.min(idx, S.tags.length), 0, t); its.forEach(i => i.tag = t.id);
+    if (big) localStorage.setItem(BIG_KEY, JSON.stringify(big));
+    db.addTag(t).then(() => its.length && db.saveItems(its)); drawCats(); drawMenu(); render();
+  });
+  drawCats(); drawMenu(); render();
+});
+
+/* ---------- Updates: the newest build's number is the public release's title; the button fetches the file for this kind of phone ---------- */
+const REL_FILES = 'https://github.com/FarisSoze/baytna/releases/download/latest/';
+const IS_ANDROID = /Android/i.test(navigator.userAgent), IS_IOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const verNum = v => { const m = /1\.0\.(\d+)/.exec(v || ''); return m ? +m[1] : 0; };
+$('#updAndroid').innerHTML = ic('getit') + (IS_ANDROID ? 'تنزيل آخر تحديث' : 'تنزيل نسخة الأندرويد');
+$('#updIos').innerHTML = ic('getit') + (IS_IOS ? 'تنزيل آخر تحديث' : 'تنزيل نسخة الآيفون');
+$('#updAndroid').hidden = IS_IOS; $('#updIos').hidden = IS_ANDROID; $('#updNote').hidden = IS_ANDROID;
+let updAt = 0;
+async function checkUpdate(){
+  if (Date.now() - updAt < 60000) return;
+  const st = $('#updState'); st.textContent = 'يتحقق من آخر إصدار…';
+  try {
+    const r = await fetch('https://api.github.com/repos/FarisSoze/baytna/releases/tags/latest', {headers:{Accept:'application/vnd.github+json'}});
+    const latest = verNum((await r.json()).name), mine = verNum(APP_VER); updAt = Date.now();
+    st.textContent = !latest ? '' : !mine ? 'آخر إصدار منشور 1.0.' + latest : latest > mine ? 'فيه إصدار أحدث: 1.0.' + latest : 'عندك آخر إصدار';
+    [$('#updAndroid'), $('#updIos')].forEach(b => { b.classList.toggle('primary', !!mine && latest > mine); b.classList.toggle('soft', !(mine && latest > mine)); });
+  } catch (e) { console.warn('update check', e); st.textContent = ''; }
+}
+$$('[data-get]').forEach(b => b.onclick = async () => {
+  const url = REL_FILES + b.dataset.get;
+  if (isNative()){ try { await native('WidgetBridge', 'openUrl', {url, external:true}); return; } catch (e) { console.warn('open url', e); } }
+  location.href = url;
+});
 $('#invCopy').innerHTML = ic('copy') + 'مشاركة';
 $('#invCopy').onclick = async () => {
   const text = `انضم لي في تطبيق بيتنا برمز الدعوة: ${S.space.code}`;
@@ -1324,6 +1469,7 @@ $('#inviteForm').onsubmit = async e => {
 
 /* ---------- Leaving a shared household: back to a list of your own, with a choice of what comes along ---------- */
 $('#leaveOpen').onclick = () => {
+  if (S.space.members.length < 2) return toast('أنت لحالك الحين، ما فيه مساحة مشتركة تخرج منها');
   const others = S.space.members.filter(m => m.id !== S.me).map(m => m.name).join(' و');
   $('#leaveText').textContent = `أغراضك الحين مشتركة مع ${others}. بعد الخروج يصير لك قائمة لحالك، وما عاد تشوف اللي يضيفونه ولا يشوفون اللي تضيفه.`;
   $('#leaveErr').classList.remove('show'); $('#leaveForm').reset();
@@ -1638,7 +1784,7 @@ function drawChat(){
 }
 function drawGpt(){
   const on = gSigned(), d = $('#gptDlg');
-  $('#gptOut').hidden = on; $('#gptIn').hidden = !on; $('#aiRow').hidden = !on;
+  $('#gptOut').hidden = on; $('#gptIn').hidden = !on; $('#aiRow').hidden = !on; $('#aiOff').hidden = on;
   $('#gptPasteBox').hidden = !localStorage.getItem(PKEY);
   if (on){
     $('#gptWho').textContent = G.email || '';
@@ -1829,7 +1975,9 @@ $('#tagForm').onsubmit = e => {
   if (!name){ $('#tErr').classList.add('show'); $('#tName').focus(); return; }
   const t = {id:uid(), name, color:f.get('color') || COLORS[0], icon:f.get('icon') || 'tag'};
   S.tags.push(t); db.addTag(t); S.view = 'home'; S.filter = 'all';
+  const big = bigIds(); if (big) localStorage.setItem(BIG_KEY, JSON.stringify([...big, t.id]));
   closeSheet($('#tagDlg')); toast(`تم إنشاء فئة «${name}»`); render();
+  if ($('#inviteDlg').open){ drawCats(); drawMenu(); }
 };
 
 /* ---------- Scroll motion ----------

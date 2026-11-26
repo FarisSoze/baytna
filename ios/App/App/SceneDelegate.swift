@@ -166,7 +166,9 @@ public class WidgetBridgePlugin: CAPPlugin, CAPBridgedPlugin {
     /// Opens the sign-in page inside the app, so the app stays in the foreground and can receive the callback.
     @objc func openUrl(_ call: CAPPluginCall) {
         guard let url = URL(string: call.getString("url") ?? ""), url.scheme == "https" else { call.reject("https only"); return }
+        let external = call.getBool("external") ?? false
         DispatchQueue.main.async {
+            if external { UIApplication.shared.open(url); call.resolve(); return }
             guard let host = self.bridge?.viewController else { call.reject("no view"); return }
             let safari = SFSafariViewController(url: url)
             self.browser = safari

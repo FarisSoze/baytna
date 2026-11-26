@@ -97,3 +97,6 @@ jobs:
           gh release upload latest out/* --clobber
           # There is one iPhone file now (it includes the widgets); drop the old separate one once the new one is up.
           if [ -f out/baytna-unsigned.ipa ]; then gh release delete-asset latest baytna-widgets-unsigned.ipa --yes || true; fi
+          # The app reads this title to tell whether a newer build exists. Only when both files are the new ones.
+          N=$(( ($(date -d "$(gh api "repos/$GH_REPO/commits/$GITHUB_SHA" --jq .commit.committer.date)" +%s) - 1793491200) / 60 ))
+          if [ -f out/baytna.apk ] && [ -f out/baytna-unsigned.ipa ]; then gh release edit latest --title "Baytna 1.0.$N"; fi
