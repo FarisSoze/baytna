@@ -141,6 +141,7 @@ public class WidgetBridgePlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "setItems", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "consumeAction", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "consumeShare", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "fetchText", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "secureGet", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "secureSet", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "openUrl", returnType: CAPPluginReturnPromise),
@@ -265,6 +266,19 @@ public class WidgetBridgePlugin: CAPPlugin, CAPBridgedPlugin {
         let action = WidgetBridgePlugin.pendingAction ?? ""
         WidgetBridgePlugin.pendingAction = nil
         call.resolve(["action": action])
+    }
+
+    /// Plain HTTPS GET that hands back the body as text and the address it ended on (after redirects).
+    /// Capacitor's own HTTP turns Google Maps' place reply into an error message, because it is labelled JSON but is not quite JSON.
+    @objc func fetchText(_ call: CAPPluginCall) {
+        guard let s = call.getString("url"), let url = URL(string: s), url.scheme == "https" else { call.reject("https only"); return }
+        var req = URLRequest(url: url, timeoutInterval: 20)
+        for (k, v) in call.getObject("headers") ?? [:] { if let v = v as? String { req.setValue(v, forHTTPHeaderField: k) } }
+        URLSession.shared.dataTask(with: req) { data, resp, err in
+            if let err = err { call.reject("fetch failed", nil, err); return }
+            call.resolve(["data": String(decoding: data ?? Data(), as: UTF8.self), "url": resp?.url?.absoluteString ?? s,
+                          "status": (resp as? HTTPURLResponse)?.statusCode ?? 0])
+        }.resume()
     }
 
     /// Texts shared into «بيتنا» from the share sheet (Google Maps links), handed to the web app once.

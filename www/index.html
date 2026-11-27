@@ -40,6 +40,7 @@
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{-webkit-text-size-adjust:100%;overscroll-behavior-x:none}
+html.ios{font-size:14.5px}
 html,body{margin:0;min-height:100%;overflow-x:clip}
 body{font-family:var(--font);background:var(--bg);color:var(--fg);font-size:1rem;line-height:1.55;font-weight:400;-webkit-font-smoothing:antialiased;-webkit-tap-highlight-color:transparent}
 body::before{content:"";position:fixed;inset:0 0 auto;height:420px;z-index:-1;pointer-events:none;background:radial-gradient(60% 100% at 70% 0%,var(--glow),transparent 70%)}
@@ -900,6 +901,7 @@ dialog.shop::backdrop{background:var(--bg)}
   </form>
 </div>
 
+<script>if (/iPhone|iPad|iPod/.test(navigator.userAgent)) document.documentElement.classList.add('ios');</script>
 <script src="vendor/supabase.js"></script>
 <script>
 const I_OLD = {
@@ -2272,8 +2274,14 @@ function swipeDone(rowEl, del){
    The link (usually maps.app.goo.gl/…) is followed to the full Maps address, which carries the name and the coordinates.
    The photo, kind and rating come from Google's place details, looked up by the 'place-info' function on our server. */
 const MAPS_RE = /https?:\/\/(?:maps\.app\.goo\.gl|goo\.gl\/maps|(?:www\.)?google\.[a-z.]+\/maps|maps\.google\.[a-z.]+)\S*/i;
+const onIOS = () => isNative() && window.Capacitor.getPlatform && window.Capacitor.getPlatform() === 'ios';
+async function getText(url, headers = {}){
+  const r = onIOS() ? await native('WidgetBridge', 'fetchText', {url, headers})
+    : await native('CapacitorHttp', 'request', {url, method:'GET', headers, responseType:'text', connectTimeout:15000, readTimeout:20000});
+  return {url:r.url || url, data:typeof r.data === 'string' ? r.data : JSON.stringify(r.data)};
+}
 async function follow(url){
-  if (isNative()){ try { const r = await native('CapacitorHttp', 'request', {url, method:'GET', responseType:'text', connectTimeout:15000, readTimeout:20000}); return r.url || url; } catch (e) { console.warn('follow', e); } }
+  if (isNative()) for (let i = 0; i < 2; i++){ try { return (await getText(url)).url; } catch (e) { console.warn('follow', e); } }
   return url;
 }
 function fromMapsUrl(u){
@@ -2294,7 +2302,7 @@ async function googlePlace(fid){
   if (!isNative() || !fid) return null;
   try {
     const url = 'https://www.google.com/maps/preview/place?authuser=0&hl=ar&gl=sa&pb=' + encodeURIComponent(GM_PB(fid));
-    const r = await native('CapacitorHttp', 'request', {url, method:'GET', headers:{'User-Agent':GM_UA, 'Accept-Language':'ar'}, responseType:'text', connectTimeout:15000, readTimeout:20000});
+    const r = await getText(url, {'User-Agent':GM_UA, 'Accept-Language':'ar'});
     const p = JSON.parse(String(r.data).replace(/^\)\]\}'\s*/, ''))[6]; if (!p) return null;
     const kinds = at(p, 13) || [], kind = kinds.length > 1 && kinds[kinds.length - 1].length <= 24 ? kinds[kinds.length - 1] : kinds[0] || '';
     const photo = at(p, 72, 0, 0, 6, 0) || at(p, 37, 0, 0, 6, 0) || at(p, 51, 0, 0, 6, 0) || '';
@@ -2304,6 +2312,20 @@ async function googlePlace(fid){
   } catch (e) { console.warn('google place', e); return null; }
 }
 async function placeInfo(p){ return googlePlace(p.fid); }
+function fillPlace(p, info){
+  Object.assign(p, {name:info.name || p.name, kind:info.kind || '', area:info.area || '', photo:info.photo || '', pid:info.pid || '', city:info.city || p.city || '', rating:info.rating ?? null, reviews:info.reviews ?? null,
+    lat:info.lat ?? p.lat, lng:info.lng ?? p.lng});
+}
+const mended = new Set();
+async function mendPlaces(){
+  if (!isNative()) return;
+  for (const p of S.places.filter(x => !x.kind && !x.photo && x.rating == null && x.url && !mended.has(x.id))){
+    mended.add(p.id);
+    if (!p.fid){ const full = await follow(p.url), got = fromMapsUrl(full); p.fid = (FID_RE.exec(full) || [''])[0]; if (p.lat == null && got.lat != null){ p.lat = got.lat; p.lng = got.lng; } }
+    const info = await placeInfo(p); if (info) fillPlace(p, info);
+    if (info || p.fid){ db.savePlaces([p]); render(); }
+  }
+}
 // A saved photo address that stopped working gets fetched again, once per place per session.
 const refreshed = new Set();
 async function refreshPhoto(id){
@@ -2322,8 +2344,7 @@ async function addPlace(text, quiet = false){
   if (S.view !== 'places'){ S.view = 'places'; S.filter = 'all'; scrollTo({top:0}); }
   render(); toast(`أُضيف «${p.name}» إلى أماكن`, () => { S.places = S.places.filter(x => x.id !== p.id); db.delPlaces([p.id]); render(); });
   const info = await placeInfo(p);
-  if (info){ Object.assign(p, {name:info.name || p.name, kind:info.kind || '', area:info.area || '', photo:info.photo || '', pid:info.pid || '', city:info.city || p.city || '', rating:info.rating ?? null, reviews:info.reviews ?? null,
-    lat:info.lat ?? p.lat, lng:info.lng ?? p.lng}); db.savePlaces([p]); render(); }
+  if (info){ fillPlace(p, info); db.savePlaces([p]); render(); }
 }
 const mapsOpen = url => isNative() ? native('WidgetBridge', 'openUrl', {url, external:true}).catch(() => window.open(url, '_blank')) : window.open(url, '_blank');
 function goPlace(id){
@@ -2346,6 +2367,7 @@ function removePlace(id){
 async function takeShared(){
   if (!isNative() || !S.me) return;
   try { const r = await native('WidgetBridge', 'consumeShare'); for (const t of (r && r.items) || []) await addPlace(t, true); } catch (e) {}
+  mendPlaces();
 }
 document.addEventListener('visibilitychange', () => { if (!document.hidden) takeShared(); });
 
