@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#07090F" media="(prefers-color-scheme: dark)">
 <meta name="theme-color" content="#EAF2FF" media="(prefers-color-scheme: light)">
 <title>بيتنا — مستلزمات وتذكيرات البيت</title>
@@ -846,6 +846,9 @@ dialog.shop::backdrop{background:var(--bg)}
     <div class="spage" data-p="look" hidden>
       <div class="setrow"><span>المظهر</span><div class="seg" id="themeSeg" role="tablist" data-i="0"><span class="thumb"></span><button type="button" role="tab" data-theme-set="auto">تلقائي</button><button type="button" role="tab" data-theme-set="dark">ليلي</button><button type="button" role="tab" data-theme-set="light">نهاري</button></div></div>
       <div class="setrow"><span>الخط</span><div class="seg" id="fontSeg" role="tablist" data-i="0"><span class="thumb"></span><button type="button" role="tab" data-font="thm">ثمانية</button><button type="button" role="tab" data-font="readex">ريدكس</button><button type="button" role="tab" data-font="sys">خط الجوال</button></div></div>
+      <div class="setrow"><span>إظهار مصاريفي</span><label class="sw"><input type="checkbox" data-tabshow="bills" checked aria-label="إظهار مصاريفي في الشريط السفلي"><i></i></label></div>
+      <div class="setrow"><span>إظهار أماكن</span><label class="sw"><input type="checkbox" data-tabshow="places" checked aria-label="إظهار أماكن في الشريط السفلي"><i></i></label></div>
+      <p class="help" style="margin:-4px 4px 0">إخفاء القسم يخص هذا الجوال بس، وما يمسح شي.</p>
       <div class="setrow" id="iconRow"><span>أيقونة التطبيق</span><div class="seg two" id="iconSeg" role="tablist" data-i="0"><span class="thumb"></span><button type="button" role="tab" data-icon="night">ليلية</button><button type="button" role="tab" data-icon="day">نهارية</button></div></div>
     </div>
   </form>
@@ -1221,7 +1224,17 @@ const grid = rows => `<div class="grid">${rows.join('')}</div>`;
 const ORD = {urgent:0, soon:1, later:2};
 const TABS = {home:'الرئيسية', bills:'مصاريفي', appts:'المواعيد', places:'أماكن', done:'منتهي'};
 let lastView = null;
+// Each phone can drop «مصاريفي» or «أماكن» from the bottom bar; home, appointments and done always stay.
+const HIDE_KEY = 'baytna-hidden-tabs';
+const hiddenTabs = () => { try { const v = JSON.parse(localStorage.getItem(HIDE_KEY)); return Array.isArray(v) ? v.filter(x => x === 'bills' || x === 'places') : []; } catch (e) { return []; } };
+document.addEventListener('change', e => {
+  const c = e.target.closest('[data-tabshow]'); if (!c) return;
+  const hid = new Set(hiddenTabs()); c.checked ? hid.delete(c.dataset.tabshow) : hid.add(c.dataset.tabshow);
+  try { localStorage.setItem(HIDE_KEY, JSON.stringify([...hid])); } catch (e) {}
+  buzz(6); render();
+});
 function render(){
+  if (hiddenTabs().includes(S.view)) S.view = 'home';
   const view = $('#view'), prev = new Map();
   $$('#view [data-flip]').forEach(e => prev.set(e.dataset.flip, e.getBoundingClientRect()));
   const all = active(), ap = appts(), doneList = S.items.filter(i => i.done).sort((a, b) => (b.doneAt || 0) - (a.doneAt || 0));
@@ -1309,7 +1322,9 @@ function render(){
     });
   }
   lastView = V + S.filter;
-  $$('#xTabs .x-tab').forEach(t => t.setAttribute('aria-current', t.dataset.view === V));
+  const hid = hiddenTabs();
+  $$('#xTabs .x-tab').forEach(t => { t.setAttribute('aria-current', t.dataset.view === V); t.hidden = hid.includes(t.dataset.view); });
+  $$('[data-tabshow]').forEach(c => { c.checked = !hid.includes(c.dataset.tabshow); });
   if ($('#shopDlg').open) drawShop();
   $('#xTabs [data-view="appts"]').classList.toggle('has', ap.some(a => a.due && dayDiff(a.due) >= 0 && dayDiff(a.due) <= 1));
   $('#xTabs [data-view="bills"]').classList.toggle('has', unpaid.length > 0 && daysToReset() <= 5);
