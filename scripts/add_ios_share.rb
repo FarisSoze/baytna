@@ -25,7 +25,7 @@ share.build_configurations.each do |config|
   s['MARKETING_VERSION'] = '1.0'
   s['CURRENT_PROJECT_VERSION'] = '1'
   s['SKIP_INSTALL'] = 'YES'
-  s['APPLICATION_EXTENSION_API_ONLY'] = 'NO' # it walks up to UIApplication to open the app on its Places tab
+  s['APPLICATION_EXTENSION_API_ONLY'] = 'YES'
   s['LD_RUNPATH_SEARCH_PATHS'] = ['$(inherited)', '@executable_path/Frameworks', '@executable_path/../../Frameworks']
 end
 

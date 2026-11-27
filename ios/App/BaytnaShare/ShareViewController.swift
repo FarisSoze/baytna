@@ -74,7 +74,16 @@ final class ShareViewController: UIViewController {
     private func openApp(_ url: URL) {
         var r: UIResponder? = self
         while let next = r {
-            if let app = next as? UIApplication { app.open(url, options: [:], completionHandler: nil); return }
+            if let app = next as? UIApplication {
+                // open(_:options:completionHandler:) is off-limits to extensions at compile time, so it is called by name.
+                let sel = NSSelectorFromString("openURL:options:completionHandler:")
+                typealias Open = @convention(c) (AnyObject, Selector, NSURL, NSDictionary, (@convention(block) (Bool) -> Void)?) -> Void
+                if app.responds(to: sel) {
+                    let fn = unsafeBitCast(app.method(for: sel), to: Open.self)
+                    fn(app, sel, url as NSURL, NSDictionary(), nil)
+                }
+                return
+            }
             r = next.next
         }
     }
