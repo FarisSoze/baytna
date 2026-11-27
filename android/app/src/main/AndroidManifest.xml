@@ -24,6 +24,13 @@
                 <data android:scheme="baytna" />
             </intent-filter>
 
+            <!-- "Share" from Google Maps (or anywhere) offers Baytna; a Maps link lands in Places. -->
+            <intent-filter android:label="أماكن بيتنا">
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/plain" />
+            </intent-filter>
+
         </activity>
 
         <!-- Two launcher entries, one enabled at a time: the person picks the night or the day icon inside the app. -->

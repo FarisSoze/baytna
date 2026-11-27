@@ -22,6 +22,14 @@ public class MainActivity extends BridgeActivity {
 
     // baytna://add comes from the plus button of the widget; the web app picks it up via WidgetBridge.consumeAction().
     private boolean capture(Intent intent) {
+        if (intent != null && Intent.ACTION_SEND.equals(intent.getAction())) {
+            String text = intent.getStringExtra(Intent.EXTRA_TEXT), subject = intent.getStringExtra(Intent.EXTRA_SUBJECT);
+            if (text == null) return false;
+            WidgetBridgePlugin.pendingShares.add(subject != null && !text.contains(subject) ? subject + '\n' + text : text);
+            WidgetBridgePlugin.pendingAction = "places";
+            intent.setAction(Intent.ACTION_MAIN);          // handled once, not again when the activity is recreated
+            return true;
+        }
         Uri data = intent == null ? null : intent.getData();
         if (data == null || !"baytna".equals(data.getScheme())) return false;
         WidgetBridgePlugin.pendingAction = data.getHost();

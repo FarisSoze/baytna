@@ -331,3 +331,121 @@ begin
 end $$;
 revoke all on function public.leave_household(text) from public, anon;
 grant execute on function public.leave_household(text) to authenticated;
+
+-- ───────────── Places (1.1.3): spots to visit, added from a Google Maps link. Safe to run more than once. ─────────────
+create table if not exists public.places (
+  id           uuid primary key default gen_random_uuid(),
+  household_id uuid not null references public.households (id) on delete cascade,
+  name         text not null check (char_length(name) between 1 and 200),
+  kind         text,
+  area         text,
+  city         text,
+  photo        text,
+  url          text,
+  lat          double precision,
+  lng          double precision,
+  place_id     text,
+  fid          text,
+  rating       real,
+  reviews      integer,
+  visited      boolean not null default false,
+  created_by   uuid references public.profiles (id) on delete set null,
+  created_at   timestamptz not null default now()
+);
+create index if not exists places_household_idx on public.places (household_id);
+
+revoke all on public.places from anon;
+grant select, insert, update, delete on public.places to authenticated;
+alter table public.places enable row level security;
+drop policy if exists places_all on public.places;
+create policy places_all on public.places
+  for all to authenticated
+  using (household_id = public.my_household())
+  with check (household_id = public.my_household());
+
+do $$
+begin
+  if not exists (select 1 from pg_publication_tables where pubname = 'supabase_realtime' and schemaname = 'public' and tablename = 'places') then
+    alter publication supabase_realtime add table public.places;
+  end if;
+end $$;
+
+-- Joining someone's household brings your bills and places along with your items.
+create or replace function public.join_household(p_code text)
+returns uuid language plpgsql security definer set search_path = public as $$
+declare
+  me     uuid := auth.uid();
+  old    uuid;
+  target uuid;
+begin
+  if me is null then raise exception 'not_authenticated'; end if;
+  select id into target from public.households where code = upper(trim(p_code));
+  if target is null then raise exception 'invalid_code'; end if;
+  select household_id into old from public.profiles where id = me;
+  if old = target then return target; end if;
+
+  update public.items i set tag_id = t2.id
+    from public.tags t1
+    join public.tags t2 on t2.household_id = target and t2.name = t1.name
+   where i.tag_id = t1.id and t1.household_id = old;
+  delete from public.tags t1
+   where t1.household_id = old
+     and exists (select 1 from public.tags t2 where t2.household_id = target and t2.name = t1.name);
+  update public.tags  set household_id = target where household_id = old;
+  update public.items set household_id = target where household_id = old;
+  update public.bills set household_id = target where household_id = old;
+  update public.places set household_id = target where household_id = old;
+  update public.profiles set household_id = target where id = me;
+  delete from public.households h
+   where h.id = old and not exists (select 1 from public.profiles p where p.household_id = old);
+  return target;
+end $$;
+revoke all on function public.join_household(text) from public, anon;
+grant execute on function public.join_household(text) to authenticated;
+
+-- Leaving a shared household (now with places: all of them, or only the ones you added). You get a household of your own again; the people you leave keep everything as it was.
+-- p_keep = 'all'  : you take a copy of every item, appointment and bill.
+-- p_keep = 'mine' : you take a copy of only what you added yourself (and the bills, which belong to nobody in particular).
+create or replace function public.leave_household(p_keep text)
+returns uuid language plpgsql security definer set search_path = public as $$
+declare
+  me   uuid := auth.uid();
+  old  uuid;
+  h    uuid;
+  t    record;
+  nid  uuid;
+  everything boolean := coalesce(p_keep, 'all') <> 'mine';
+begin
+  if me is null then raise exception 'not_authenticated'; end if;
+  select household_id into old from public.profiles where id = me;
+  if (select count(*) from public.profiles where household_id = old) < 2 then raise exception 'alone'; end if;
+
+  insert into public.households (code) values (public.gen_invite_code()) returning id into h;
+
+  -- Categories come along, and each copied item points at its copied category.
+  for t in select * from public.tags where household_id = old order by created_at loop
+    insert into public.tags (household_id, name, color, icon, created_at) values (h, t.name, t.color, t.icon, t.created_at) returning id into nid;
+    insert into public.items (household_id, title, tag_id, prio, due, done, done_at, done_by, created_by, created_at, kind, location, remind_min)
+      select h, i.title, nid, i.prio, i.due, i.done, i.done_at,
+             case when i.done_by = me then me end, case when i.created_by = me then me end, i.created_at, i.kind, i.location, i.remind_min
+        from public.items i
+       where i.household_id = old and i.tag_id = t.id and (everything or i.created_by = me);
+  end loop;
+  insert into public.items (household_id, title, tag_id, prio, due, done, done_at, done_by, created_by, created_at, kind, location, remind_min)
+    select h, i.title, null, i.prio, i.due, i.done, i.done_at,
+           case when i.done_by = me then me end, case when i.created_by = me then me end, i.created_at, i.kind, i.location, i.remind_min
+      from public.items i
+     where i.household_id = old and i.tag_id is null and (everything or i.created_by = me);
+  insert into public.bills (household_id, title, amount, icon, color, paid, paid_by, paid_at, created_at)
+    select h, b.title, b.amount, b.icon, b.color, b.paid, case when b.paid_by = me then me end, b.paid_at, b.created_at
+      from public.bills b where b.household_id = old;
+  insert into public.places (household_id, name, kind, area, city, photo, url, lat, lng, place_id, fid, rating, reviews, visited, created_by, created_at)
+    select h, p.name, p.kind, p.area, p.city, p.photo, p.url, p.lat, p.lng, p.place_id, p.fid, p.rating, p.reviews, p.visited,
+           case when p.created_by = me then me end, p.created_at
+      from public.places p where p.household_id = old and (everything or p.created_by = me);
+
+  update public.profiles set household_id = h where id = me;
+  return h;
+end $$;
+revoke all on function public.leave_household(text) from public, anon;
+grant execute on function public.leave_household(text) to authenticated;

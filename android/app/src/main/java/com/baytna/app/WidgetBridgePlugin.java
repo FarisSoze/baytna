@@ -37,6 +37,7 @@ public class WidgetBridgePlugin extends Plugin {
         + "<script>location.href='baytna://gpt'</script></body></html>";
 
     static volatile String pendingAction = null;
+    static final java.util.List<String> pendingShares = java.util.Collections.synchronizedList(new java.util.ArrayList<>());
     static volatile String authQuery = null;
     private static volatile ServerSocket authServer = null;
 
@@ -52,6 +53,16 @@ public class WidgetBridgePlugin extends Plugin {
             .apply();
         BaytnaWidget.refreshAll(getContext());
         call.resolve();
+    }
+
+    /** Texts shared into the app (Google Maps links), handed to the web app once. */
+    @PluginMethod
+    public void consumeShare(PluginCall call) {
+        com.getcapacitor.JSArray items = new com.getcapacitor.JSArray();
+        synchronized (pendingShares) { for (String s : pendingShares) items.put(s); pendingShares.clear(); }
+        JSObject res = new JSObject();
+        res.put("items", items);
+        call.resolve(res);
     }
 
     @PluginMethod

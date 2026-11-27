@@ -140,6 +140,7 @@ public class WidgetBridgePlugin: CAPPlugin, CAPBridgedPlugin {
     public let pluginMethods: [CAPPluginMethod] = [
         CAPPluginMethod(name: "setItems", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "consumeAction", returnType: CAPPluginReturnPromise),
+        CAPPluginMethod(name: "consumeShare", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "secureGet", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "secureSet", returnType: CAPPluginReturnPromise),
         CAPPluginMethod(name: "openUrl", returnType: CAPPluginReturnPromise),
@@ -152,6 +153,8 @@ public class WidgetBridgePlugin: CAPPlugin, CAPBridgedPlugin {
         CAPPluginMethod(name: "stopListening", returnType: CAPPluginReturnPromise)
     ]
     static var pendingAction: String?
+    /// Links shared from the share sheet that came in through baytna://places?t=… (used when the App Group is not shared).
+    static var urlShares: [String] = []
     private weak var browser: SFSafariViewController?
 
     // The ChatGPT tokens stay in the app's own sandbox, not in the group shared with the widgets.
@@ -263,6 +266,18 @@ public class WidgetBridgePlugin: CAPPlugin, CAPBridgedPlugin {
         WidgetBridgePlugin.pendingAction = nil
         call.resolve(["action": action])
     }
+
+    /// Texts shared into «بيتنا» from the share sheet (Google Maps links), handed to the web app once.
+    @objc func consumeShare(_ call: CAPPluginCall) {
+        var items: [String] = []
+        if let store = UserDefaults(suiteName: baytnaGroup) {
+            items = store.stringArray(forKey: "pendingShares") ?? []
+            store.removeObject(forKey: "pendingShares")
+        }
+        for t in WidgetBridgePlugin.urlShares where !items.contains(t) { items.append(t) }
+        WidgetBridgePlugin.urlShares = []
+        call.resolve(["items": items])
+    }
 }
 
 class MainViewController: CAPBridgeViewController {
@@ -300,6 +315,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     private func capture(_ contexts: Set<UIOpenURLContext>) -> Bool {
         guard let url = contexts.first?.url, url.scheme == "baytna" else { return false }
         WidgetBridgePlugin.pendingAction = url.host
+        if url.host == "places", let t = URLComponents(url: url, resolvingAgainstBaseURL: false)?.queryItems?.first(where: { $0.name == "t" })?.value, !t.isEmpty {
+            WidgetBridgePlugin.urlShares.append(t)
+        }
         return true
     }
 }

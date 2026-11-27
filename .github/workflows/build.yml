@@ -62,6 +62,7 @@ jobs:
         run: |
           gem install xcodeproj --no-document --user-install
           ruby scripts/add_ios_widget.rb
+          ruby scripts/add_ios_share.rb
       - name: Archive and package without code signing
         run: sh scripts/ios_ipa.sh baytna-unsigned.ipa
       - uses: actions/upload-artifact@v4

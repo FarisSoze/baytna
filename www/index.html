@@ -608,6 +608,32 @@ dialog.shop::backdrop{background:var(--bg)}
 .auth{background:var(--bg)}
 .auth::before{background:var(--wash)}
 .auth-card .logo{background:var(--cta-bg);color:var(--cta-fg)}
+/* Places: photo, name and kind, and a Go button that hands over to Google Maps */
+#view .pl .card{gap:10px;padding-block:10px;padding-inline:2px 12px}
+.pph{width:58px;height:58px;border-radius:14px;flex:none;object-fit:cover;background:var(--fill);display:grid;place-items:center;color:#fff}
+.pph.ic{background:var(--c)}
+.pph.ic svg{width:26px;height:26px}
+.pl .body{min-width:0}
+.pl .title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.go{flex:none;height:34px;padding-inline:12px 10px;border-radius:999px;background:var(--accent);color:var(--cta-fg);font-size:.8125rem;font-weight:700;display:flex;align-items:center;gap:5px;position:relative}
+.go::after{content:"";position:absolute;inset:-4px -2px}
+.go svg{width:15px;height:15px;stroke-width:2.4}
+.pl .card{padding-inline-start:2px!important}
+.pl .check{width:40px;margin-inline-end:-2px}
+#view .row.pl.is-done .title{color:var(--fg);text-decoration:none}
+#view .row.pl.is-done .check span,#view .row.pl.checking:not(.is-done) .check span{background:#30C65A;color:#fff;box-shadow:none}
+.pl.is-done .go{background:var(--fill);color:var(--fg)}
+.pl .meta .star{color:#F0C95A}
+.pl .meta .star small{color:var(--fg3);font-size:inherit}
+/* No photo: the place seen from above (free satellite tiles, nothing to sign up for), centred on a pin */
+.pmap{position:relative;overflow:hidden;background:#1d2230}
+.pmap .tiles{position:absolute;width:768px;height:768px;display:grid;grid-template-columns:repeat(3,256px);grid-auto-rows:256px;gap:0;line-height:0}
+.pmap .tiles img{width:256px;height:256px;display:block}
+.pmap::after{content:"";position:absolute;left:50%;top:50%;width:10px;height:10px;margin:-5px 0 0 -5px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 2px #fff,0 2px 6px rgba(0,0,0,.5)}
+.pl .meta{flex-wrap:nowrap;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;display:block}
+.pl .meta span{display:inline}
+.pl .meta span+span::before{content:" · ";color:var(--fg3)}
+.pl .meta+.meta{margin-top:2px}
 @media (prefers-reduced-transparency:reduce){.x-pin::before{background:var(--bg)}.gl,.x-tabs,.x-tool,.sheet,#view .grid{-webkit-backdrop-filter:none;backdrop-filter:none;background:var(--solid)}}
 </style>
 </head>
@@ -641,6 +667,7 @@ dialog.shop::backdrop{background:var(--bg)}
   <button class="x-tab" data-view="home"><span data-ic="home" style="display:contents"></span>الرئيسية</button>
   <button class="x-tab" data-view="bills"><span data-ic="receipt" style="display:contents"></span>مصاريفي</button>
   <button class="x-tab" data-view="appts"><span data-ic="cal" style="display:contents"></span>المواعيد</button>
+  <button class="x-tab" data-view="places"><span data-ic="pin" style="display:contents"></span>أماكن</button>
   <button class="x-tab" data-view="done"><span data-ic="done" style="display:contents"></span>منتهي</button>
 </nav>
 
@@ -1013,7 +1040,7 @@ const APP_VER = 'dev';                                    // CI puts the VERSION
 const APP_BUILD = 0;                                      // and the hidden build number here; that one decides what is newer
 $('#appVer').textContent = 'بيتنا ' + APP_VER;
 const KEY = 'baytna-cache-v2';
-const blank = () => ({view:'home', filter:'all', me:null, hid:null, space:{name:'بيتنا', code:'', members:[]}, tags:[], items:[], bills:[]});
+const blank = () => ({view:'home', filter:'all', me:null, hid:null, space:{name:'بيتنا', code:'', members:[]}, tags:[], items:[], bills:[], places:[], city:''});
 let S = blank();
 try { const c = JSON.parse(localStorage.getItem(KEY)); if (c && c.me) S = Object.assign(blank(), c, {view:'home', filter:'all'}); } catch {}
 const save = () => { try { localStorage.setItem(KEY, JSON.stringify(S)); } catch {} };
@@ -1025,6 +1052,8 @@ const toRow = it => ({id:it.id, household_id:S.hid, title:it.title, tag_id:it.ta
   done:!!it.done, done_at:it.doneAt ? new Date(it.doneAt).toISOString() : null, done_by:it.doneBy || null,
   ...(it.kind === 'appt' ? {kind:'appt', location:it.loc || null, remind_min:it.remind == null ? null : it.remind} : {})});
 const billFrom = r => ({id:r.id, title:r.title, amount:r.amount == null ? null : +r.amount, icon:r.icon || 'receipt', color:r.color || 'teal', paid:!!r.paid, paidBy:r.paid_by || undefined});
+const placeFrom = r => ({id:r.id, name:r.name, kind:r.kind || '', area:r.area || '', photo:r.photo || '', url:r.url || '', lat:r.lat, lng:r.lng, pid:r.place_id || '', fid:r.fid || '', city:r.city || '', rating:r.rating, reviews:r.reviews, visited:!!r.visited, by:r.created_by});
+const placeRow = p => ({id:p.id, household_id:S.hid, name:p.name, kind:p.kind || null, area:p.area || null, photo:p.photo || null, url:p.url || null, lat:p.lat ?? null, lng:p.lng ?? null, place_id:p.pid || null, fid:p.fid || null, city:p.city || null, rating:p.rating ?? null, reviews:p.reviews ?? null, visited:!!p.visited, created_by:p.by || null});
 const billRow = b => ({id:b.id, household_id:S.hid, title:b.title, amount:b.amount == null ? null : b.amount, icon:b.icon, color:b.color, paid:!!b.paid, paid_by:b.paid ? b.paidBy || null : null, paid_at:b.paid ? new Date().toISOString() : null});
 
 // The UI updates first; the write follows. A failed write says so and reloads the truth.
@@ -1040,17 +1069,20 @@ const db = {
   addTag: t => run(sb.from('tags').insert({id:t.id, household_id:S.hid, name:t.name, color:t.color, icon:t.icon})),
   delTag: id => run(sb.from('tags').delete().eq('id', id)),
   saveBills: bs => run(sb.from('bills').upsert(bs.map(billRow))),
-  delBills: ids => run(sb.from('bills').delete().in('id', ids))
+  delBills: ids => run(sb.from('bills').delete().in('id', ids)),
+  savePlaces: ps => run(sb.from('places').upsert(ps.map(placeRow))),
+  delPlaces: ids => run(sb.from('places').delete().in('id', ids))
 };
 
 async function load(){
   const started = epoch;
-  const [pr, hh, tg, it, bl] = await Promise.all([
+  const [pr, hh, tg, it, bl, pl] = await Promise.all([
     sb.from('profiles').select('id,name,email,created_at').order('created_at'),
     sb.from('households').select('id,code').maybeSingle(),
     sb.from('tags').select('id,name,color,icon').order('created_at'),
     sb.from('items').select('*').order('created_at', {ascending:false}),
-    sb.from('bills').select('*').order('created_at')]);
+    sb.from('bills').select('*').order('created_at'),
+    sb.from('places').select('*').order('created_at', {ascending:false})]);
   if (pr.error || hh.error || tg.error || it.error || !hh.data){ console.error(pr.error || hh.error || tg.error || it.error || 'no household'); toast('تعذّر تحميل البيانات، تحقق من الاتصال'); return false; }
   if (writes || epoch !== started){ ping(); return true; }          // something changed here while this was loading: its answer is already stale
   if (bl.error) console.warn('bills', bl.error);                  // an older database without the bills table still opens
@@ -1058,7 +1090,7 @@ async function load(){
   S.hid = hh.data.id; S.space.code = hh.data.code;
   S.space.members = pr.data.map((m, i) => ({id:m.id, name:m.name, email:m.email || '', color:MCOL[i % MCOL.length]}));
   S.tags = tg.data; S.items = it.data.map(fromRow);
-  const freshUrgent = knew ? S.items.filter(i => !knew.has(i.id) && i.prio === 'urgent' && !i.done && !isAppt(i) && i.by && i.by !== S.me) : []; S.bills = bl.error ? S.bills : bl.data.map(billFrom);
+  const freshUrgent = knew ? S.items.filter(i => !knew.has(i.id) && i.prio === 'urgent' && !i.done && !isAppt(i) && i.by && i.by !== S.me) : []; S.bills = bl.error ? S.bills : bl.data.map(billFrom); S.places = pl.error ? (S.places || []) : pl.data.map(placeFrom);
   if (S.filter !== 'all' && !S.tags.some(t => t.id === S.filter)) S.filter = 'all';
   render(); subscribe(); urgentAlert(freshUrgent); return true;
 }
@@ -1068,7 +1100,7 @@ const ping = () => { clearTimeout(relT); relT = setTimeout(() => (sw || writes |
 function subscribe(){
   if (chan) return;
   chan = sb.channel('household');
-  for (const table of ['items', 'tags', 'profiles', 'bills']) chan.on('postgres_changes', {event:'*', schema:'public', table}, ping);
+  for (const table of ['items', 'tags', 'profiles', 'bills', 'places']) chan.on('postgres_changes', {event:'*', schema:'public', table}, ping);
   chan.subscribe();
 }
 function unsubscribe(){ if (chan){ sb.removeChannel(chan); chan = null; } }
@@ -1125,11 +1157,32 @@ function billRowHtml(b){
       ${b.amount != null ? `<span class="amt">${fmtMoney(b.amount)}${SAR}</span>` : ''}<span class="mi c-${b.color}">${ic(icOf(b.icon))}</span>
     </article></div>`;
 }
+const KIND_LOOK = [['coffee','amber','قهو كوفي كافيه مقهى'],['food','rose','مطعم مطاعم برجر بيتزا مشويات مندي'],['bag','violet','مول سوق متجر محل بوتيك'],['leaf','green','حديقة منتزه بارك شاطئ'],
+  ['star','gold','فندق منتجع شاليه استراحة'],['book','blue','متحف معرض مكتبة'],['gift','pink','حلويات حلا مخبز كيك']];
+const kindLook = k => { const n = norm(k || ''); for (const [icon, color, keys] of KIND_LOOK) if (keys.split(' ').some(x => n.includes(norm(x)))) return {icon, color}; return {icon:'pin', color:'teal'}; };
+const isDark = () => document.documentElement.dataset.theme === 'dark' || (!document.documentElement.dataset.theme && matchMedia('(prefers-color-scheme: dark)').matches);
+function mapThumb(lat, lng, size = 58, z = 18){
+  const n = 2 ** z, fx = (lng + 180) / 360 * n, r = lat * Math.PI / 180, fy = (1 - Math.log(Math.tan(r) + 1 / Math.cos(r)) / Math.PI) / 2 * n;
+  const tx = Math.floor(fx), ty = Math.floor(fy);
+  let imgs = ''; for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) imgs += `<img alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${ty + j}/${tx + i}">`;
+  return `<span class="pph pmap" aria-hidden="true"><span class="tiles" style="left:${size / 2 - 256 - (fx - tx) * 256}px;top:${size / 2 - 256 - (fy - ty) * 256}px">${imgs}</span></span>`;
+}
+function placeRowHtml(p){
+  const lk = kindLook(p.kind), meta = [p.kind ? `<span>${esc(p.kind)}</span>` : '', p.area ? `<span>${esc(p.area)}</span>` : ''].join(''),
+    stars = p.rating ? `<div class="meta"><span class="star">★ ${(+p.rating).toFixed(1)}${p.reviews ? ` <small>(${(+p.reviews).toLocaleString('en')} تقييم)</small>` : ''}</span></div>` : '';
+  return `<div class="row pl ${p.visited ? 'is-done' : ''}" data-id="${p.id}" data-kind="place" data-flip="${p.id}">${swipeBg(p.visited)}
+    <article class="card">
+      <button class="check" data-visit="${p.id}" aria-label="${p.visited ? 'ما زرناه' : 'زرناه'}: «${esc(p.name)}»"><span>${ic('check')}</span></button>
+      ${p.photo ? `<img class="pph" src="${esc(p.photo)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="refreshPhoto('${p.id}')">` : p.lat != null ? mapThumb(p.lat, p.lng) : `<span class="pph ic c-${lk.color}">${ic(lk.icon)}</span>`}
+      <button class="body" data-place="${p.id}" aria-label="فتح «${esc(p.name)}» في قوقل ماب"><div class="title">${esc(p.name)}</div><div class="meta">${meta || '<span>مكان</span>'}</div>${stars}</button>
+      <button class="go press" data-go="${p.id}" aria-label="اذهب إلى «${esc(p.name)}»">${ic('go')}اذهب</button>
+    </article></div>`;
+}
 const emptyBox = (icon, b, p) => `<div class="empty" data-flip="empty"><span class="tile-ic">${ic(icon)}</span><b>${b}</b>${p}</div>`;
 const grid = rows => `<div class="grid">${rows.join('')}</div>`;
 
 const ORD = {urgent:0, soon:1, later:2};
-const TABS = {home:'الرئيسية', bills:'مصاريفي', appts:'المواعيد', done:'منتهي'};
+const TABS = {home:'الرئيسية', bills:'مصاريفي', appts:'المواعيد', places:'أماكن', done:'منتهي'};
 let lastView = null;
 function render(){
   const view = $('#view'), prev = new Map();
@@ -1142,14 +1195,20 @@ function render(){
   $('#ltitle').textContent = V === 'home' ? (cur ? cur.name : S.space.name) : TABS[V];
   $('#eyebrow').textContent = V === 'home' ? (list.length ? plural(list.length, 'غرض واحد ناقص', 'غرضين ناقصة', 'أغراض ناقصة', 'غرض ناقص') + (urgent && !cur ? `، ${plural(urgent, 'واحد مستعجل', 'اثنين مستعجلة', 'مستعجلة', 'مستعجل')}` : '') : 'ما فيه شيء ناقص')
     : V === 'bills' ? 'فواتير شهر ' + new Intl.DateTimeFormat(AR, {month:'long'}).format(new Date())
+    : V === 'places' ? (S.places.some(x => !x.visited && (!S.city || x.city === S.city)) ? (S.city ? S.city + '، ' : '') + plural(S.places.filter(x => !x.visited && (!S.city || x.city === S.city)).length, 'مكان واحد تبون تزورونه', 'مكانين تبون تزورونها', 'أماكن تبون تزورونها', 'مكان تبون تزورونه') : 'ما فيه أماكن بعد')
     : V === 'appts' ? (ap.length ? plural(ap.length, 'موعد واحد قادم', 'موعدين قادمة', 'مواعيد قادمة', 'موعد قادم') : 'ما فيه مواعيد قادمة')
     : plural(doneList.length, 'غرض واحد مكتمل', 'غرضين مكتملة', 'أغراض مكتملة', 'غرض مكتمل');
 
   // Small filter strip
-  $('#xChips').hidden = V !== 'home';
+  const cities = [...new Set(S.places.map(x => x.city).filter(Boolean))];
+  if (S.city && !cities.includes(S.city)) S.city = '';
+  $('#xChips').hidden = !(V === 'home' || (V === 'places' && cities.length > 1));
   $('#xChips').innerHTML = `<button class="x-chip gl" data-filter="all" aria-pressed="${S.filter === 'all'}">الكل</button>`
     + S.tags.map(t => `<button class="x-chip gl" data-filter="${t.id}" aria-pressed="${S.filter === t.id}">${esc(t.name)}</button>`).join('')
     + `<button class="x-chip gl" data-newtag>+ فئة</button>`;
+  if (V === 'places') $('#xChips').innerHTML = `<button class="x-chip gl" data-city="" aria-pressed="${!S.city}">كل المدن</button>`
+    + cities.sort((a, b) => S.places.filter(x => x.city === b).length - S.places.filter(x => x.city === a).length)
+      .map(c => `<button class="x-chip gl" data-city="${esc(c)}" aria-pressed="${S.city === c}">${esc(c)}</button>`).join('');
 
   // Hero: category cards on the home screen, the month's summary on bills, the next appointment on appointments
   // Rebuilding these would restart their scroll animation and show them for a frame, so when only numbers changed they are patched in place.
@@ -1183,15 +1242,20 @@ function render(){
 
   // The add field speaks for the screen it is on
   $('#quick').hidden = V === 'done';
-  $('#qIn').placeholder = V === 'bills' ? 'أضف فاتورة…' : V === 'appts' ? 'أضف موعداً…' : cur ? `أضف إلى ${cur.name}…` : 'أضف غرضاً…';
+  $('#qIn').placeholder = V === 'bills' ? 'أضف فاتورة…' : V === 'places' ? 'الصق رابط مكان من قوقل ماب…' : V === 'appts' ? 'أضف موعداً…' : cur ? `أضف إلى ${cur.name}…` : 'أضف غرضاً…';
   $('#qAi').hidden = V !== 'home';
 
   if (render._v !== V){ render._v = V; requestAnimationFrame(() => typeof remeasure === 'function' && remeasure()); }   // each screen decides its own scroll motion
-  $('#lhTitle').textContent = V === 'home' ? (cur ? cur.name : 'كل المهام') : V === 'bills' ? 'الفواتير' : V === 'appts' ? 'كل المواعيد' : 'منتهي';
+  $('#lhTitle').textContent = V === 'home' ? (cur ? cur.name : 'كل المهام') : V === 'bills' ? 'الفواتير' : V === 'appts' ? 'كل المواعيد' : V === 'places' ? 'نبي نزورها' : 'منتهي';
   $('#lhEnd').innerHTML = V === 'home' && list.length ? `<button class="lhb press" data-share aria-label="مشاركة القائمة كصورة">${ic('chat')}مشاركة</button><button class="lhb go press" data-shop aria-label="وضع التسوق">${ic('cart')}تسوّق</button>` : V === 'done' && doneList.length ? '<button class="sort link" data-clear>مسح الكل</button>' : '<span class="sort"></span>';
 
   if (V === 'home') view.innerHTML = list.length ? grid([...list].sort((a, b) => ORD[a.prio] - ORD[b.prio]).map(row)) : emptyBox('done', 'كل شيء منتهي', cur ? 'ما فيه أغراض ناقصة في هذي الفئة.' : 'أضف أول غرض من الخانة فوق.');
   else if (V === 'bills') view.innerHTML = S.bills.length ? grid([...unpaid, ...paid].map(billRowHtml)) : emptyBox('receipt', 'ما فيه فواتير بعد', 'أضف فواتيرك الشهرية الثابتة من الخانة فوق، وعلّمها لما تسدد.');
+  else if (V === 'places'){
+    const here = S.places.filter(x => !S.city || x.city === S.city), want = here.filter(x => !x.visited), been = here.filter(x => x.visited);
+    view.innerHTML = S.places.length ? (want.length ? grid(want.map(placeRowHtml)) : '') + (been.length ? `<p class="x-sec">زرناها</p>${grid(been.map(placeRowHtml))}` : '')
+      : emptyBox('pin', 'ما فيه أماكن بعد', 'من قوقل ماب اضغط «مشاركة» واختر بيتنا، أو الصق رابط المكان في الخانة فوق.');
+  }
   else if (V === 'appts'){
     const rest = ap.slice(ap.length && ap[0].due ? 1 : 0), groups = [['هذا الأسبوع', a => a.due && dayDiff(a.due) <= 7], ['لاحقاً', a => !a.due || dayDiff(a.due) > 7]];
     view.innerHTML = ap.length ? groups.map(([name, f]) => { const g = rest.filter(f); return g.length ? `<p class="x-sec">${name}</p>${grid(g.map(row))}` : ''; }).join('') : emptyBox('cal', 'ما فيه مواعيد قادمة', 'أضف موعداً من الخانة فوق، ويذكّرك التطبيق قبله.');
@@ -1801,7 +1865,9 @@ async function consumeAction(){
     if (r && r.action === 'add' && !$('#itemDlg').open){ S.view = 'home'; render(); openItem(); }
     else if (r && r.action === 'gpt') gptReturn();
     else if (r && r.action === 'bills'){ S.view = 'bills'; S.filter = 'all'; render(); }
+    else if (r && r.action === 'places'){ S.view = 'places'; S.filter = 'all'; render(); }
   } catch (e) { console.warn('action', e); }
+  takeShared();
 }
 addEventListener('baytnaAction', consumeAction);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) consumeAction(); });
@@ -2110,6 +2176,10 @@ document.addEventListener('click', e => {
   else if (d.filter){ S.view = 'home'; S.filter = d.filter; render(); if (scrollY > 0) scrollTo({top:0, behavior:reduced() ? 'auto' : 'smooth'}); }
   else if (d.toggle) toggle(d.toggle);
   else if (d.pay) payBill(d.pay);
+  else if (d.go) goPlace(d.go);
+  else if (d.visit) visitPlace(d.visit);
+  else if ('city' in d){ S.city = d.city; render(); }
+  else if (d.place) openPlace(d.place);
   else if (d.bill) openBill(d.bill);
   else if (d.edit) (isAppt(S.items.find(i => i.id === d.edit) || {}) ? openAppt : openItem)(d.edit);
   else if ('newtag' in d) openTag();
@@ -2133,6 +2203,7 @@ $('#quick').onsubmit = e => {
   const text = $('#qIn').value.trim(), titles = splitTitles(text); if (!titles.length) return;
   $('#qIn').blur();
   if (S.view === 'bills'){ titles.forEach(t => addBill(t)); clearQuick(); return render(); }
+  if (S.view === 'places'){ clearQuick(); return addPlace(text); }
   if (S.view === 'appts'){ clearQuick(); openAppt(); $('#apName').value = text; return; }
   if (S.filter !== 'all'){ addItems(titles.join('،'), S.filter, 'soon'); clearQuick(); return render(); }
   const known = [], unknown = [];
@@ -2193,8 +2264,90 @@ $('#bDelete').onclick = () => { const id = billEditing.id; closeSheet($('#billDl
 // A swipe lands here: delete, or finish / pay.
 function swipeDone(rowEl, del){
   const id = rowEl.dataset.id;
-  if (rowEl.dataset.kind === 'bill') del ? removeBill(id) : payBill(id); else del ? removeItem(id) : toggle(id, true);
+  if (rowEl.dataset.kind === 'place') del ? removePlace(id) : visitPlace(id);
+  else if (rowEl.dataset.kind === 'bill') del ? removeBill(id) : payBill(id); else del ? removeItem(id) : toggle(id, true);
 }
+
+/* ---------- Places: from a Google Maps link to a card with photo, kind and a Go button ----------
+   The link (usually maps.app.goo.gl/…) is followed to the full Maps address, which carries the name and the coordinates.
+   The photo, kind and rating come from Google's place details, looked up by the 'place-info' function on our server. */
+const MAPS_RE = /https?:\/\/(?:maps\.app\.goo\.gl|goo\.gl\/maps|(?:www\.)?google\.[a-z.]+\/maps|maps\.google\.[a-z.]+)\S*/i;
+async function follow(url){
+  if (isNative()){ try { const r = await native('CapacitorHttp', 'request', {url, method:'GET', responseType:'text', connectTimeout:15000, readTimeout:20000}); return r.url || url; } catch (e) { console.warn('follow', e); } }
+  return url;
+}
+function fromMapsUrl(u){
+  let name = '', lat = null, lng = null;
+  try { const m = /\/maps\/place\/([^/@?]+)/.exec(u); if (m) name = decodeURIComponent(m[1].replace(/\+/g, ' ')).split('،')[0].trim(); } catch (e) {}
+  const c = /!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/.exec(u) || /@(-?\d+\.\d+),(-?\d+\.\d+)/.exec(u) || /[?&](?:q|query|ll)=(-?\d+\.\d+),\s*(-?\d+\.\d+)/.exec(u);
+  if (c){ lat = +c[1]; lng = +c[2]; }
+  if (!name){ try { const q = new URL(u).searchParams.get('q') || new URL(u).searchParams.get('query'); if (q && !/^-?\d/.test(q)) name = q; } catch (e) {} }
+  return {name, lat, lng};
+}
+// Google Maps' own page asks this address for a place's details. The phone asks it the same way, so no account or key is involved.
+// It is not a published service: if Google changes it, places simply arrive without photo and rating (and with the satellite view instead).
+const GM_UA = 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1';
+const GM_PB = fid => `!1m1!1s${fid}!12m4!2m3!1i360!2i120!4i8!13m57!2m2!1i203!2i100!3m2!2i4!5b1!6m6!1m2!1i86!2i86!1m2!1i408!2i240!7m33!1m3!1e1!2b0!3e3!1m3!1e2!2b1!3e2!1m3!1e2!2b0!3e3!1m3!1e8!2b0!3e3!1m3!1e10!2b0!3e3!1m3!1e10!2b1!3e2!1m3!1e10!2b0!3e4!1m3!1e9!2b1!3e2!2b1!9b0!15m8!1m7!1m2!1m1!1e2!2m2!1i195!2i195!3i20`;
+const FID_RE = /0x[0-9a-f]{6,}:0x[0-9a-f]{6,}/i;
+const at = (x, ...k) => { for (const i of k){ if (x == null) return undefined; x = x[i]; } return x; };
+async function googlePlace(fid){
+  if (!isNative() || !fid) return null;
+  try {
+    const url = 'https://www.google.com/maps/preview/place?authuser=0&hl=ar&gl=sa&pb=' + encodeURIComponent(GM_PB(fid));
+    const r = await native('CapacitorHttp', 'request', {url, method:'GET', headers:{'User-Agent':GM_UA, 'Accept-Language':'ar'}, responseType:'text', connectTimeout:15000, readTimeout:20000});
+    const p = JSON.parse(String(r.data).replace(/^\)\]\}'\s*/, ''))[6]; if (!p) return null;
+    const kinds = at(p, 13) || [], kind = kinds.length > 1 && kinds[kinds.length - 1].length <= 24 ? kinds[kinds.length - 1] : kinds[0] || '';
+    const photo = at(p, 72, 0, 0, 6, 0) || at(p, 37, 0, 0, 6, 0) || at(p, 51, 0, 0, 6, 0) || '';
+    const nm = at(p, 11) || '', ar = /[A-Za-z]/.test(nm) && /[؀-ۿ]/.exec(nm);
+    return {name:ar ? nm.slice(ar.index).trim() : nm, city:at(p, 166) || at(p, 82, 3) || '', kind, area:at(p, 14) || '', rating:at(p, 4, 7) ?? null, reviews:at(p, 4, 8) ?? null, pid:at(p, 78) || '',
+      lat:at(p, 9, 2) ?? null, lng:at(p, 9, 3) ?? null, photo:photo ? photo.replace(/=[^=/]*$/, '') + '=w240-h240-k-no' : ''};
+  } catch (e) { console.warn('google place', e); return null; }
+}
+async function placeInfo(p){ return googlePlace(p.fid); }
+// A saved photo address that stopped working gets fetched again, once per place per session.
+const refreshed = new Set();
+async function refreshPhoto(id){
+  const p = S.places.find(x => x.id === id); if (!p || refreshed.has(id)) return; refreshed.add(id);
+  const info = await placeInfo(p);
+  p.photo = info && info.photo && info.photo !== p.photo ? info.photo : ''; db.savePlaces([p]); render();
+}
+async function addPlace(text, quiet = false){
+  const m = MAPS_RE.exec(text || '');
+  if (!m){ if (!quiet) toast('الصق رابط المكان من قوقل ماب'); return; }
+  const shared = text.replace(m[0], '').split('\n').map(x => x.trim()).filter(Boolean);       // Maps shares "Name\nAddress\nlink"
+  const full = await follow(m[0]), got = fromMapsUrl(full), fid = (FID_RE.exec(full) || FID_RE.exec(m[0]) || [''])[0];
+  const p = {id:uid(), name:got.name || shared[0] || 'مكان', kind:'', area:'', photo:'', url:m[0], lat:got.lat, lng:got.lng, pid:'', fid, city:'', rating:null, reviews:null, visited:false, by:S.me};
+  if (S.places.some(x => x.url === p.url || (p.fid && x.fid === p.fid) || (x.name === p.name && x.lat != null && Math.abs(x.lat - p.lat) < 1e-4))){ toast(`«${p.name}» موجود في أماكن`); return; }
+  S.places.unshift(p); db.savePlaces([p]); buzz(8);
+  if (S.view !== 'places'){ S.view = 'places'; S.filter = 'all'; scrollTo({top:0}); }
+  render(); toast(`أُضيف «${p.name}» إلى أماكن`, () => { S.places = S.places.filter(x => x.id !== p.id); db.delPlaces([p.id]); render(); });
+  const info = await placeInfo(p);
+  if (info){ Object.assign(p, {name:info.name || p.name, kind:info.kind || '', area:info.area || '', photo:info.photo || '', pid:info.pid || '', city:info.city || p.city || '', rating:info.rating ?? null, reviews:info.reviews ?? null,
+    lat:info.lat ?? p.lat, lng:info.lng ?? p.lng}); db.savePlaces([p]); render(); }
+}
+const mapsOpen = url => isNative() ? native('WidgetBridge', 'openUrl', {url, external:true}).catch(() => window.open(url, '_blank')) : window.open(url, '_blank');
+function goPlace(id){
+  const p = S.places.find(x => x.id === id); if (!p) return; buzz(8);
+  const dest = p.lat != null ? `${p.lat},${p.lng}` : p.name;
+  mapsOpen(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}${p.pid ? '&destination_place_id=' + p.pid : ''}&travelmode=driving`);
+}
+function openPlace(id){ const p = S.places.find(x => x.id === id); if (p) mapsOpen(p.url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name)}`); }
+function visitPlace(id){
+  const p = S.places.find(x => x.id === id); if (!p) return;
+  const flip = () => { p.visited = !p.visited; db.savePlaces([p]); render(); };
+  flip(); buzz(12); toast(p.visited ? `زرتوا «${p.name}»` : `رجع «${p.name}» لقائمة نبي نزورها`, flip);
+}
+function removePlace(id){
+  const idx = S.places.findIndex(x => x.id === id); if (idx < 0) return;
+  const [p] = S.places.splice(idx, 1); buzz(12); db.delPlaces([p.id]);
+  toast(`تم حذف «${p.name}»`, () => { S.places.splice(Math.min(idx, S.places.length), 0, p); db.savePlaces([p]); render(); }); render();
+}
+// A Maps link sent to the app from the share sheet waits in the native side until the app is in front.
+async function takeShared(){
+  if (!isNative() || !S.me) return;
+  try { const r = await native('WidgetBridge', 'consumeShare'); for (const t of (r && r.items) || []) await addPlace(t, true); } catch (e) {}
+}
+document.addEventListener('visibilitychange', () => { if (!document.hidden) takeShared(); });
 
 /* ---------- New category: a name, a colour, an icon ---------- */
 function drawTagPrev(){
