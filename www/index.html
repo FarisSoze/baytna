@@ -549,7 +549,9 @@ body::before{inset:0;height:auto;background:var(--wash)}
 .often button svg{width:14px;height:14px;color:var(--accent)}
 .lhb{display:inline-flex;align-items:center;gap:6px;min-height:34px;padding:0 10px;border-radius:999px;font-size:.75rem;font-weight:500;color:var(--fg2);background:var(--fill)}
 .lhb svg{width:15px;height:15px}
-.lhb.go{color:var(--accent)}
+.lhb.ico{width:36px;min-height:36px;padding:0;justify-content:center}
+.lhb.ico svg{width:17px;height:17px}
+.lhb.shopb{background:var(--accent);color:var(--cta-fg)}
 #lhEnd{display:flex;align-items:center;gap:6px}
 dialog.shop{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;border:0;padding:0;background:var(--bg);color:var(--fg);overflow:auto;overscroll-behavior:contain}
 dialog.shop::before{content:"";position:fixed;inset:0;background:var(--wash);pointer-events:none}
@@ -616,14 +618,21 @@ dialog.shop::backdrop{background:var(--bg)}
 .pph.ic svg{width:26px;height:26px}
 .pl .body{min-width:0}
 .pl .title{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.go{flex:none;height:34px;padding-inline:12px 10px;border-radius:999px;background:var(--accent);color:var(--cta-fg);font-size:.8125rem;font-weight:700;display:flex;align-items:center;gap:5px;position:relative}
-.go::after{content:"";position:absolute;inset:-4px -2px}
-.go svg{width:15px;height:15px;stroke-width:2.4}
+.pgo{flex:none;width:40px;height:40px;border-radius:50%;background:var(--accent);color:var(--cta-fg);display:grid;place-items:center;position:relative}
+.pgo::after{content:"";position:absolute;inset:-6px}
+.pgo svg{width:18px;height:18px;stroke-width:2.2;fill:currentColor;fill-opacity:.18}
+.pl{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}
+.pl .pnote{display:flex;align-items:center;gap:5px;margin-top:3px;font-size:.75rem;color:var(--fg2);min-width:0}
+.pl .pnote svg{width:12px;height:12px;flex:none;color:var(--accent)}
+.pl .pnote span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#nText{width:100%;min-height:110px;border-radius:16px;border:0;background:var(--fill);padding:14px 16px;outline:0;resize:none;font:inherit;color:var(--fg);line-height:1.6}
+#nText:focus-visible{box-shadow:0 0 0 2px var(--accent)}
+#nText::placeholder{color:var(--fg3);font-weight:300}
 .pl .card{padding-inline-start:2px!important}
 .pl .check{width:40px;margin-inline-end:-2px}
 #view .row.pl.is-done .title{color:var(--fg);text-decoration:none}
 #view .row.pl.is-done .check span,#view .row.pl.checking:not(.is-done) .check span{background:#30C65A;color:#fff;box-shadow:none}
-.pl.is-done .go{background:var(--fill);color:var(--fg)}
+.pl.is-done .pgo{background:var(--fill);color:var(--fg)}
 .pl .meta .star{color:#F0C95A}
 .pl .meta .star small{color:var(--fg3);font-size:inherit}
 /* No photo: the place seen from above (free satellite tiles, nothing to sign up for), centred on a pin */
@@ -689,6 +698,21 @@ dialog.shop::backdrop{background:var(--bg)}
     <div class="actions">
       <button type="button" class="del press" id="bDelete" aria-label="حذف الفاتورة" data-ic="trash" hidden></button>
       <button type="submit" class="btn primary" id="bSubmit">إضافة الفاتورة</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog class="modal" id="noteDlg" aria-labelledby="noteTitle">
+  <div class="scrim" data-close></div>
+  <form class="sheet" id="noteForm" novalidate>
+    <div class="sheet-h"><span class="grabber"></span><h2 id="noteTitle">ملاحظة</h2><button type="button" class="x press" data-close aria-label="إغلاق" data-ic="x"></button></div>
+    <div class="field">
+      <label for="nText">ملاحظة على المكان</label>
+      <textarea id="nText" rows="4" maxlength="500" placeholder="مثلاً: جرّبوا البرقر، والجلسات الخارجية أحلى"></textarea>
+    </div>
+    <div class="actions">
+      <button type="button" class="del press" id="nDelete" aria-label="حذف الملاحظة" data-ic="trash" hidden></button>
+      <button type="submit" class="btn primary">حفظ الملاحظة</button>
     </div>
   </form>
 </dialog>
@@ -985,7 +1009,7 @@ const I_NEW = {
   refresh:'<path d="M3 12a9 9 0 0 1 15-6.7L21 8M21 3v5h-5M21 12a9 9 0 0 1-15 6.7L3 16M3 21v-5h5"/>',
   gear:'<path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"/><circle cx="12" cy="12" r="3"/>',
   chat:'<path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>', again:'<path d="M3 12a9 9 0 1 0 3-6.7L3 8"/><path d="M3 3v5h5"/>',
-  goback:'<path d="m9 18 6-6-6-6"/>', go:'<path d="m15 18-6-6 6-6"/>', getit:'<path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"/>',
+  goback:'<path d="m9 18 6-6-6-6"/>', go:'<path d="m15 18-6-6 6-6"/>', nav:'<path d="M3 11 22 2l-9 19-2-8-8-2Z"/>', share:'<path d="M12 15V3m0 0L8 7m4-4 4 4"/><path d="M7 10H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8a2 2 0 0 0-2-2h-1"/>', getit:'<path d="M12 3v12m0 0-5-5m5 5 5-5M5 21h14"/>',
   grid4:'<rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/>'
 };
 const I = {...I_OLD, ...I_NEW};
@@ -1054,8 +1078,8 @@ const toRow = it => ({id:it.id, household_id:S.hid, title:it.title, tag_id:it.ta
   done:!!it.done, done_at:it.doneAt ? new Date(it.doneAt).toISOString() : null, done_by:it.doneBy || null,
   ...(it.kind === 'appt' ? {kind:'appt', location:it.loc || null, remind_min:it.remind == null ? null : it.remind} : {})});
 const billFrom = r => ({id:r.id, title:r.title, amount:r.amount == null ? null : +r.amount, icon:r.icon || 'receipt', color:r.color || 'teal', paid:!!r.paid, paidBy:r.paid_by || undefined});
-const placeFrom = r => ({id:r.id, name:r.name, kind:r.kind || '', area:r.area || '', photo:r.photo || '', url:r.url || '', lat:r.lat, lng:r.lng, pid:r.place_id || '', fid:r.fid || '', city:r.city || '', rating:r.rating, reviews:r.reviews, visited:!!r.visited, by:r.created_by});
-const placeRow = p => ({id:p.id, household_id:S.hid, name:p.name, kind:p.kind || null, area:p.area || null, photo:p.photo || null, url:p.url || null, lat:p.lat ?? null, lng:p.lng ?? null, place_id:p.pid || null, fid:p.fid || null, city:p.city || null, rating:p.rating ?? null, reviews:p.reviews ?? null, visited:!!p.visited, created_by:p.by || null});
+const placeFrom = r => ({id:r.id, name:r.name, kind:r.kind || '', area:r.area || '', photo:r.photo || '', url:r.url || '', lat:r.lat, lng:r.lng, pid:r.place_id || '', fid:r.fid || '', city:r.city || '', rating:r.rating, reviews:r.reviews, visited:!!r.visited, note:r.note || '', by:r.created_by});
+const placeRow = p => ({id:p.id, household_id:S.hid, name:p.name, kind:p.kind || null, area:p.area || null, photo:p.photo || null, url:p.url || null, lat:p.lat ?? null, lng:p.lng ?? null, place_id:p.pid || null, fid:p.fid || null, city:p.city || null, rating:p.rating ?? null, reviews:p.reviews ?? null, visited:!!p.visited, note:p.note || null, created_by:p.by || null});
 const billRow = b => ({id:b.id, household_id:S.hid, title:b.title, amount:b.amount == null ? null : b.amount, icon:b.icon, color:b.color, paid:!!b.paid, paid_by:b.paid ? b.paidBy || null : null, paid_at:b.paid ? new Date().toISOString() : null});
 
 // The UI updates first; the write follows. A failed write says so and reloads the truth.
@@ -1169,6 +1193,17 @@ function mapThumb(lat, lng, size = 58, z = 18){
   let imgs = ''; for (let j = -1; j <= 1; j++) for (let i = -1; i <= 1; i++) imgs += `<img alt="" src="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/${z}/${ty + j}/${tx + i}">`;
   return `<span class="pph pmap" aria-hidden="true"><span class="tiles" style="left:${size / 2 - 256 - (fx - tx) * 256}px;top:${size / 2 - 256 - (fy - ty) * 256}px">${imgs}</span></span>`;
 }
+// Google's names often carry the branch: "Wingstop Ajdan Walk Khobar". The card shows the brand; the full name stays saved.
+const CITY_W = /^(riyadh|jeddah|jiddah|khobar|alkhobar|dammam|dhahran|makkah|mecca|madinah|medina|taif|abha|tabuk|qatif|jubail|الرياض|جدة|جده|الخبر|الدمام|الظهران|مكة|المدينة|الطائف|أبها|تبوك|القطيف|الجبيل)$/i;
+const SPOT_W = /^(walk|mall|park|plaza|center|centre|boulevard|blvd|avenue|tower|square|gate|district|road|street)$/i;
+function shortName(p){
+  const n = (p.name || '').split(/\s+[-–—|]\s+|[،,(]/)[0].trim(), w = n.split(/\s+/).filter(Boolean);
+  let cut = w.length;
+  w.forEach((x, i) => { if (i && i < cut && (CITY_W.test(x) || (p.city && x === p.city) || /^(فرع|branch)$/i.test(x))) cut = i; });
+  w.forEach((x, i) => { if (i >= 2 && SPOT_W.test(x) && i - 1 < cut) cut = i - 1; });
+  if (cut > 1 && cut < w.length && /^(al|el|ال)$/i.test(w[cut - 1])) cut--;
+  return w.slice(0, Math.max(cut, 1)).join(' ') || p.name;
+}
 function placeRowHtml(p){
   const lk = kindLook(p.kind), meta = [p.kind ? `<span>${esc(p.kind)}</span>` : '', p.area ? `<span>${esc(p.area)}</span>` : ''].join(''),
     stars = p.rating ? `<div class="meta"><span class="star">★ ${(+p.rating).toFixed(1)}${p.reviews ? ` <small>(${(+p.reviews).toLocaleString('en')} تقييم)</small>` : ''}</span></div>` : '';
@@ -1176,8 +1211,8 @@ function placeRowHtml(p){
     <article class="card">
       <button class="check" data-visit="${p.id}" aria-label="${p.visited ? 'ما زرناه' : 'زرناه'}: «${esc(p.name)}»"><span>${ic('check')}</span></button>
       ${p.photo ? `<img class="pph" src="${esc(p.photo)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="refreshPhoto('${p.id}')">` : p.lat != null ? mapThumb(p.lat, p.lng) : `<span class="pph ic c-${lk.color}">${ic(lk.icon)}</span>`}
-      <button class="body" data-place="${p.id}" aria-label="فتح «${esc(p.name)}» في قوقل ماب"><div class="title">${esc(p.name)}</div><div class="meta">${meta || '<span>مكان</span>'}</div>${stars}</button>
-      <button class="go press" data-go="${p.id}" aria-label="اذهب إلى «${esc(p.name)}»">${ic('go')}اذهب</button>
+      <button class="body" data-place="${p.id}" aria-label="فتح «${esc(p.name)}» في قوقل ماب"><div class="title">${esc(shortName(p))}</div><div class="meta">${meta || '<span>مكان</span>'}</div>${stars}${p.note ? `<div class="pnote">${ic('pencil')}<span>${esc(p.note)}</span></div>` : ''}</button>
+      <button class="pgo press" data-go="${p.id}" aria-label="اذهب إلى «${esc(p.name)}»">${ic('nav')}</button>
     </article></div>`;
 }
 const emptyBox = (icon, b, p) => `<div class="empty" data-flip="empty"><span class="tile-ic">${ic(icon)}</span><b>${b}</b>${p}</div>`;
@@ -1249,7 +1284,7 @@ function render(){
 
   if (render._v !== V){ render._v = V; requestAnimationFrame(() => typeof remeasure === 'function' && remeasure()); }   // each screen decides its own scroll motion
   $('#lhTitle').textContent = V === 'home' ? (cur ? cur.name : 'كل المهام') : V === 'bills' ? 'الفواتير' : V === 'appts' ? 'كل المواعيد' : V === 'places' ? 'نبي نزورها' : 'منتهي';
-  $('#lhEnd').innerHTML = V === 'home' && list.length ? `<button class="lhb press" data-share aria-label="مشاركة القائمة كصورة">${ic('chat')}مشاركة</button><button class="lhb go press" data-shop aria-label="وضع التسوق">${ic('cart')}تسوّق</button>` : V === 'done' && doneList.length ? '<button class="sort link" data-clear>مسح الكل</button>' : '<span class="sort"></span>';
+  $('#lhEnd').innerHTML = V === 'home' && list.length ? `<button class="lhb ico press" data-share aria-label="مشاركة القائمة كصورة">${ic('share')}</button><button class="lhb ico shopb press" data-shop aria-label="وضع التسوق">${ic('cart')}</button>` : V === 'done' && doneList.length ? '<button class="sort link" data-clear>مسح الكل</button>' : '<span class="sort"></span>';
 
   if (V === 'home') view.innerHTML = list.length ? grid([...list].sort((a, b) => ORD[a.prio] - ORD[b.prio]).map(row)) : emptyBox('done', 'كل شيء منتهي', cur ? 'ما فيه أغراض ناقصة في هذي الفئة.' : 'أضف أول غرض من الخانة فوق.');
   else if (V === 'bills') view.innerHTML = S.bills.length ? grid([...unpaid, ...paid].map(billRowHtml)) : emptyBox('receipt', 'ما فيه فواتير بعد', 'أضف فواتيرك الشهرية الثابتة من الخانة فوق، وعلّمها لما تسدد.');
@@ -1594,6 +1629,17 @@ const endSwipe = e => {
   else spring({from:x, to:0, velocity:v, damping:.8, response:.36, onUpdate:n => setX(s, n), onDone:() => { s.row.classList.remove('armed'); s.card.style.transform = ''; }});
 };
 addEventListener('pointerup', endSwipe); addEventListener('pointercancel', endSwipe);
+let holdT = 0, holdXY = null, held = 0;
+$('#view').addEventListener('pointerdown', e => {
+  clearTimeout(holdT); holdXY = null;
+  const r = e.target.closest('.row.pl'); if (!r || e.button || e.target.closest('.check')) return;
+  holdXY = [e.clientX, e.clientY];
+  holdT = setTimeout(() => { holdXY = null; if (sw && sw.on) return; sw = null; held = Date.now(); buzz(14); openNote(r.dataset.id); }, 480);
+});
+addEventListener('pointermove', e => { if (holdXY && Math.hypot(e.clientX - holdXY[0], e.clientY - holdXY[1]) > 8){ clearTimeout(holdT); holdXY = null; } });
+['pointerup', 'pointercancel'].forEach(t => addEventListener(t, () => { clearTimeout(holdT); holdXY = null; }, true));
+addEventListener('scroll', () => { clearTimeout(holdT); holdXY = null; }, {passive:true});
+$('#view').addEventListener('contextmenu', e => { if (e.target.closest('.row.pl')) e.preventDefault(); });
 
 
 /* ---------- Sheets: spring in, drag to dismiss, interruptible ---------- */
@@ -2172,6 +2218,7 @@ $('#gptForm').onsubmit = async e => {
 
 /* ---------- Taps ---------- */
 document.addEventListener('click', e => {
+  if (Date.now() - held < 700 && e.target.closest('#view')){ e.preventDefault(); return; }
   const b = e.target.closest('button,[data-close]'); if (!b) return;
   const d = b.dataset;
   if (d.view){ S.view = d.view; S.filter = 'all'; render(); scrollTo({top:0}); }
@@ -2316,15 +2363,15 @@ function fillPlace(p, info){
   Object.assign(p, {name:info.name || p.name, kind:info.kind || '', area:info.area || '', photo:info.photo || '', pid:info.pid || '', city:info.city || p.city || '', rating:info.rating ?? null, reviews:info.reviews ?? null,
     lat:info.lat ?? p.lat, lng:info.lng ?? p.lng});
 }
-const mended = new Set();
+const mended = new Map();
 async function mendPlaces(){
-  if (!isNative()) return;
-  for (const p of S.places.filter(x => !x.kind && !x.photo && x.rating == null && x.url && !mended.has(x.id))){
-    mended.add(p.id);
+  if (!isNative() || mendPlaces.busy) return; mendPlaces.busy = true;
+  try { for (const p of S.places.filter(x => !x.kind && !x.photo && x.rating == null && x.url && (mended.get(x.id) || 0) < 3)){
+    mended.set(p.id, (mended.get(p.id) || 0) + 1);
     if (!p.fid){ const full = await follow(p.url), got = fromMapsUrl(full); p.fid = (FID_RE.exec(full) || [''])[0]; if (p.lat == null && got.lat != null){ p.lat = got.lat; p.lng = got.lng; } }
     const info = await placeInfo(p); if (info) fillPlace(p, info);
     if (info || p.fid){ db.savePlaces([p]); render(); }
-  }
+  } } finally { mendPlaces.busy = false; }
 }
 // A saved photo address that stopped working gets fetched again, once per place per session.
 const refreshed = new Set();
@@ -2342,7 +2389,7 @@ async function addPlace(text, quiet = false){
   if (S.places.some(x => x.url === p.url || (p.fid && x.fid === p.fid) || (x.name === p.name && x.lat != null && Math.abs(x.lat - p.lat) < 1e-4))){ toast(`«${p.name}» موجود في أماكن`); return; }
   S.places.unshift(p); db.savePlaces([p]); buzz(8);
   if (S.view !== 'places'){ S.view = 'places'; S.filter = 'all'; scrollTo({top:0}); }
-  render(); toast(`أُضيف «${p.name}» إلى أماكن`, () => { S.places = S.places.filter(x => x.id !== p.id); db.delPlaces([p.id]); render(); });
+  render(); toast(`أُضيف «${shortName(p)}» إلى أماكن`, () => { S.places = S.places.filter(x => x.id !== p.id); db.delPlaces([p.id]); render(); });
   const info = await placeInfo(p);
   if (info){ fillPlace(p, info); db.savePlaces([p]); render(); }
 }
@@ -2353,6 +2400,19 @@ function goPlace(id){
   mapsOpen(`https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}${p.pid ? '&destination_place_id=' + p.pid : ''}&travelmode=driving`);
 }
 function openPlace(id){ const p = S.places.find(x => x.id === id); if (p) mapsOpen(p.url || `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(p.name)}`); }
+let noteFor = null;
+function openNote(id){
+  noteFor = S.places.find(x => x.id === id); if (!noteFor) return;
+  $('#noteTitle').textContent = shortName(noteFor); $('#nText').value = noteFor.note || ''; $('#nDelete').hidden = !noteFor.note;
+  openSheet($('#noteDlg')); if (!isPhone()) $('#nText').focus();
+}
+$('#noteForm').onsubmit = e => {
+  e.preventDefault(); if (!noteFor) return;
+  const t = $('#nText').value.trim().slice(0, 500), had = noteFor.note;
+  noteFor.note = t; db.savePlaces([noteFor]); closeSheet($('#noteDlg')); render();
+  if (t !== had) toast(t ? 'انحفظت الملاحظة' : 'انحذفت الملاحظة');
+};
+$('#nDelete').onclick = () => { $('#nText').value = ''; $('#noteForm').requestSubmit(); };
 function visitPlace(id){
   const p = S.places.find(x => x.id === id); if (!p) return;
   const flip = () => { p.visited = !p.visited; db.savePlaces([p]); render(); };

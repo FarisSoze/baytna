@@ -349,9 +349,12 @@ create table if not exists public.places (
   rating       real,
   reviews      integer,
   visited      boolean not null default false,
+  note         text check (char_length(note) <= 500),
   created_by   uuid references public.profiles (id) on delete set null,
   created_at   timestamptz not null default now()
 );
+-- 1.1.5: a short note on a place (long-press the card).
+alter table public.places add column if not exists note text check (char_length(note) <= 500);
 create index if not exists places_household_idx on public.places (household_id);
 
 revoke all on public.places from anon;
@@ -439,8 +442,8 @@ begin
   insert into public.bills (household_id, title, amount, icon, color, paid, paid_by, paid_at, created_at)
     select h, b.title, b.amount, b.icon, b.color, b.paid, case when b.paid_by = me then me end, b.paid_at, b.created_at
       from public.bills b where b.household_id = old;
-  insert into public.places (household_id, name, kind, area, city, photo, url, lat, lng, place_id, fid, rating, reviews, visited, created_by, created_at)
-    select h, p.name, p.kind, p.area, p.city, p.photo, p.url, p.lat, p.lng, p.place_id, p.fid, p.rating, p.reviews, p.visited,
+  insert into public.places (household_id, name, kind, area, city, photo, url, lat, lng, place_id, fid, rating, reviews, visited, note, created_by, created_at)
+    select h, p.name, p.kind, p.area, p.city, p.photo, p.url, p.lat, p.lng, p.place_id, p.fid, p.rating, p.reviews, p.visited, p.note,
            case when p.created_by = me then me end, p.created_at
       from public.places p where p.household_id = old and (everything or p.created_by = me);
 
